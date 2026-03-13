@@ -1,0 +1,43 @@
+# Maven
+target/
+**/target/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Java
+*.class
+
+# Local env overrides
+.env
+.env.*
+application-local.yml
+application-dev.yml
+application-*.local.yml
+
+# Runtime files
+*.pid
+*.seed
+*.out
+*.err
+
+# Archive artifacts
+*.jar
+*.war
+*.zip
+*.exe
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
