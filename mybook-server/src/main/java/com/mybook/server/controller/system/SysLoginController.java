@@ -67,7 +67,7 @@ public class SysLoginController {
 
     @GetMapping("/getRouters")
     public AjaxResult getRouters() {
-        Long userId = loginService.getCurrentLoginUser().getUser().getUserId();
+        Long userId = sloginService.getCurrentLoginUser().getUser().getUserId();
         List<SysMenu> menus = menuService.selectMenuTreeByUserId(userId);
         return AjaxResult.success(menuService.buildMenus(menus));
     }
