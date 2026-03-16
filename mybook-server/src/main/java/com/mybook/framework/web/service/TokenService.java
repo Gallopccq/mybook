@@ -17,6 +17,7 @@ import com.mybook.common.core.domain.model.LoginUser;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.security.Key;
 import java.nio.charset.StandardCharsets;
@@ -85,6 +86,30 @@ public class TokenService {
              */
         } catch (Exception e) {
             return Optional.empty();
+        }
+    }
+
+    public Optional<String> resolveJwtFromRequest(HttpServletRequest request) {
+        String auth = request.getHeader(Constants.AUTH_HEADER);
+        if (auth == null || auth.isBlank()) return Optional.empty();
+        auth = auth.trim();
+
+        String jwt = auth.startsWith(Constants.BEARER_PREFIX)
+                    ? auth.substring(Constants.BEARER_PREFIX.length())
+                    : auth;
+        jwt = jwt.trim();
+        return jwt.isEmpty() ? Optional.empty() : Optional.of(jwt);
+    }
+
+    public void removeTokenByJwt(String jwt){
+        Claims claims = Jwts.parserBuilder()
+                        .setSigningKey(signingKey())
+                        .build()
+                        .parseClaimsJws(jwt)
+                        .getBody();
+        String token = (String) claims.get("token");
+        if (token != null && !token.isBlank()){
+            redis.delete(Constants.LOGIN_TOKEN_KEY + token);
         }
     }
 }

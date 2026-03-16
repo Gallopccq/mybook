@@ -16,6 +16,7 @@ import com.mybook.common.core.domain.entity.SysMenu;
 import com.mybook.common.core.domain.entity.SysUser;
 import com.mybook.common.core.domain.model.LoginBody;
 import com.mybook.common.core.domain.model.LoginUser;
+import com.mybook.framework.web.annotation.NoAuth;
 import com.mybook.framework.web.service.SysLoginService;
 import com.mybook.framework.web.service.SysPermissionService;
 import com.mybook.system.service.ISysMenuService;
@@ -49,13 +50,20 @@ public class SysLoginController {
      * @Param loginBody 登陆信息
      * @return 结果
      */
+    @NoAuth // 为什么要加免登录注解？
     @PostMapping("/login")
     public AjaxResult login(@RequestBody LoginBody loginBody) {
         AjaxResult ajax = AjaxResult.success();
         String token = loginService.login(loginBody);
         ajax.put(Constants.TOKEN, token);
-        logger.debug("用户名：" + loginBody.getUsername() + ", 密码：" + loginBody.getPassword());
+        logger.debug("用户登录成功：" + loginBody.getUsername());
         return ajax;
+    }
+    
+    @PostMapping("/logout")
+    public AjaxResult logout() {
+        loginService.logout();
+        return AjaxResult.success("退出成功");
     }
 
     @GetMapping("/getInfo")

@@ -46,10 +46,11 @@ public class AjaxResult extends HashMap<String, Object>{
     public static AjaxResult error(String msg, Object data) {
         return new AjaxResult(500, msg, data);
     }
-    
+
     /** 链式调用：result.put("key", value) */
     @Override
     public AjaxResult put(String key, Object value) {
         super.put(key, value);
         return this;
+    }
 }

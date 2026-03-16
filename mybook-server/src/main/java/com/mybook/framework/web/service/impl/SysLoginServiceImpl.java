@@ -29,7 +29,6 @@ public class SysLoginServiceImpl implements SysLoginService{
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final HttpServletRequest request;
-    private final ConcurrentMap<String, LoginUser> sessions = new ConcurrentHashMap<>();
     // 似乎session的信息就是用一个Map来存储，是否合适？这个ConcurrentMap是否只是保证并发存取时的一致性？
     /**
      *  单机、小型或演示性质的应用中，使用内存中的 ConcurrentHashMap来存储会话信息是一种简单直接的实现方式
@@ -92,6 +91,20 @@ public class SysLoginServiceImpl implements SysLoginService{
         return tokenService.parseLoginUser(jwt)
                 .orElseThrow(() -> new IllegalStateException("登录已过期"));
 
+    }
+
+    @Override
+    public void logout() {
+        String jwt = tokenService.resolveJwtFromRequest(request);
+                .orElseThrow(() -> new IllegalStateException("缺少 Authorization 请求头"));
+        tokenService.removeTokenByJwt(jwt);
+    }
+
+    @Override
+    public boolean checkToken() {
+        String jwt = tokenService.resolveJwtFromRequest(request);
+        if (jwt == null) return false;
+        return tokenService.parseLoginUser(jwt).isPresent();
     }
     
 }

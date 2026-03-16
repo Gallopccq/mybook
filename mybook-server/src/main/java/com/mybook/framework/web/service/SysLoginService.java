@@ -6,4 +6,6 @@ import com.mybook.common.core.domain.model.LoginUser;
 public interface SysLoginService {
     String login(LoginBody body);
     LoginUser getCurrentLoginUser();
+    void logout();
+    boolean checkToken();
 }
