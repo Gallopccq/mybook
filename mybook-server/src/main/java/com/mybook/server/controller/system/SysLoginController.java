@@ -1,5 +1,15 @@
 package com.mybook.server.controller.system;
 
+import java.util.List;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.mybook.common.constant.Constants;
 import com.mybook.common.core.domain.AjaxResult;
 import com.mybook.common.core.domain.entity.SysMenu;
@@ -9,13 +19,6 @@ import com.mybook.common.core.domain.model.LoginUser;
 import com.mybook.framework.web.service.SysLoginService;
 import com.mybook.framework.web.service.SysPermissionService;
 import com.mybook.system.service.ISysMenuService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-import java.util.Set;
 
 /**
  * 登陆验证
@@ -24,6 +27,8 @@ import java.util.Set;
  */
 @RestController
 public class SysLoginController {
+
+    private final Logger logger = LoggerFactory.getLogger(SysLoginController.class);
 
     private final SysLoginService loginService;
     private final ISysMenuService menuService;
@@ -49,15 +54,16 @@ public class SysLoginController {
         AjaxResult ajax = AjaxResult.success();
         String token = loginService.login(loginBody);
         ajax.put(Constants.TOKEN, token);
+        logger.info("用户名：" + loginBody.getUsername() + ", 密码：" + loginBody.getPassword());
         return ajax;
     }
 
     @GetMapping("/getInfo")
     public AjaxResult getInfo() {
         LoginUser loginUser = loginService.getCurrentLoginUser();
-        SysUser user = loginUser.getUser();
-        Set<String> roles = permissionService.getRolePermission(user);
-        Set<String> permissions = permissionService.getMenuPermission(user);
+        SysUser user = loginUser.getUser(); // loginuser和user有什么区别？
+        Set<String> roles = permissionService.getRolePermission(user); // roles用来做什么？
+        Set<String> permissions = permissionService.getMenuPermission(user); // permission有什么东西？
         AjaxResult ajax = AjaxResult.success();
         ajax.put("user", user);
         ajax.put("roles", roles);
@@ -67,7 +73,7 @@ public class SysLoginController {
 
     @GetMapping("/getRouters")
     public AjaxResult getRouters() {
-        Long userId = sloginService.getCurrentLoginUser().getUser().getUserId();
+        Long userId = loginService.getCurrentLoginUser().getUser().getUserId();
         List<SysMenu> menus = menuService.selectMenuTreeByUserId(userId);
         return AjaxResult.success(menuService.buildMenus(menus));
     }

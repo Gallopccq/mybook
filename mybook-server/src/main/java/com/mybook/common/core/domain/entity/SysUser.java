@@ -13,10 +13,6 @@ public class SysUser {
         this.nickName = nickName;
     }
 
-    public SysUser getUser(){
-        return this;
-    }
-
     public Long getUserId() {
         return userId;
     }
