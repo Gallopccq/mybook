@@ -1,0 +1,25 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:mybook;MODE=MYSQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE
+    driverClassName: org.h2.Driver
+    username: sa
+    password: 
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:sql/schema.sql
+      data-locations: classpath:sql/data.sql
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      database: 0
+      timeout: 2s
+
+token:
+  header: Authorization
+  secret: abcdefghijklmnopqrstuvwxyz
+  expire-minutes: 120
