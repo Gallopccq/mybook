@@ -2,8 +2,10 @@ package com.mybook.common.core.domain.entity;
 
 public class SysUser {
     private Long userId;
+    private String password;
     private String userName;
     private String nickName;
+    private String status;
 
     public SysUser() {}
 
@@ -35,5 +37,21 @@ public class SysUser {
 
     public void setNickName(String nickName) {
         this.nickName = nickName;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

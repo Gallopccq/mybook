@@ -1,21 +1,28 @@
 package com.mybook.framework.web.service.impl;
 
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.mybook.common.constant.Constants;
-import com.mybook.common.core.domain.entity.SysUser;
 import com.mybook.common.core.domain.model.LoginBody;
 import com.mybook.common.core.domain.model.LoginUser;
+import com.mybook.framework.repository.AuthRepository;
+import com.mybook.framework.repository.UserRepository;
 import com.mybook.framework.web.service.SysLoginService;
+import com.mybook.framework.web.service.TokenService;
 
 import jakarta.servlet.http.HttpServletRequest;
 
+/**
+ * 	本实现（混合模式）:
+ * 有状态;	用户信息存储在Redis中; 会话管理, 可主动失效（删除Redis键）; 扩展性​依赖Redis集群
+ * 
+ */
 @Service
 public class SysLoginServiceImpl implements SysLoginService{
 
@@ -29,9 +36,17 @@ public class SysLoginServiceImpl implements SysLoginService{
      * 但是，对于生产环境，尤其是需要分布式部署（多实例）的应用，需要替换为Redis等集中式存储。
      * ConcurrentHashMap 是线程安全的哈希表实现，保证线程安全性和数据一致性
     */
+    private final UserRepository userRepository;
+    private final AuthRepository authRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final TokenService tokenService;
 
-    public SysLoginServiceImpl(HttpServletRequest request){
+    public SysLoginServiceImpl(AuthRepository authRepository, PasswordEncoder passwordEncoder, HttpServletRequest request, TokenService tokenService, UserRepository userRepository) {
+        this.authRepository = authRepository;
+        this.passwordEncoder = passwordEncoder;
         this.request = request;
+        this.tokenService = tokenService;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -39,13 +54,20 @@ public class SysLoginServiceImpl implements SysLoginService{
         if (body == null || body.getUsername() == null || body.getPassword() == null){
             throw new IllegalArgumentException("用户名或密码不能为空");
         }
-        LoginUser loginUser = new LoginUser();
-        loginUser.setUser(new SysUser(1L, body.getUsername(), "默认管理员"));
+        var user = userRepository.findByUsername(body.getUsername()) // 这个var干什么的？
+                .orElseThrow(() -> new IllegalArgumentException("用户不存在"));
+        if (!"0".equals(user.getStatus())) {
+            throw new IllegalStateException("用户已停用");
+        }
+        if (!passwordEncoder.matches(body.getPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("密码错误");
+        }
 
-        String token = UUID.randomUUID().toString().replace("-", "");
-        loginUser.setToken(token);
-        sessions.put(token, loginUser);
-        return token;
+        LoginUser loginUser = new LoginUser();
+        loginUser.setUser(user);
+        loginUser.setRoles(authRepository.findRoleKeysByUserId(user.getUserId()));
+        loginUser.setPermissions(authRepository.findPermsByUserId(user.getUserId()));
+        return tokenService.createToken(loginUser);
     }
 
     @Override
@@ -55,11 +77,11 @@ public class SysLoginServiceImpl implements SysLoginService{
             throw new IllegalStateException("缺少 Authorization 请求头");
         } // 这个请求头是什么？后面一般跟什么信息？
         auth = auth.trim();
-        String token = auth.startsWith(Constants.BEARER_PREFIX)
+        String jwt = auth.startsWith(Constants.BEARER_PREFIX)
                 ? auth.substring(Constants.BEARER_PREFIX.length())
                 : auth;
-        token = token.trim();
-        logger.info("当前用户 token: " + token);
+        jwt = jwt.trim();
+        logger.info("当前用户 jwt: " + jwt);
                 // 啥意思？BEARER是什么？BEARER后面有什么？
         /**
          * “持有此令牌（Bearer Token）的任何一方”都被授权访问相关资源。它是一种最常见的Token使用方式。
@@ -67,11 +89,8 @@ public class SysLoginServiceImpl implements SysLoginService{
          * Bearer关键字后面，紧跟一个空格，然后就是具体的令牌字符串。
          * 例如：Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...。
          */
-        LoginUser user = sessions.get(token); // 请求体里没有吗，要从sessions里找？
-        if (user == null) {
-            throw new IllegalStateException("登录已失效");
-        }
-        return user;
+        return tokenService.parseLoginUser(jwt)
+                .orElseThrow(() -> new IllegalStateException("登录已过期"));
 
     }
     

@@ -54,7 +54,7 @@ public class SysLoginController {
         AjaxResult ajax = AjaxResult.success();
         String token = loginService.login(loginBody);
         ajax.put(Constants.TOKEN, token);
-        logger.info("用户名：" + loginBody.getUsername() + ", 密码：" + loginBody.getPassword());
+        logger.debug("用户名：" + loginBody.getUsername() + ", 密码：" + loginBody.getPassword());
         return ajax;
     }
 
