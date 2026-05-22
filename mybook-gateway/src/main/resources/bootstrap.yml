@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: mybook-gateway
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      discovery:
+        enabled: true
+        group: DEFAULT_GROUP
+        namespace: mybook
+        server-addr: 127.0.0.1
