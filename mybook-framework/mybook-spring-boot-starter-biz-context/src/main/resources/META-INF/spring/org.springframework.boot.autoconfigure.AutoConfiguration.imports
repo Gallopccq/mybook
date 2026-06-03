@@ -1,0 +1,2 @@
+com.mybook.framework.biz.context.config.ContextAutoConfiguration
+com.mybook.framework.biz.context.config.FeignContextAutoConfiguration
