@@ -7,7 +7,7 @@
     <parent>
         <artifactId>mybook</artifactId>
         <groupId>com.mybook</groupId>
-        <version>1.0.0</version>
+        <version>${revision}</version>
     </parent>
 
     <packaging>jar</packaging>

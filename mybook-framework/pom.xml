@@ -8,7 +8,7 @@
     <parent>
         <groupId>com.mybook</groupId>
         <artifactId>mybook</artifactId>
-        <version>1.0.0</version>
+        <version>${revision}</version>
     </parent>
 
     <!-- 多模块项目需要配置打包方式为 pom -->

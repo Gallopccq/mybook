@@ -4,19 +4,20 @@
     <parent>
         <groupId>com.mybook</groupId>
         <artifactId>mybook</artifactId>
-        <version>1.0.0</version>
+        <version>${revision}</version>
     </parent>
 
-    <groupId>com.mybook.mybook.note</groupId>
+<!--    <groupId>com.mybook.mybook.note</groupId>-->
     <artifactId>mybook-note</artifactId>
     <packaging>pom</packaging>
 
     <modules>
         <module>mybook-note-biz</module>
+        <module>mybook-note-api</module>
     </modules>
 
-    <name>mybook-note</name>
-    <url>http://maven.apache.org</url>
+<!--    <name>mybook-note</name>-->
+<!--    <url>http://maven.apache.org</url>-->
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

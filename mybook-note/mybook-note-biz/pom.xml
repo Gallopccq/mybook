@@ -3,17 +3,18 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.mybook</groupId>
-        <artifactId>mybook</artifactId>
-        <version>1.0.0</version>
-        <relativePath>../../pom.xml</relativePath>
+        <artifactId>mybook-note</artifactId>
+        <version>${revision}</version>
+<!--        <relativePath>../../pom.xml</relativePath>-->
     </parent>
 
-    <groupId>com.mybook.mybook.note.biz</groupId>
+<!--    <groupId>com.mybook.mybook.note.biz</groupId>-->
     <artifactId>mybook-note-biz</artifactId>
-    <packaging>jar</packaging>
 
-    <name>mybook-note-biz</name>
-    <url>http://maven.apache.org</url>
+<!--    <packaging>jar</packaging>-->
+
+<!--    <name>mybook-note-biz</name>-->
+<!--    <url>http://maven.apache.org</url>-->
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
