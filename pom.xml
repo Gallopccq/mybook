@@ -110,6 +110,11 @@
                 <artifactId>druid-spring-boot-3-starter</artifactId>
                 <version>${druid.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>druid</artifactId>
+                <version>${druid.version}</version>
+            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-loadbalancer -->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>

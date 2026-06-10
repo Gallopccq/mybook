@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
 
-@Service  // TODO: 这个是干什么的？
+@Service  // TODO:
 @Slf4j
 public class VerificationCodeServiceImpl implements VerificationCodeService {
 
