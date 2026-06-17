@@ -71,6 +71,11 @@
         <version>${druid.version}</version>
       </dependency>
       <dependency>
+        <groupId>com.alibaba</groupId>
+        <artifactId>druid</artifactId>
+        <version>${druid.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.springframework.cloud</groupId>
         <artifactId>spring-cloud-starter-loadbalancer</artifactId>
         <version>4.1.5</version>
@@ -108,8 +113,8 @@
         <version>${swagger.version}</version>
         <exclusions>
           <exclusion>
-            <artifactId>swagger-models</artifactId>
             <groupId>io.swagger</groupId>
+            <artifactId>swagger-models</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
@@ -237,8 +242,8 @@
         <version>${mybatisplus.version}</version>
         <exclusions>
           <exclusion>
-            <artifactId>mybatis-plus-generator</artifactId>
             <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-generator</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
