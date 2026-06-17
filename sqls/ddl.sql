@@ -1,6 +1,6 @@
 -- 用户服务 --
 -- 用户表
-
+use mybook;
 create table if not exists `t_user` (
 	`id` bigint unsigned not null auto_increment comment '主键ID',
     `mybook_id` varchar(15) not null comment 'Mybook ID（唯一凭证），可修改',
@@ -88,7 +88,8 @@ CREATE TABLE IF NOT EXISTS `t_channel` (
   `name` varchar(12) character set utf8mb4 collate utf8mb4_unicode_ci not null comment '频道名称',
     `create_time` datetime not null default current_timestamp comment '创建时间',
     `update_time` datetime not null default current_timestamp comment '更新时间',
-    `is_deleted` bit(1) not null default b'0' comment '逻辑删除：0未删除1已删除'
+    `is_deleted` bit(1) not null default b'0' comment '逻辑删除：0未删除1已删除',
+    primary key (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='频道表';
 
 -- 话题表：
@@ -98,7 +99,9 @@ CREATE TABLE IF NOT EXISTS `t_topic` (
   `name` varchar(12) character set utf8mb4 collate utf8mb4_unicode_ci not null comment '话题名称',
     `create_time` datetime not null default current_timestamp comment '创建时间',
     `update_time` datetime not null default current_timestamp comment '更新时间',
-    `is_deleted` bit(1) not null default b'0' comment '逻辑删除：0未删除1已删除'
+    `is_deleted` bit(1) not null default b'0' comment '逻辑删除：0未删除1已删除',
+    primary key (`id`)
+
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='话题表';
 
 -- 话题-频道关联表
