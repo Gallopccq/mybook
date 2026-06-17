@@ -3,7 +3,7 @@
 <mapper namespace="com.mybook.mybook.auth.domain.mapper.UserDOMapper">
   <resultMap id="BaseResultMap" type="com.mybook.mybook.auth.domain.dataobject.UserDO">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="xiaohashu_id" jdbcType="VARCHAR" property="xiaohashuId" />
+    <result column="mybook_id" jdbcType="VARCHAR" property="mybookId" />
     <result column="phone" jdbcType="VARCHAR" property="phone" />
     <result column="password" jdbcType="VARCHAR" property="password" />
     <result column="birthday" jdbcType="DATE" property="birthday" />
@@ -18,8 +18,8 @@
     <result column="is_deleted" jdbcType="BIT" property="isDeleted" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, xiaohashu_id, phone, `password`, birthday, nickname, avatar, background_img, 
-    sex, `status`, introduction, create_time, update_time, is_deleted
+    id, mybook_id, phone, `password`, birthday, nickname, avatar, background_img, sex, 
+    `status`, introduction, create_time, update_time, is_deleted
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
@@ -27,17 +27,20 @@
     from t_user
     where id = #{id,jdbcType=BIGINT}
   </select>
+  <select id="selectByPhone" resultMap="BaseResultMap">
+    select id, password from t_user where phone = #{phone}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from t_user
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.mybook.mybook.auth.domain.dataobject.UserDO">
-    insert into t_user (id, xiaohashu_id, phone, 
+  <insert id="insert" parameterType="com.mybook.mybook.auth.domain.dataobject.UserDO" useGeneratedKeys="true" keyProperty="id">
+    insert into t_user (mybook_id, phone,
       `password`, birthday, nickname, 
       avatar, background_img, sex, 
       `status`, introduction, create_time, 
       update_time, is_deleted)
-    values (#{id,jdbcType=BIGINT}, #{xiaohashuId,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, 
+    values (#{mybookId,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR},
       #{password,jdbcType=VARCHAR}, #{birthday,jdbcType=DATE}, #{nickname,jdbcType=VARCHAR}, 
       #{avatar,jdbcType=VARCHAR}, #{backgroundImg,jdbcType=VARCHAR}, #{sex,jdbcType=TINYINT}, 
       #{status,jdbcType=TINYINT}, #{introduction,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
@@ -49,8 +52,8 @@
       <if test="id != null">
         id,
       </if>
-      <if test="xiaohashuId != null">
-        xiaohashu_id,
+      <if test="mybookId != null">
+        mybook_id,
       </if>
       <if test="phone != null">
         phone,
@@ -93,8 +96,8 @@
       <if test="id != null">
         #{id,jdbcType=BIGINT},
       </if>
-      <if test="xiaohashuId != null">
-        #{xiaohashuId,jdbcType=VARCHAR},
+      <if test="mybookId != null">
+        #{mybookId,jdbcType=VARCHAR},
       </if>
       <if test="phone != null">
         #{phone,jdbcType=VARCHAR},
@@ -137,8 +140,8 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.mybook.mybook.auth.domain.dataobject.UserDO">
     update t_user
     <set>
-      <if test="xiaohashuId != null">
-        xiaohashu_id = #{xiaohashuId,jdbcType=VARCHAR},
+      <if test="mybookId != null">
+        mybook_id = #{mybookId,jdbcType=VARCHAR},
       </if>
       <if test="phone != null">
         phone = #{phone,jdbcType=VARCHAR},
@@ -181,7 +184,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.mybook.mybook.auth.domain.dataobject.UserDO">
     update t_user
-    set xiaohashu_id = #{xiaohashuId,jdbcType=VARCHAR},
+    set mybook_id = #{mybookId,jdbcType=VARCHAR},
       phone = #{phone,jdbcType=VARCHAR},
       `password` = #{password,jdbcType=VARCHAR},
       birthday = #{birthday,jdbcType=DATE},

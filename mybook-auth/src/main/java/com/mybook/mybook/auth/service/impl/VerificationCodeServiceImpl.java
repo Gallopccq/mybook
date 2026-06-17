@@ -32,6 +32,7 @@ public class VerificationCodeServiceImpl implements VerificationCodeService {
     public Response<?> send(SendVerificationCodeReqVO sendVerificationCodeReqVO) {
         String phone = sendVerificationCodeReqVO.getPhone();
         String key = RedisKeyConstants.buildVerificationCodeKey(phone);
+        // 检查redis中是否已经保存3分钟有效的验证码
         boolean isSent = redisTemplate.hasKey(key);
         if (isSent){
             throw new BizException(ResponseCodeEnum.VERIFICATION_CODE_SEND_FREQUENTLY);
@@ -39,6 +40,7 @@ public class VerificationCodeServiceImpl implements VerificationCodeService {
         String verificationCode = RandomUtil.randomNumbers(6);
         // todo: 三方
         log.info("==> 手机号: {}, 已发送验证码：【{}】", phone, verificationCode);
+        // 在redis中保存验证码
         redisTemplate.opsForValue().set(key, verificationCode, 3, TimeUnit.MINUTES);
         return Response.success();
 
