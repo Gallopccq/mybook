@@ -1,0 +1,34 @@
+package com.mybook.mybook.auth.controller;
+
+
+import com.mybook.framework.biz.operationlog.aspect.ApiOperationLog;
+import com.mybook.framework.common.response.Response;
+import com.mybook.mybook.auth.model.vo.user.UserLoginReqVO;
+import com.mybook.mybook.auth.service.UserService;
+import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ * 接口：/user/login
+ * 接受UserLoginReqVO
+ * 调用UserService服务
+ */
+@RestController
+@RequestMapping("/user")
+@Slf4j
+public class UserController {
+
+    @Resource
+    private UserService userService;
+
+    @PostMapping("/login")
+    @ApiOperationLog(description = "用户登录/注册")
+    public Response<String> loginAndRegister(@Validated @RequestBody UserLoginReqVO userLoginReqVO) {
+        return userService.loginAndRegister(userLoginReqVO);
+    }
+}

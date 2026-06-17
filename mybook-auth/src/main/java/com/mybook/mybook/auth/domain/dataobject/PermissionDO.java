@@ -6,34 +6,29 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
 @Builder
-public class UserDO {
+public class PermissionDO {
     private Long id;
 
-    private String mybookId;
+    private Long parentId;
 
-    private String phone;
+    private String name;
 
-    private String password;
+    private Byte type;
 
-    private LocalDateTime birthday;
+    private String menuUrl;
 
-    private String nickname;
+    private String menuIcon;
 
-    private String avatar;
+    private Integer sort;
 
-    private String backgroundImg;
-
-    private Byte sex;
+    private String permissionKey;
 
     private Byte status;
-
-    private String introduction;
 
     private LocalDateTime createTime;
 

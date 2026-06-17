@@ -1,0 +1,13 @@
+drop table if exists `t_user`;
+drop table if exists `t_role`;
+drop table if exists `t_permission`;
+drop table if exists `t_user_role_rel`;
+drop table if exists `t_role_permission_rel`;
+drop table if exists `t_channel`;
+drop table if exists `t_topic`;
+drop table if exists `t_channel_topic_rel`;
+drop table if exists `t_note`;
+drop table if exists `t_note_like`;
+drop table if exists `t_note_collection`;
+drop table if exists `t_note_count`;
+drop table if exists `t_user_count`;
