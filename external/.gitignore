@@ -2,3 +2,4 @@ cassandra/
 minio/
 nacos/
 redis/
+mysql/
