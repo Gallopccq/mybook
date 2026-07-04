@@ -3,6 +3,7 @@ package com.mybook.mybook.auth.controller;
 
 import com.mybook.framework.biz.operationlog.aspect.ApiOperationLog;
 import com.mybook.framework.common.response.Response;
+import com.mybook.mybook.auth.model.vo.user.UpdatePasswordReqVO;
 import com.mybook.mybook.auth.model.vo.user.UserLoginReqVO;
 import com.mybook.mybook.auth.service.UserService;
 import jakarta.annotation.Resource;
@@ -33,5 +34,11 @@ public class UserController {
     @ApiOperationLog(description = "账号登出")
     public Response<?> logout(){
         return userService.logout();
+    }
+
+    @PostMapping("/password/update")
+    @ApiOperationLog(description = "修改密码")
+    public Response<?> updatePassword(@Validated @RequestBody UpdatePasswordReqVO updatePasswordReqVO) {
+        return userService.updatePassword(updatePasswordReqVO);
     }
 }

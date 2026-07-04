@@ -16,6 +16,7 @@ import com.mybook.mybook.auth.domain.mapper.UserDOMapper;
 import com.mybook.mybook.auth.enums.LoginTypeEnum;
 import com.mybook.mybook.auth.enums.ResponseCodeEnum;
 import com.mybook.mybook.auth.filter.LoginUserContextHolder;
+import com.mybook.mybook.auth.model.vo.user.UpdatePasswordReqVO;
 import com.mybook.mybook.auth.model.vo.user.UserLoginReqVO;
 import com.mybook.mybook.auth.service.UserService;
 import jakarta.annotation.Resource;
@@ -23,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -60,6 +62,9 @@ public class UserServiceImpl implements UserService {
 
     @Resource
     private RoleDOMapper roleDOMapper;
+
+    @Resource
+    private PasswordEncoder passwordEncoder;
 
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
@@ -161,6 +166,23 @@ public class UserServiceImpl implements UserService {
         });
 
         StpUtil.logout(userId);
+        return Response.success();
+    }
+
+    @Override
+    public Response updatePassword(UpdatePasswordReqVO updatePasswordReqVO) {
+        String newPassword = updatePasswordReqVO.getNewPassword();
+        String encodePassword = passwordEncoder.encode(newPassword);
+
+        Long userId = LoginUserContextHolder.getUserId();
+        UserDO userDO = UserDO.builder()
+                .id(userId)
+                .password(encodePassword)
+                .updateTime(LocalDateTime.now())
+                .build();
+        // todo: 为什么用 updateByPrimaryKeySelective 而不用 updateByPrimaryKey
+        userDOMapper.updateByPrimaryKeySelective(userDO);
+
         return Response.success();
     }
 }
