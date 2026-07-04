@@ -42,7 +42,8 @@ public class VerificationCodeServiceImpl implements VerificationCodeService {
         log.info("==> 手机号: {}, 已发送验证码：【{}】", phone, verificationCode);
         // 在redis中保存验证码
         redisTemplate.opsForValue().set(key, verificationCode, 3, TimeUnit.MINUTES);
-        return Response.success();
+        // todo: 将验证码返回到结果中
+        return Response.success(verificationCode);
 
     }
 }

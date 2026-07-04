@@ -1,5 +1,6 @@
 -- 用户服务 --
 -- 用户表
+create database if not exists mybook;
 use mybook;
 create table if not exists `t_user` (
 	`id` bigint unsigned not null auto_increment comment '主键ID',
@@ -165,7 +166,7 @@ create table IF NOT EXISTS `t_note_collection`(
 
 -- 笔记计数表
 
-create table `t_note_count` (
+create table if not exists `t_note_count` (
 	`id` bigint(11) unsigned not null auto_increment comment '主键ID',
     `note_id` bigint(11) unsigned not null comment '笔记ID',
     `like_total` bigint(11) unsigned not null default '0' comment '点赞总数',

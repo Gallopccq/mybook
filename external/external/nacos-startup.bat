@@ -1,1 +1,0 @@
-docker run -d --name nacos --privileged -e MODE=standalone -e JVM_XMX=300m -e JVM_XMS=300m -p 8848:8848 -p 9848:9848  -v E:\A_WorkingFiles\xiaohashu\external\nacos\conf:/home/nacos/conf -v E:\A_WorkingFiles\xiaohashu\external\nacos\data:/home/nacos/data -v E:\A_WorkingFiles\xiaohashu\external\nacos\logs:/home/nacos/logs nacos/nacos-server:v2.2.3

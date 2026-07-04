@@ -18,6 +18,7 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @Builder
+//@Getter
 public class UserLoginReqVO {
 
     @NotBlank(message = "手机号不能为空")

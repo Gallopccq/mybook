@@ -64,6 +64,8 @@ public class PushRolePermission2RedisRunner implements ApplicationRunner {
                 // 根据角色ID，查询对应权限
                 List<RolePermissionDO> rolePermissionDOS = rolePermissionDOMapper.selectByRoleIds(roleIds);
 
+                log.info(rolePermissionDOS.toString());
+
                 if (Objects.isNull(rolePermissionDOS)) {
                     log.info("rolePermissionDOS is null: " + rolePermissionDOS);
                     return;
@@ -71,7 +73,7 @@ public class PushRolePermission2RedisRunner implements ApplicationRunner {
                 // 按角色ID 分组，每个ID 多个权限
                 // todo: 有点复杂
                 Map<Long, List<Long>> roleIdPermissionIdMap = rolePermissionDOS.stream().collect(
-                        Collectors.groupingBy(RolePermissionDO::getId,
+                        Collectors.groupingBy(RolePermissionDO::getRoleId,
                                 Collectors.mapping(RolePermissionDO::getPermissionId, Collectors.toList()))
                 );
 
@@ -83,26 +85,27 @@ public class PushRolePermission2RedisRunner implements ApplicationRunner {
                 );
 
                 // 组织 角色ID - 权限 关系
-                Map<Long, List<PermissionDO>> roleIdPermissionDOMap = Maps.newHashMap();
+                Map<String, List<String>> roleIdPermissionDOMap = Maps.newHashMap();
 
                 roleDOS.forEach(roleDO -> {
                     Long roleId = roleDO.getId();
+                    String roleKey = roleDO.getRoleKey();
                     List<Long> permissionIds = roleIdPermissionIdMap.get(roleId);
                     if (CollUtil.isNotEmpty(permissionIds)) {
-                        List<PermissionDO> perDOS = Lists.newArrayList(); // todo：为什么不用new而用这种方式？
+                        List<String> permissionKeys = Lists.newArrayList(); // todo：为什么不用new而用这种方式？ 答，因为不用管泛型的声明
                         permissionIds.forEach(permissionId -> {
                             PermissionDO permissionDO = permissionDOMap.get(permissionId);
                             if (Objects.nonNull(permissionDO)) {
-                                perDOS.add(permissionDO);
+                                permissionKeys.add(permissionDO.getPermissionKey());
                             }
                         });
-                        roleIdPermissionDOMap.put(roleId, perDOS);
+                        roleIdPermissionDOMap.put(roleKey, permissionKeys);
                     }
                 });
 
                 // 同步至redis，方便网关鉴权查询
-                roleIdPermissionDOMap.forEach((roleId, permissions) -> {
-                    String key = RedisKeyConstants.buildRolePermissionsKey(roleId);
+                roleIdPermissionDOMap.forEach((roleKey, permissions) -> {
+                    String key = RedisKeyConstants.buildRolePermissionsKey(roleKey);
                     redisTemplate.opsForValue().set(key, JsonUtils.toJsonString(permissions));
                 });
 

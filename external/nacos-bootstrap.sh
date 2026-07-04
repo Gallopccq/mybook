@@ -1,4 +1,4 @@
-docker run nacos
+docker run nacos/nacos-server:v2.3.2 nacos -e MODE="standalone" -d
 mkdir nacos
 docker cp nacos:/home/nacos/conf nacos/conf
 docker cp nacos:/home/nacos/data nacos/data

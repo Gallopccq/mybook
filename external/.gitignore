@@ -1,5 +1,7 @@
 cassandra/
 minio/
 nacos/
+nacos.bak*/
 redis/
 mysql/
+

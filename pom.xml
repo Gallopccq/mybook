@@ -49,7 +49,9 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!-- 依赖包版本 -->
         <!--   spring-boot.version 3.0.2     -->
-        <spring-boot.version>3.2.3</spring-boot.version>
+        <spring-boot.version>3.0.2</spring-boot.version>
+        <spring-cloud.version>2022.0.0</spring-cloud.version>
+        <spring-cloud-alibaba.version>2022.0.0.0-RC2</spring-cloud-alibaba.version>
         <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
         <druid.version>1.2.23</druid.version>
         <bitwalker.version>1.21</bitwalker.version>
@@ -88,7 +90,7 @@
         <activation.version>1.1.1</activation.version>
         <jaxb-runtime.version>2.3.3</jaxb-runtime.version>
         <feign-form.version>3.8.0</feign-form.version>
-
+        <nacos-config.version>0.3.0-RC</nacos-config.version>
 
     </properties>
 
@@ -135,6 +137,22 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <!-- Spring Cloud 官方依赖管理 -->
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!-- Spring Cloud Alibaba BOM -->
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+                <version>${spring-cloud-alibaba.version}</version> <!-- 注意：2023.0.0.0 正式版尚未发布，可使用 RC1 或改用 2022.0.0.0-RC2（但需验证）-->
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <!-- 阿里数据库连接池 -->
             <dependency>
                 <groupId>com.alibaba</groupId>
@@ -142,12 +160,12 @@
                 <version>${druid.version}</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-loadbalancer -->
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-starter-loadbalancer</artifactId>
-                <version>4.1.5</version>
-                <scope>compile</scope>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.springframework.cloud</groupId>-->
+<!--                <artifactId>spring-cloud-starter-loadbalancer</artifactId>-->
+<!--                <version>4.1.5</version>-->
+<!--                <scope>compile</scope>-->
+<!--            </dependency>-->
             <!-- 解析客户端操作系统、浏览器等 -->
             <dependency>
                 <groupId>eu.bitwalker</groupId>
@@ -160,19 +178,39 @@
                 <artifactId>pagehelper-spring-boot-starter</artifactId>
                 <version>${pagehelper.boot.version}</version>
             </dependency>
+            <!-- SaToken -->
             <dependency>
                 <groupId>cn.dev33</groupId>
                 <artifactId>sa-token-redis-jackson</artifactId>
                 <version>${sa-token.version}</version>
             </dependency>
 
-            <!-- Source: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation -->
+            <!-- Nacos 配置中心 -->
             <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-validation</artifactId>
-                <version>4.0.6</version>
-                <scope>compile</scope>
+                <groupId>com.alibaba.boot</groupId>
+                <artifactId>nacos-config-spring-boot-starter</artifactId>
+                <version>${nacos-config.version}</version>
             </dependency>
+			<!-- Source: https://mvnrepository.com/artifact/com.alibaba.cloud/spring-cloud-starter-alibaba-nacos-discovery -->
+<!--			<dependency>-->
+<!--			    <groupId>com.alibaba.cloud</groupId>-->
+<!--			    <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>-->
+<!--&lt;!&ndash;			    <version>2023.0.3.2</version>&ndash;&gt;-->
+<!--&lt;!&ndash;			    <scope>compile</scope>&ndash;&gt;-->
+<!--			</dependency>-->
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>1.32</version>
+            </dependency>
+
+            <!-- Source: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation -->
+<!--            <dependency>-->
+<!--                <groupId>org.springframework.boot</groupId>-->
+<!--                <artifactId>spring-boot-starter-validation</artifactId>-->
+<!--                <version>4.0.6</version>-->
+<!--                <scope>compile</scope>-->
+<!--            </dependency>-->
             <!-- 获取系统信息 -->
             <dependency>
                 <groupId>com.github.oshi</groupId>
@@ -195,27 +233,13 @@
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>${commons.io.version}</version>
+<!--                <version>${commons.io.version}</version>-->
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-bootstrap -->
             <dependency>
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-starter-bootstrap</artifactId>
                 <version>4.3.0</version>
-                <scope>compile</scope>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.alibaba.cloud/spring-cloud-starter-alibaba-nacos-config -->
-            <dependency>
-                <groupId>com.alibaba.cloud</groupId>
-                <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
-                <version>2023.0.3.4</version>
-                <scope>compile</scope>
-            </dependency>
-            <!-- Source: https://mvnrepository.com/artifact/com.alibaba.cloud/spring-cloud-starter-alibaba-nacos-discovery -->
-            <dependency>
-                <groupId>com.alibaba.cloud</groupId>
-                <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-                <version>2023.0.3.4</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
@@ -263,7 +287,7 @@
             <dependency>
                 <groupId>com.alibaba.fastjson2</groupId>
                 <artifactId>fastjson2</artifactId>
-                <version>${fastjson.version}</version>
+<!--                <version>${fastjson.version}</version>-->
             </dependency>
             <!-- Token生成与解析-->
             <dependency>
@@ -291,6 +315,11 @@
             <dependency>
                 <groupId>cn.dev33</groupId>
                 <artifactId>sa-token-spring-boot3-starter</artifactId>
+                <version>${sa-token.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.dev33</groupId>
+                <artifactId>sa-token-reactor-spring-boot3-starter</artifactId>
                 <version>${sa-token.version}</version>
             </dependency>
             <!-- 验证码 -->
@@ -333,7 +362,7 @@
             <dependency>
                 <groupId>org.mybatis.spring.boot</groupId>
                 <artifactId>mybatis-spring-boot-starter</artifactId>
-                <version>4.0.1</version>
+                <version>3.0.5</version>
                 <scope>compile</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/com.mysql/mysql-connector-j -->
@@ -343,6 +372,12 @@
                 <version>${mysql-connector-j.version}</version>
                 <scope>compile</scope>
             </dependency>
+            <!-- Source: https://mvnrepository.com/artifact/com.h2database/h2 -->
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>2.2.220</version>
+            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
             <dependency>
                 <groupId>mysql</groupId>
@@ -351,12 +386,12 @@
                 <scope>compile</scope>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-gateway -->
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-starter-gateway</artifactId>
-                <version>4.1.9</version>
-                <scope>compile</scope>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.springframework.cloud</groupId>-->
+<!--                <artifactId>spring-cloud-starter-gateway</artifactId>-->
+<!--                <version>4.1.9</version>-->
+<!--                <scope>compile</scope>-->
+<!--            </dependency>-->
             <!-- mybatis-plus-->
 <!--            <dependency>-->
 <!--                <groupId>com.baomidou</groupId>-->
@@ -411,7 +446,9 @@
                 <artifactId>mybook-common</artifactId>
                 <version>${revision}</version>
             </dependency>
+
         </dependencies>
+
     </dependencyManagement>
 
     <build>

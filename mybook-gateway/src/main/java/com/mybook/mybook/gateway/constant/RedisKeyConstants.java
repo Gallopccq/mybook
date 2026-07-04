@@ -1,9 +1,6 @@
-package com.mybook.mybook.auth.constant;
+package com.mybook.mybook.gateway.constant;
 
 public class RedisKeyConstants {
-    private static final String VERIFICATION_CODE_KEY_PREFIX = "verification.code:";
-
-    public static final String MYBOOK_ID_GENERATOR_KEY = "mybook.id.generator";
 
     private static final String USER_ROLES_KEY_PREFIX = "user:roles:";
 
@@ -21,15 +18,5 @@ public class RedisKeyConstants {
 
     public static String buildRolePermissionsKey(String roleKey) {
         return ROLE_PERMISSIONS_KEY_PREFIX + roleKey;
-    }
-
-
-    /**
-     * 构建验证码 KEY
-     * @param phone
-     * @return
-     */
-    public static String buildVerificationCodeKey(String phone) {
-        return VERIFICATION_CODE_KEY_PREFIX + phone;
     }
 }

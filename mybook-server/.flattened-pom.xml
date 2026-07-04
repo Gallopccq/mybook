@@ -11,12 +11,6 @@
   <artifactId>mybook-server</artifactId>
   <version>1.0.0</version>
   <description>server服务</description>
-  <licenses>
-    <license>
-      <name>Apache License, Version 2.0</name>
-      <url>https://www.apache.org/licenses/LICENSE-2.0</url>
-    </license>
-  </licenses>
   <dependencies>
     <dependency>
       <groupId>org.springframework.boot</groupId>

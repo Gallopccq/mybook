@@ -10,7 +10,9 @@ import com.mybook.framework.common.response.Response;
 import com.mybook.framework.common.util.JsonUtils;
 import com.mybook.mybook.auth.constant.RedisKeyConstants;
 import com.mybook.mybook.auth.constant.RoleConstants;
+import com.mybook.mybook.auth.domain.dataobject.RoleDO;
 import com.mybook.mybook.auth.domain.dataobject.UserDO;
+import com.mybook.mybook.auth.domain.mapper.RoleDOMapper;
 import com.mybook.mybook.auth.domain.mapper.UserDOMapper;
 import com.mybook.mybook.auth.enums.LoginTypeEnum;
 import com.mybook.mybook.auth.enums.ResponseCodeEnum;
@@ -25,6 +27,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -55,6 +58,9 @@ import java.util.Objects;
 public class UserServiceImpl implements UserService {
     @Resource
     private UserDOMapper userDOMapper;
+
+    @Resource
+    private RoleDOMapper roleDOMapper;
 
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
@@ -129,11 +135,21 @@ public class UserServiceImpl implements UserService {
                 .build();
         userDOMapper.insert(userDO);
 
-        List<Long> roles = Lists.newArrayList();
-        roles.add(RoleConstants.COMMON_USER_ROLE_ID);
-        String userRolesKey = RedisKeyConstants.buildUserRoleKey(phone);
+        // 给用户分配默认角色
+        RoleDO roleDO = roleDOMapper.selectByPrimaryKey(RoleConstants.COMMON_USER_ROLE_ID);
+        List<String> roles = new ArrayList<String>(1);
+        roles.add(roleDO.getRoleKey());
+        String userRolesKey = RedisKeyConstants.buildUserRoleKey(userId);
         redisTemplate.opsForValue().set(userRolesKey, JsonUtils.toJsonString(roles));
 
+        // todo 是否要同步更新 mysql
+
         return userId;
+    }
+
+    @Override
+    public Response<String> logout(Long userId) {
+        StpUtil.logout(userId);
+        return Response.success();
     }
 }

@@ -1,1 +1,0 @@
-docker run -p 6379:6379 --name redis2 -v E:\A_WorkingFiles\xiaohashu\external\redis\conf\redis.conf:/etc/redis/redis.conf  -v E:\A_WorkingFiles\xiaohashu\external\redis\data:/data -d redis:7.2.3 redis-server /etc/redis/redis.conf --appendonly yes

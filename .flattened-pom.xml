@@ -2,24 +2,12 @@
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
-  <parent>
-    <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-parent</artifactId>
-    <version>3.2.3</version>
-    <relativePath></relativePath>
-  </parent>
   <groupId>com.mybook</groupId>
   <artifactId>mybook</artifactId>
   <version>1.0.0</version>
   <packaging>pom</packaging>
   <name>mybook</name>
   <description>我的小红书系统</description>
-  <licenses>
-    <license>
-      <name>Apache License, Version 2.0</name>
-      <url>https://www.apache.org/licenses/LICENSE-2.0</url>
-    </license>
-  </licenses>
   <modules>
     <module>mybook-server</module>
     <module>mybook-auth</module>
@@ -31,55 +19,84 @@
   </modules>
   <properties>
     <bitwalker.version>1.21</bitwalker.version>
-    <hutool.version>5.7.22</hutool.version>
     <mysql-connector-j.version>8.3.0</mysql-connector-j.version>
+    <mysql-connector-java.version>8.0.33</mysql-connector-java.version>
+    <flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version>
+    <spring-cloud.version>2022.0.0</spring-cloud.version>
+    <websocket.version>3.1.7</websocket.version>
+    <commons-lang3.version>3.12.0</commons-lang3.version>
+    <fastjson.version>2.0.43</fastjson.version>
+    <caffeine.version>3.1.8</caffeine.version>
+    <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
+    <qiniu.version>7.7.0</qiniu.version>
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+    <maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
+    <buffertrigger.version>0.2.21</buffertrigger.version>
+    <jaxb-runtime.version>2.3.3</jaxb-runtime.version>
+    <revision>1.0.0</revision>
+    <mybatisplus.version>3.5.2</mybatisplus.version>
+    <jaxb-api.version>2.3.1</jaxb-api.version>
+    <rocketmq-client.version>4.9.4</rocketmq-client.version>
+    <canal.version>1.1.7</canal.version>
+    <xxl-job.version>2.4.1</xxl-job.version>
+    <transmittable-thread-local.version>2.14.2</transmittable-thread-local.version>
+    <minio.version>8.2.1</minio.version>
+    <feign-form.version>3.8.0</feign-form.version>
+    <hutool.version>5.7.22</hutool.version>
     <sa-token.version>1.38.0</sa-token.version>
     <guava.version>20.0</guava.version>
-    <spring-boot.version>3.2.3</spring-boot.version>
-    <flatten-maven-plugin.version>1.5.0</flatten-maven-plugin.version>
-    <websocket.version>3.1.7</websocket.version>
+    <spring-boot.version>3.0.2</spring-boot.version>
+    <spring-cloud-alibaba.version>2022.0.0.0-RC2</spring-cloud-alibaba.version>
+    <elasticsearch.version>7.3.0</elasticsearch.version>
     <mybatis-generator-maven-plugin.version>1.3.5</mybatis-generator-maven-plugin.version>
     <gson.version>2.9.0</gson.version>
     <poi.version>4.1.2</poi.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <fastjson.version>2.0.43</fastjson.version>
     <oshi.version>6.5.0</oshi.version>
-    <mybook.version>1.0.0</mybook.version>
     <kaptcha.version>2.3.3</kaptcha.version>
     <elasticsearch-version>8.1.0</elasticsearch-version>
     <swagger.version>3.0.0</swagger.version>
-    <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
-    <qiniu.version>7.7.0</qiniu.version>
+    <rocketmq.version>2.2.3</rocketmq.version>
     <java.version>17</java.version>
-    <maven.compiler.source>17</maven.compiler.source>
+    <aliyun-sdk-oss.version>3.17.4</aliyun-sdk-oss.version>
+    <activation.version>1.1.1</activation.version>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <mybatisplus.version>3.5.2</mybatisplus.version>
-    <revision>1.0.0</revision>
     <lombok.version>1.18.24</lombok.version>
-    <maven.compiler.target>17</maven.compiler.target>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
     <jwt.version>0.11.5</jwt.version>
     <druid.version>1.2.23</druid.version>
     <commons.io.version>2.13.0</commons.io.version>
-    <pagehelper.boot.version>1.4.7</pagehelper.boot.version>
+    <nacos-config.version>0.3.0-RC</nacos-config.version>
     <velocity.version>2.3</velocity.version>
+    <pagehelper.boot.version>1.4.7</pagehelper.boot.version>
   </properties>
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>com.alibaba</groupId>
-        <artifactId>druid-spring-boot-3-starter</artifactId>
-        <version>${druid.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.alibaba</groupId>
-        <artifactId>druid</artifactId>
-        <version>${druid.version}</version>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-dependencies</artifactId>
+        <version>${spring-boot.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
       </dependency>
       <dependency>
         <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-starter-loadbalancer</artifactId>
-        <version>4.1.5</version>
-        <scope>compile</scope>
+        <artifactId>spring-cloud-dependencies</artifactId>
+        <version>${spring-cloud.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.alibaba.cloud</groupId>
+        <artifactId>spring-cloud-alibaba-dependencies</artifactId>
+        <version>${spring-cloud-alibaba.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.alibaba</groupId>
+        <artifactId>druid-spring-boot-3-starter</artifactId>
+        <version>${druid.version}</version>
       </dependency>
       <dependency>
         <groupId>eu.bitwalker</groupId>
@@ -97,10 +114,14 @@
         <version>${sa-token.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-validation</artifactId>
-        <version>4.0.6</version>
-        <scope>compile</scope>
+        <groupId>com.alibaba.boot</groupId>
+        <artifactId>nacos-config-spring-boot-starter</artifactId>
+        <version>${nacos-config.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.yaml</groupId>
+        <artifactId>snakeyaml</artifactId>
+        <version>1.32</version>
       </dependency>
       <dependency>
         <groupId>com.github.oshi</groupId>
@@ -121,7 +142,6 @@
       <dependency>
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
-        <version>${commons.io.version}</version>
       </dependency>
       <dependency>
         <groupId>org.springframework.cloud</groupId>
@@ -130,16 +150,9 @@
         <scope>compile</scope>
       </dependency>
       <dependency>
-        <groupId>com.alibaba.cloud</groupId>
-        <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>
-        <version>2023.0.3.4</version>
-        <scope>compile</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.alibaba.cloud</groupId>
-        <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
-        <version>2023.0.3.4</version>
-        <scope>compile</scope>
+        <groupId>com.github.ben-manes.caffeine</groupId>
+        <artifactId>caffeine</artifactId>
+        <version>${caffeine.version}</version>
       </dependency>
       <dependency>
         <groupId>com.alibaba</groupId>
@@ -153,6 +166,21 @@
         <version>${poi.version}</version>
       </dependency>
       <dependency>
+        <groupId>org.apache.rocketmq</groupId>
+        <artifactId>rocketmq-spring-boot-starter</artifactId>
+        <version>${rocketmq.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.rocketmq</groupId>
+        <artifactId>rocketmq-client</artifactId>
+        <version>${rocketmq-client.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.commons</groupId>
+        <artifactId>commons-lang3</artifactId>
+        <version>${commons-lang3.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.apache.velocity</groupId>
         <artifactId>velocity-engine-core</artifactId>
         <version>${velocity.version}</version>
@@ -160,7 +188,6 @@
       <dependency>
         <groupId>com.alibaba.fastjson2</groupId>
         <artifactId>fastjson2</artifactId>
-        <version>${fastjson.version}</version>
       </dependency>
       <dependency>
         <groupId>io.jsonwebtoken</groupId>
@@ -186,6 +213,11 @@
       <dependency>
         <groupId>cn.dev33</groupId>
         <artifactId>sa-token-spring-boot3-starter</artifactId>
+        <version>${sa-token.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>cn.dev33</groupId>
+        <artifactId>sa-token-reactor-spring-boot3-starter</artifactId>
         <version>${sa-token.version}</version>
       </dependency>
       <dependency>
@@ -221,7 +253,7 @@
       <dependency>
         <groupId>org.mybatis.spring.boot</groupId>
         <artifactId>mybatis-spring-boot-starter</artifactId>
-        <version>4.0.1</version>
+        <version>3.0.5</version>
         <scope>compile</scope>
       </dependency>
       <dependency>
@@ -231,21 +263,15 @@
         <scope>compile</scope>
       </dependency>
       <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-starter-gateway</artifactId>
-        <version>4.1.9</version>
-        <scope>compile</scope>
+        <groupId>com.h2database</groupId>
+        <artifactId>h2</artifactId>
+        <version>2.2.220</version>
       </dependency>
       <dependency>
-        <groupId>com.baomidou</groupId>
-        <artifactId>mybatis-plus-boot-starter</artifactId>
-        <version>${mybatisplus.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-generator</artifactId>
-          </exclusion>
-        </exclusions>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>${mysql-connector-java.version}</version>
+        <scope>compile</scope>
       </dependency>
       <dependency>
         <groupId>com.qiniu</groupId>
@@ -260,27 +286,27 @@
       <dependency>
         <groupId>com.mybook</groupId>
         <artifactId>mybook-quartz</artifactId>
-        <version>${mybook.version}</version>
+        <version>1.0.0</version>
       </dependency>
       <dependency>
         <groupId>com.mybook</groupId>
         <artifactId>mybook-framework</artifactId>
-        <version>${mybook.version}</version>
+        <version>1.0.0</version>
       </dependency>
       <dependency>
         <groupId>com.mybook</groupId>
         <artifactId>mybook-system</artifactId>
-        <version>${mybook.version}</version>
+        <version>1.0.0</version>
       </dependency>
       <dependency>
         <groupId>com.mybook</groupId>
         <artifactId>mybook-web</artifactId>
-        <version>${mybook.version}</version>
+        <version>1.0.0</version>
       </dependency>
       <dependency>
         <groupId>com.mybook</groupId>
         <artifactId>mybook-common</artifactId>
-        <version>${mybook.version}</version>
+        <version>1.0.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
