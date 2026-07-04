@@ -29,7 +29,7 @@ public class SaTokenConfigure {
                             .notMatch("/auth/user/login")
                             .check(r -> StpUtil.checkLogin());
                     SaRouter.match("/auth/user/logout")
-                            .check(r -> StpUtil.checkRole("admin"));
+                            .check(r -> StpUtil.checkRole("common_user"));
                 })
                 .setError(e -> {
                     if (e instanceof NotLoginException) {
