@@ -2,7 +2,6 @@ package com.mybook.mybook.auth.service.impl;
 
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
-import com.google.common.collect.Lists;
 import com.mybook.framework.common.enums.DeletedEnum;
 import com.mybook.framework.common.enums.StatusEnum;
 import com.mybook.framework.common.exception.BizException;
@@ -16,15 +15,14 @@ import com.mybook.mybook.auth.domain.mapper.RoleDOMapper;
 import com.mybook.mybook.auth.domain.mapper.UserDOMapper;
 import com.mybook.mybook.auth.enums.LoginTypeEnum;
 import com.mybook.mybook.auth.enums.ResponseCodeEnum;
-import com.mybook.mybook.auth.filter.LoginUserContextFilter;
+import com.mybook.mybook.auth.filter.LoginUserContextHolder;
 import com.mybook.mybook.auth.model.vo.user.UserLoginReqVO;
 import com.mybook.mybook.auth.service.UserService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.User;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -65,6 +63,9 @@ public class UserServiceImpl implements UserService {
 
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
+
+    @Resource(name = "taskExecutor")
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     @Override
     public Response<String> loginAndRegister(UserLoginReqVO userLoginReqVO) {
@@ -150,9 +151,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Response<String> logout() {
-        Long userId = LoginUserContextFilter.getUserId();
+        Long userId = LoginUserContextHolder.getUserId();
 
         log.info("==> 用户退出登录, userId: {}", userId);
+
+        threadPoolTaskExecutor.submit(() -> {
+            Long userId2 = LoginUserContextHolder.getUserId();
+            log.info("==> 异步线程中获取 userId: {}", userId2);
+        });
 
         StpUtil.logout(userId);
         return Response.success();

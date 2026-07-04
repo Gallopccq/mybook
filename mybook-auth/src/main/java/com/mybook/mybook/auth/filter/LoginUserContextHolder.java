@@ -1,14 +1,16 @@
 package com.mybook.mybook.auth.filter;
 
+import com.alibaba.ttl.TransmittableThreadLocal;
 import com.mybook.framework.common.constant.GlobalConstants;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class LoginUserContextFilter {
+public class LoginUserContextHolder {
+    // todo: ThreadLocal的原理是什么？为什么能透传
     private static final ThreadLocal<Map<String, Object>> LOGIN_USER_CONTEXT_THREAD_LOCAL
-            = ThreadLocal.withInitial(HashMap::new);
+            = TransmittableThreadLocal.withInitial(HashMap::new);
 
     public static void setUserId(Object value) {
         LOGIN_USER_CONTEXT_THREAD_LOCAL.get().put(GlobalConstants.USER_ID, value);

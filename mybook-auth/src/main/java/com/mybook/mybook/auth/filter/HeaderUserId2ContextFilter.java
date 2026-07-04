@@ -24,11 +24,11 @@ public class HeaderUserId2ContextFilter extends OncePerRequestFilter {
             return;
         }
         log.info("===== 设置 userId 到 ThreadLocal 中， 用户 ID: {}", userId);
-        LoginUserContextFilter.setUserId(userId);
+        LoginUserContextHolder.setUserId(userId);
         try {
             filterChain.doFilter(request, response);
         } finally {
-            LoginUserContextFilter.remove();
+            LoginUserContextHolder.remove();
             log.info("===== 删除 ThreadLocal， userId: {}", userId);
         }
 
