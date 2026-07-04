@@ -16,6 +16,7 @@ import com.mybook.mybook.auth.domain.mapper.RoleDOMapper;
 import com.mybook.mybook.auth.domain.mapper.UserDOMapper;
 import com.mybook.mybook.auth.enums.LoginTypeEnum;
 import com.mybook.mybook.auth.enums.ResponseCodeEnum;
+import com.mybook.mybook.auth.filter.LoginUserContextFilter;
 import com.mybook.mybook.auth.model.vo.user.UserLoginReqVO;
 import com.mybook.mybook.auth.service.UserService;
 import jakarta.annotation.Resource;
@@ -148,7 +149,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Response<String> logout(Long userId) {
+    public Response<String> logout() {
+        Long userId = LoginUserContextFilter.getUserId();
+
+        log.info("==> 用户退出登录, userId: {}", userId);
+
         StpUtil.logout(userId);
         return Response.success();
     }
