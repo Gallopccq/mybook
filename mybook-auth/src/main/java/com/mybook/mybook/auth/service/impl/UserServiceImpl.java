@@ -78,7 +78,13 @@ public class UserServiceImpl implements UserService {
         Integer type = userLoginReqVO.getType();
 
         LoginTypeEnum loginTypeEnum = LoginTypeEnum.valueOf(type);
+        if (Objects.isNull(loginTypeEnum)){
+            throw new BizException(ResponseCodeEnum.LOGIN_TYPE_ERROR);
+        }
+
         Long userId = null;
+
+
 
         // 判断登录类型
         switch (loginTypeEnum) {
@@ -97,7 +103,7 @@ public class UserServiceImpl implements UserService {
                 // 判断key是否匹配
                 if (!StringUtils.equals(verificationCode, sendCode)) {
                     // todo: 为什么上面是返回Response，这里是抛异常
-//                    log.debug(key);
+                    // 答：未实现的功能，上面是功能校验参数的一部分
                     throw new BizException(ResponseCodeEnum.VERIFICATION_CODE_ERROR);
                 }
 
@@ -117,6 +123,19 @@ public class UserServiceImpl implements UserService {
                 break;
             case PASSWORD:
                 // todo
+                String password = userLoginReqVO.getPassword();
+                UserDO userDO1 = userDOMapper.selectByPhone(phone);
+
+                if (Objects.isNull(userDO1)){
+                    throw new BizException(ResponseCodeEnum.USER_NOT_FOUND);
+                }
+                String encodePassword = userDO1.getPassword();
+                boolean isPasswordCorrect = passwordEncoder.matches(password, encodePassword);
+                if (!isPasswordCorrect){
+                    throw new BizException(ResponseCodeEnum.PHONE_OR_PASSWORD_ERROR);
+                }
+
+                userId = userDO1.getId();
                 break;
             default:
                 break;

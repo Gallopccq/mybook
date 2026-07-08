@@ -20,7 +20,7 @@
         <module>mybook-gateway</module>
         <module>mybook-user</module>
         <module>mybook-note</module>
-
+        <module>mybook-oss</module>
 
 
     </modules>
@@ -384,6 +384,11 @@
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql-connector-java.version}</version>
                 <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.minio</groupId>
+                <artifactId>minio</artifactId>
+                <version>8.3.6</version>
             </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-gateway -->
 <!--            <dependency>-->
