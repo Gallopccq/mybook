@@ -2,19 +2,18 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.mybook</groupId>
+        <groupId>com.mybook.mybook.note</groupId>
         <artifactId>mybook-note</artifactId>
         <version>${revision}</version>
-<!--        <relativePath>../../pom.xml</relativePath>-->
     </parent>
 
-<!--    <groupId>com.mybook.mybook.note.biz</groupId>-->
+    <groupId>com.mybook.mybook.note.biz</groupId>
     <artifactId>mybook-note-biz</artifactId>
 
-<!--    <packaging>jar</packaging>-->
+    <packaging>jar</packaging>
 
-<!--    <name>mybook-note-biz</name>-->
-<!--    <url>http://maven.apache.org</url>-->
+    <name>mybook-note-biz</name>
+
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -31,24 +30,6 @@
             <groupId>com.mybook</groupId>
             <artifactId>mybook-common</artifactId>
         </dependency>
-
-<!--        &lt;!&ndash; 业务接口日志组件 &ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>com.mybook</groupId>-->
-<!--            <artifactId>mybook-spring-boot-starter-biz-operationlog</artifactId>-->
-<!--        </dependency>-->
-
-<!--        &lt;!&ndash; 上下文组件 &ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>com.mybook</groupId>-->
-<!--            <artifactId>mybook-spring-boot-starter-biz-context</artifactId>-->
-<!--        </dependency>-->
-
-<!--        &lt;!&ndash; Jackson 组件 &ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>com.mybook</groupId>-->
-<!--            <artifactId>mybook-spring-boot-starter-jackson</artifactId>-->
-<!--        </dependency>-->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

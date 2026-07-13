@@ -128,8 +128,6 @@
         <dependency>
             <groupId>com.mybook</groupId>
             <artifactId>mybook-spring-boot-starter-biz-operationlog</artifactId>
-            <version>${revision}</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>

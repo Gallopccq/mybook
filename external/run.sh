@@ -4,5 +4,5 @@ redis-server ~/.config/redis.conf
 echo --- runing nacos --- 
 bash ~/opt/nacos/run.sh
 
-bash scripts/minio.sh
+# bash ~/workspace/mybook/external/scripts/minio.sh
 

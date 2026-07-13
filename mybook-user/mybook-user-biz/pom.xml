@@ -12,7 +12,6 @@
     <packaging>jar</packaging>
 
     <name>mybook-user-biz</name>
-    <url>http://maven.apache.org</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -65,8 +64,17 @@
             <artifactId>mybook-spring-boot-starter-biz-context</artifactId>
             <version>1.0.0</version>
             <scope>compile</scope>
-        </dependency>
 
+        </dependency>
+        <dependency>
+            <groupId>com.mybook</groupId>
+            <artifactId>mybook-oss-api</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mybook</groupId>
+            <artifactId>mybook-spring-boot-starter-biz-operationlog</artifactId>
+        </dependency>
 
     </dependencies>
 

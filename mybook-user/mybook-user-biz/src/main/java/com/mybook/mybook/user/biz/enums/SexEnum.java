@@ -14,7 +14,7 @@ public enum SexEnum {
 
     public static boolean isValid(Integer value){
         for (SexEnum sexEnum : SexEnum.values()){
-            if (Objects.equals(sexEnum, value)){
+            if (Objects.equals(sexEnum.value, value)){
                 return true;
             }
         }

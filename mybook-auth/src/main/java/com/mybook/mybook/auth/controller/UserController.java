@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
  * 调用UserService服务
  */
 @RestController
-@RequestMapping("/user")
 @Slf4j
 public class UserController {
 

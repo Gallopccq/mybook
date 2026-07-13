@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 @AllArgsConstructor
@@ -17,7 +17,7 @@ public class UpdateUserInfoReqVO {
     private String nickName;
     private String mybookId;
     private Integer sex;
-    private LocalDateTime birthday;
+    private LocalDate birthday;
     private String introduction;
     private MultipartFile background;
 }

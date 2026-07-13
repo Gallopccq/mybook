@@ -16,6 +16,7 @@
     <module>mybook-gateway</module>
     <module>mybook-user</module>
     <module>mybook-note</module>
+    <module>mybook-oss</module>
   </modules>
   <properties>
     <bitwalker.version>1.21</bitwalker.version>
@@ -274,6 +275,11 @@
         <scope>compile</scope>
       </dependency>
       <dependency>
+        <groupId>io.minio</groupId>
+        <artifactId>minio</artifactId>
+        <version>8.3.6</version>
+      </dependency>
+      <dependency>
         <groupId>com.qiniu</groupId>
         <artifactId>qiniu-java-sdk</artifactId>
         <version>${qiniu.version}</version>
@@ -306,6 +312,11 @@
       <dependency>
         <groupId>com.mybook</groupId>
         <artifactId>mybook-common</artifactId>
+        <version>1.0.0</version>
+      </dependency>
+      <dependency>
+        <groupId>com.mybook</groupId>
+        <artifactId>mybook-oss-api</artifactId>
         <version>1.0.0</version>
       </dependency>
     </dependencies>

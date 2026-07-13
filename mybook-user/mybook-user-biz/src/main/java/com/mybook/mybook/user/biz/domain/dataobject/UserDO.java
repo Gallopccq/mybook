@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @AllArgsConstructor
@@ -21,7 +22,7 @@ public class UserDO {
 
     private String password;
 
-    private LocalDateTime birthday;
+    private LocalDate birthday;
 
     private String nickname;
 

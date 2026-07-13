@@ -4,14 +4,13 @@
     <parent>
         <groupId>com.mybook</groupId>
         <artifactId>mybook</artifactId>
-        <version>1.0.0</version>
+        <version>${revision}</version>
     </parent>
 
     <artifactId>mybook-oss</artifactId>
     <packaging>pom</packaging>
 
     <name>mybook-oss</name>
-    <url>http://maven.apache.org</url>
     <modules>
         <module>mybook-oss-api</module>
         <module>mybook-oss-biz</module>

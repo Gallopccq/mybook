@@ -3,23 +3,20 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>com.mybook.mybook.user</groupId>
-    <artifactId>mybook-user</artifactId>
+    <groupId>com.mybook</groupId>
+    <artifactId>mybook</artifactId>
     <version>1.0.0</version>
   </parent>
-  <groupId>com.mybook.mybook.user.api</groupId>
-  <artifactId>mybook-user-api</artifactId>
+  <groupId>com.mybook</groupId>
+  <artifactId>mybook-oss</artifactId>
   <version>1.0.0</version>
-  <name>mybook-user-api</name>
+  <packaging>pom</packaging>
+  <name>mybook-oss</name>
+  <modules>
+    <module>mybook-oss-api</module>
+    <module>mybook-oss-biz</module>
+  </modules>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
 </project>

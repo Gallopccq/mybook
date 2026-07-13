@@ -26,10 +26,10 @@ public class SaTokenConfigure {
                 .setAuth(obj -> {
                     SaRouter.match("/**")
                             .notMatch("/auth/verification/code/send")
-                            .notMatch("/auth/user/login")
+                            .notMatch("/auth/login")
                             .check(r -> StpUtil.checkLogin());
-                    SaRouter.match("/auth/user/logout")
-                            .check(r -> StpUtil.checkRole("common_user"));
+                    SaRouter.match("/auth/logout")
+                            .check(r -> StpUtil.checkRole("admin"));
                 })
                 .setError(e -> {
                     if (e instanceof NotLoginException) {

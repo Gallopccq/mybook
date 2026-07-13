@@ -8,9 +8,9 @@ spring:
     name: mybook-user
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://172.18.0.2:3306/mybook?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://127.0.0.1:3307/mybook?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&useSSL=false&serverTimezone=Asia/Shanghai
     #    driverClassName: org.h2.Driver
-    username: root
+    username: mybook
     password: 123456
     type: com.alibaba.druid.pool.DruidDataSource
     druid: # Druid 连接池
