@@ -8,7 +8,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
 
-@Configuration
+
 public class ThreadPoolConfig {
     /**
      * ThreadPoolTaskExecutor是spring的组件，底层仍是jdk的ThreadPoolExecutor。
@@ -17,7 +17,7 @@ public class ThreadPoolConfig {
      * CPU密集，core=N+1;IO密集：core=N*2
      * maxpool：队列较大，maxpool可与corepoll相近，队列较小，maxpool要设置较大（防止频繁拒绝）
      */
-    @Bean
+    
     public Executor taskExecutor(){
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
         executor.setCorePoolSize(16);

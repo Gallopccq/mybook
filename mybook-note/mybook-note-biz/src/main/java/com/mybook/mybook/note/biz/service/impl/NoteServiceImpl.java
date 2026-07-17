@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
-@Service
+
 @Slf4j
 public class NoteServiceImpl implements NoteService {
     @Resource
