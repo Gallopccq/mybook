@@ -1,6 +1,7 @@
 package com.mybook.mybook.note.biz.service.impl;
 
 import com.mybook.framework.common.response.Response;
+import com.mybook.mybook.note.biz.service.NoteService;
 import jakarta.annotation.Resource;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Service
 @Slf4j
-public class NoteServiceImpl {
+public class NoteServiceImpl implements NoteService {
     @Resource
     ThreadPoolTaskExecutor threadPoolTaskExecutor;
 

@@ -1,0 +1,23 @@
+
+#
+#spring:
+#  application:
+#    name: mybook-auth
+#  profiles:
+#    active: dev
+#  cloud:
+#    nacos:
+#      server-addr: 127.0.0.1:8848
+#      config:
+#        server-addr: 127.0.0.1:8848
+#        prefix: ${spring.application.name}
+#        group: DEFAULT_GROUP
+#        namespace: mybook
+#        file-extension: yaml
+#        refresh-enabled: true
+#      discovery:
+#        enabled: true # 启用服务发现
+#        group: DEFAULT_GROUP # 所属组
+#        namespace: mybook # 命名空间
+#        server-addr: 127.0.0.1:8848 # 指定 Nacos 配置中心的服务器地址
+
