@@ -7,10 +7,11 @@
     <artifactId>mybook</artifactId>
     <version>1.0.0</version>
   </parent>
-  <groupId>com.mybook</groupId>
+  <groupId>com.mybook.mybook.note</groupId>
   <artifactId>mybook-note</artifactId>
   <version>1.0.0</version>
   <packaging>pom</packaging>
+  <name>mybook-note</name>
   <modules>
     <module>mybook-note-biz</module>
     <module>mybook-note-api</module>

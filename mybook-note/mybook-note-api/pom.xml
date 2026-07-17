@@ -2,18 +2,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>com.mybook</groupId>
+        <groupId>com.mybook.mybook.note</groupId>
         <artifactId>mybook-note</artifactId>
         <version>${revision}</version>
-<!--        <relativePath>../../pom.xml</relativePath>-->
     </parent>
 
-<!--    <groupId>com.mybook.mybook.note.api</groupId>-->
+    <groupId>com.mybook.mybook.note.api</groupId>
     <artifactId>mybook-note-api</artifactId>
-<!--    <packaging>jar</packaging>-->
+    <packaging>jar</packaging>
 
-<!--    <name>mybook-note-api</name>-->
-<!--    <url>http://maven.apache.org</url>-->
+    <name>mybook-note-api</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

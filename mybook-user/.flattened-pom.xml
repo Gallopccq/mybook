@@ -12,7 +12,6 @@
   <version>1.0.0</version>
   <packaging>pom</packaging>
   <name>mybook-user</name>
-  <url>http://maven.apache.org</url>
   <modules>
     <module>mybook-user-biz</module>
     <module>mybook-user-api</module>

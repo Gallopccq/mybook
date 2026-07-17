@@ -20,7 +20,8 @@
         <module>mybook-gateway</module>
         <module>mybook-user</module>
         <module>mybook-note</module>
-
+        <module>mybook-oss</module>
+        <module>mybook-distributed-id-generator</module>
 
 
     </modules>
@@ -89,6 +90,7 @@
         <jaxb-api.version>2.3.1</jaxb-api.version>
         <activation.version>1.1.1</activation.version>
         <jaxb-runtime.version>2.3.3</jaxb-runtime.version>
+        <feign-core.version>13.6</feign-core.version>
         <feign-form.version>3.8.0</feign-form.version>
         <nacos-config.version>0.3.0-RC</nacos-config.version>
 
@@ -299,8 +301,14 @@
             <dependency>
                 <groupId>io.github.openfeign</groupId>
                 <artifactId>feign-core</artifactId>
-                <version>13.6</version>
+                <version>${feign-core.version}</version>
                 <scope>compile</scope>
+            </dependency>
+            <!-- Feign 表单提交 -->
+            <dependency>
+                <groupId>io.github.openfeign.form</groupId>
+                <artifactId>feign-form</artifactId>
+                <version>${feign-form.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.jsonwebtoken</groupId>
@@ -385,6 +393,11 @@
                 <version>${mysql-connector-java.version}</version>
                 <scope>compile</scope>
             </dependency>
+            <dependency>
+                <groupId>io.minio</groupId>
+                <artifactId>minio</artifactId>
+                <version>8.3.6</version>
+            </dependency>
             <!-- Source: https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-gateway -->
 <!--            <dependency>-->
 <!--                <groupId>org.springframework.cloud</groupId>-->
@@ -446,6 +459,34 @@
                 <artifactId>mybook-common</artifactId>
                 <version>${revision}</version>
             </dependency>
+            <dependency>
+                <groupId>com.mybook</groupId>
+                <artifactId>mybook-kv-api</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mybook</groupId>
+                <artifactId>mybook-user-api</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mybook.mybook.distributed.id.generator</groupId>
+                <artifactId>mybook-distributed-id-generator-api</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.mybook</groupId>
+                <artifactId>mybook-oss-api</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mybook</groupId>
+                <artifactId>mybook-spring-boot-starter-biz-operationlog</artifactId>
+                <version>${revision}</version>
+                <scope>compile</scope>
+            </dependency>
+
 
         </dependencies>
 

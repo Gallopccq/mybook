@@ -19,7 +19,21 @@
 
 
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-bootstrap</artifactId>
+        </dependency>
 
+        <!-- 服务发现 -->
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.mybook</groupId>
+            <artifactId>mybook-common</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -44,19 +58,13 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
-
-
-        <!-- 服务发现 -->
-        <!-- Source: https://mvnrepository.com/artifact/com.alibaba.cloud/spring-cloud-starter-alibaba-nacos-config -->
-<!--        <dependency>-->
-<!--            <groupId>com.alibaba.cloud</groupId>-->
-<!--            <artifactId>spring-cloud-starter-alibaba-nacos-config</artifactId>-->
-<!--        </dependency>-->
-        <!-- Source: https://mvnrepository.com/artifact/com.alibaba.cloud/spring-cloud-starter-alibaba-nacos-discovery -->
-<!--        <dependency>-->
-<!--            <groupId>com.alibaba.cloud</groupId>-->
-<!--            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>-->
-<!--        </dependency>-->
-
+        <dependency>
+            <groupId>com.mybook</groupId>
+            <artifactId>mybook-kv-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.mybook</groupId>
+            <artifactId>mybook-spring-boot-starter-biz-operationlog</artifactId>
+        </dependency>
     </dependencies>
 </project>

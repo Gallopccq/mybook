@@ -48,17 +48,17 @@ public final class ParamUtils {
     /**
      * 小哈书 ID 校验
      *
-     * @param xiaohashuId
+     * @param mybookId
      * @return
      */
-    public static boolean checkXiaohashuId(String xiaohashuId) {
+    public static boolean checkMybookId(String mybookId) {
         // 检查长度
-        if (xiaohashuId.length() < ID_MIN_LENGTH || xiaohashuId.length() > ID_MAX_LENGTH) {
+        if (mybookId.length() < ID_MIN_LENGTH || mybookId.length() > ID_MAX_LENGTH) {
             return false;
         }
         // 检查格式
         Pattern pattern = Pattern.compile(ID_REGEX);
-        return pattern.matcher(xiaohashuId).matches();
+        return pattern.matcher(mybookId).matches();
     }
 
     /**

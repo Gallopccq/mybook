@@ -7,7 +7,7 @@
         <version>${revision}</version>
     </parent>
 
-<!--    <groupId>com.mybook.mybook.note</groupId>-->
+    <groupId>com.mybook.mybook.note</groupId>
     <artifactId>mybook-note</artifactId>
     <packaging>pom</packaging>
 
@@ -16,8 +16,7 @@
         <module>mybook-note-api</module>
     </modules>
 
-<!--    <name>mybook-note</name>-->
-<!--    <url>http://maven.apache.org</url>-->
+    <name>mybook-note</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

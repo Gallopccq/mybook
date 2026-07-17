@@ -3,13 +3,14 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>com.mybook</groupId>
+    <groupId>com.mybook.mybook.note</groupId>
     <artifactId>mybook-note</artifactId>
     <version>1.0.0</version>
   </parent>
-  <groupId>com.mybook</groupId>
+  <groupId>com.mybook.mybook.note.api</groupId>
   <artifactId>mybook-note-api</artifactId>
   <version>1.0.0</version>
+  <name>mybook-note-api</name>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>

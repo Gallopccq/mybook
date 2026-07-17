@@ -1,5 +1,6 @@
 package com.mybook.mybook.kv.biz;
 
+import com.mybook.framework.common.util.JsonUtils;
 import com.mybook.mybook.kv.biz.domain.dataobject.NoteContentDO;
 import com.mybook.mybook.kv.biz.domain.repository.NoteContentRepository;
 import jakarta.annotation.Resource;
@@ -31,8 +32,12 @@ class CassandraTests {
 
     @Test
     void testSelect(){
-        Optional<NoteContentDO> optional = noteContentRepository.findById(UUID.fromString("00c40117-27e0-4024-9323-eb3e51d5d863"));
-//        optional.isPresent(noteContentDO -> log.info("查询结果：{}", ))
+        Optional<NoteContentDO> optional = noteContentRepository.findById(UUID.fromString("13701b12-b070-4fc2-abcb-f8f9737ef403"));
+        optional.ifPresent(noteContentDO -> log.info("查询结果：{}", JsonUtils.toJsonString(noteContentDO)));
     }
 
+    @Test
+    void testDelete(){
+        noteContentRepository.deleteById(UUID.fromString("13701b12-b070-4fc2-abcb-f8f9737ef403"));
+    }
 }

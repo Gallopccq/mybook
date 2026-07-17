@@ -16,6 +16,7 @@
     <module>mybook-gateway</module>
     <module>mybook-user</module>
     <module>mybook-note</module>
+    <module>mybook-oss</module>
   </modules>
   <properties>
     <bitwalker.version>1.21</bitwalker.version>
@@ -64,6 +65,7 @@
     <lombok.version>1.18.24</lombok.version>
     <maven.compiler.target>${java.version}</maven.compiler.target>
     <jwt.version>0.11.5</jwt.version>
+    <feign-core.version>13.6</feign-core.version>
     <druid.version>1.2.23</druid.version>
     <commons.io.version>2.13.0</commons.io.version>
     <nacos-config.version>0.3.0-RC</nacos-config.version>
@@ -197,8 +199,13 @@
       <dependency>
         <groupId>io.github.openfeign</groupId>
         <artifactId>feign-core</artifactId>
-        <version>13.6</version>
+        <version>${feign-core.version}</version>
         <scope>compile</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.github.openfeign.form</groupId>
+        <artifactId>feign-form</artifactId>
+        <version>${feign-form.version}</version>
       </dependency>
       <dependency>
         <groupId>io.jsonwebtoken</groupId>
@@ -274,6 +281,11 @@
         <scope>compile</scope>
       </dependency>
       <dependency>
+        <groupId>io.minio</groupId>
+        <artifactId>minio</artifactId>
+        <version>8.3.6</version>
+      </dependency>
+      <dependency>
         <groupId>com.qiniu</groupId>
         <artifactId>qiniu-java-sdk</artifactId>
         <version>${qiniu.version}</version>
@@ -307,6 +319,22 @@
         <groupId>com.mybook</groupId>
         <artifactId>mybook-common</artifactId>
         <version>1.0.0</version>
+      </dependency>
+      <dependency>
+        <groupId>com.mybook</groupId>
+        <artifactId>mybook-user-api</artifactId>
+        <version>1.0.0</version>
+      </dependency>
+      <dependency>
+        <groupId>com.mybook</groupId>
+        <artifactId>mybook-oss-api</artifactId>
+        <version>1.0.0</version>
+      </dependency>
+      <dependency>
+        <groupId>com.mybook</groupId>
+        <artifactId>mybook-spring-boot-starter-biz-operationlog</artifactId>
+        <version>1.0.0</version>
+        <scope>compile</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
