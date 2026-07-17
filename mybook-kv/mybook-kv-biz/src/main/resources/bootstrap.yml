@@ -1,6 +1,6 @@
 spring:
   application:
-    name: mybook-ky
+    name: mybook-kv
   profiles:
     active: dev
   cloud:

@@ -7,7 +7,7 @@
         <version>${revision}</version>
     </parent>
 
-    <groupId>com.mybook.mybook.user.api</groupId>
+    <groupId>com.mybook</groupId>
     <artifactId>mybook-user-api</artifactId>
     <packaging>jar</packaging>
 
@@ -19,11 +19,33 @@
     </properties>
 
     <dependencies>
+        <!-- OpenFeign -->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>3.8.1</version>
-            <scope>test</scope>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.openfeign.form</groupId>
+            <artifactId>feign-form</artifactId>
+        </dependency>
+        <!-- Feign 表单提交 -->
+        <dependency>
+            <groupId>io.github.openfeign.form</groupId>
+            <artifactId>feign-form-spring</artifactId>
+        </dependency>
+
+        <!-- 负载均衡 -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.mybook</groupId>
+            <artifactId>mybook-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
     </dependencies>
 </project>

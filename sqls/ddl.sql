@@ -190,3 +190,15 @@ create table if not exists `t_user_count` (
     unique key `uk_user_id` (`user_id`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户计数表';
 
+-- leaf
+
+CREATE TABLE `leaf_alloc` (
+  `biz_tag` varchar(128) not null default '',
+  `max_id` bigint(20) not null default '1',
+  `step` int(11) not null,
+  `description` varchar(256) default null,
+  `update_time` timestamp not null default current_timestamp on update current_timestamp,
+  primary key (`biz_tag`)
+) ENGINE=InnoDB;
+
+

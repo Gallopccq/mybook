@@ -62,3 +62,15 @@ services:
       - ./cassandra/data:/var/lib/cassandra
       - ./cassandra/config:/etc/cassandra
     restart: always
+
+  zookeeper:
+    image: zookeeper:3.5.6
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./zookeeper/data:/data
+      - ./zookeeper/conf:/conf
+    restart: unless-stopped

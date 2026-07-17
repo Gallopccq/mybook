@@ -4,25 +4,42 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.base.Preconditions;
 import com.mybook.framework.biz.context.holder.LoginUserContextHolder;
+import com.mybook.framework.common.enums.DeletedEnum;
+import com.mybook.framework.common.enums.StatusEnum;
 import com.mybook.framework.common.exception.BizException;
 import com.mybook.framework.common.response.Response;
+import com.mybook.framework.common.util.JsonUtils;
 import com.mybook.framework.common.util.ParamUtils;
-import com.mybook.mybook.oss.api.FileFeignApi;
+import com.mybook.mybook.user.biz.constant.RedisKeyConstants;
+import com.mybook.mybook.user.biz.constant.RoleConstants;
+import com.mybook.mybook.user.biz.domain.dataobject.RoleDO;
 import com.mybook.mybook.user.biz.domain.dataobject.UserDO;
+import com.mybook.mybook.user.biz.domain.dataobject.UserRoleDO;
+import com.mybook.mybook.user.biz.domain.mapper.RoleDOMapper;
 import com.mybook.mybook.user.biz.domain.mapper.UserDOMapper;
+import com.mybook.mybook.user.biz.domain.mapper.UserRoleDOMapper;
 import com.mybook.mybook.user.biz.enums.ResponseCodeEnum;
 import com.mybook.mybook.user.biz.enums.SexEnum;
 import com.mybook.mybook.user.biz.model.vo.UpdateUserInfoReqVO;
+import com.mybook.mybook.user.biz.rpc.DistributedIdGeneratorRpcService;
 import com.mybook.mybook.user.biz.rpc.OssRpcService;
 import com.mybook.mybook.user.biz.service.UserService;
+import com.mybook.mybook.user.dto.req.FindUserByPhoneReqDTO;
+import com.mybook.mybook.user.dto.req.RegisterUserReqDTO;
+import com.mybook.mybook.user.dto.req.UpdateUserPasswordReqDTO;
+import com.mybook.mybook.user.dto.resp.FindUserByPhoneRspDTO;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -39,6 +56,86 @@ public class UserServiceImpl  implements UserService {
     private UserDOMapper userDOMapper;
     @Resource
     private OssRpcService ossRpcService;
+    @Resource
+    private DistributedIdGeneratorRpcService distributedIdGeneratorRpcService;
+    @Resource
+    private RedisTemplate<String, String> redisTemplate;
+    @Resource
+    private UserRoleDOMapper userRoleDOMapper;
+    @Resource
+    private RoleDOMapper roleDOMapper;
+
+
+    @Override
+    public Response<?> updatePassword(UpdateUserPasswordReqDTO updateUserPasswordReqDTO) {
+        Long userId = LoginUserContextHolder.getUserId();
+        UserDO userDO = UserDO.builder()
+                .id(userId)
+                .password(updateUserPasswordReqDTO.getEncodePassword())
+                .updateTime(LocalDateTime.now())
+                .build();
+        userDOMapper.updateByPrimaryKeySelective(userDO);
+        return Response.success();
+    }
+
+    @Override
+    public Response<FindUserByPhoneRspDTO> findByPhone(FindUserByPhoneReqDTO findUserByPhoneReqDTO) {
+        String phone = findUserByPhoneReqDTO.getPhone();
+        UserDO userDO = userDOMapper.selectByPhone(phone);
+        if (Objects.isNull(userDO)){
+            throw new BizException(ResponseCodeEnum.USER_NOT_FOUND);
+        }
+        Long userId = userDO.getId();
+        String password = userDO.getPassword();
+
+        return Response.success(new FindUserByPhoneRspDTO(userId, password));
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    @Override
+    public Response<Long> register(RegisterUserReqDTO registerUserReqDTO) {
+        String phone = registerUserReqDTO.getPhone();
+
+        UserDO userDO1 = userDOMapper.selectByPhone(phone);
+        log.info("==> 用户是否注册, phone: {}, userDO: {}", phone, JsonUtils.toJsonString(userDO1));
+
+        if (Objects.nonNull(userDO1)){
+            return Response.success(userDO1.getId());
+        }
+
+        String mybookId = distributedIdGeneratorRpcService.getMybookId();
+        Long userId = Long.valueOf(distributedIdGeneratorRpcService.getUserId());
+
+        UserDO userDO = UserDO.builder()
+                .id(userId)
+                .phone(phone)
+                .mybookId(mybookId)
+                .nickname("小红薯"+mybookId)
+                .status(StatusEnum.ENABLE.getValue().byteValue())
+                .createTime(LocalDateTime.now())
+                .updateTime(LocalDateTime.now())
+                .isDeleted(DeletedEnum.NO.getValue())
+                .build();
+        userDOMapper.insert(userDO);
+
+        userId = userDO.getId();
+
+        UserRoleDO userRoleDO = UserRoleDO.builder()
+                .userId(userId)
+                .roleId(RoleConstants.COMMON_USER_ROLE_ID)
+                .createTime(LocalDateTime.now())
+                .updateTime(LocalDateTime.now())
+                .build();
+        userRoleDOMapper.insertSelective(userRoleDO);
+        RoleDO roleDO = roleDOMapper.selectByPrimaryKey(userRoleDO.getRoleId());
+        List<String> roles = new ArrayList<>(1);
+        roles.add(roleDO.getRoleKey());
+
+        String userRolesKey = RedisKeyConstants.buildUserRoleKey(userId);
+        redisTemplate.opsForValue().set(userRolesKey, JsonUtils.toJsonString(roles));
+
+        return Response.success(userId);
+    }
 
     @Override
     public Response<?> updateUserInfo(UpdateUserInfoReqVO updateUserInfoReqVO) {

@@ -21,6 +21,7 @@
         <module>mybook-user</module>
         <module>mybook-note</module>
         <module>mybook-oss</module>
+        <module>mybook-distributed-id-generator</module>
 
 
     </modules>
@@ -458,6 +459,22 @@
                 <artifactId>mybook-common</artifactId>
                 <version>${revision}</version>
             </dependency>
+            <dependency>
+                <groupId>com.mybook</groupId>
+                <artifactId>mybook-kv-api</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mybook</groupId>
+                <artifactId>mybook-user-api</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mybook.mybook.distributed.id.generator</groupId>
+                <artifactId>mybook-distributed-id-generator-api</artifactId>
+                <version>${revision}</version>
+            </dependency>
+
             <dependency>
                 <groupId>com.mybook</groupId>
                 <artifactId>mybook-oss-api</artifactId>

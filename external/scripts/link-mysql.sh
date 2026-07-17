@@ -1,1 +1,1 @@
-mysql -h 172.21.0.2 -uroot -p123456
+mysql -h 127.0.0.1 -umybook -p123456 -P3307
