@@ -3,6 +3,8 @@ package com.mybook.mybook.note.biz.rpc;
 import java.util.Objects;
 import java.util.UUID;
 
+import org.springframework.stereotype.Service;
+
 import com.mybook.framework.common.response.Response;
 import com.mybook.mybook.kv.api.KeyValueFeignApi;
 import com.mybook.mybook.kv.dto.req.AddNoteContentReqDTO;
@@ -10,6 +12,7 @@ import com.mybook.mybook.kv.dto.req.DeleteNoteContentReqDTO;
 
 import jakarta.annotation.Resource;
 
+@Service
 public class KeyValueRpcService {
     @Resource
     KeyValueFeignApi keyValueFeignApi;

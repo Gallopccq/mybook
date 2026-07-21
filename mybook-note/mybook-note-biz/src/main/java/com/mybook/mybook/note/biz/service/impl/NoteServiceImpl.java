@@ -34,6 +34,7 @@ import java.util.concurrent.CompletableFuture;
 
 
 @Slf4j
+@Service
 public class NoteServiceImpl implements NoteService {
     @Resource
     ThreadPoolTaskExecutor threadPoolTaskExecutor;

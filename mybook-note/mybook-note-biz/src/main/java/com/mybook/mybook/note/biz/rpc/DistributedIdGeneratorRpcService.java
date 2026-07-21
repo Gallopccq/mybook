@@ -1,9 +1,12 @@
 package com.mybook.mybook.note.biz.rpc;
 
+import org.springframework.stereotype.Service;
+
 import com.mybook.mybook.distributed.id.generator.api.DistributedIdGeneratorFeignApi;
 
 import jakarta.annotation.Resource;
 
+@Service
 public class DistributedIdGeneratorRpcService {
     @Resource
     DistributedIdGeneratorFeignApi distributedIdGeneratorFeignApi;
