@@ -41,7 +41,13 @@ spring:
           predicates:
             - Path=/user/**
           filters:
-              - StripPrefix=1
+            - StripPrefix=1
+        - id: note
+          uri: lb://mybook-note
+          predicates:
+            - Path=/note/**
+          filters:
+            - StripPrefix=1
 
 
 ############## Sa-Token 配置 (文档: https://sa-token.cc) ##############

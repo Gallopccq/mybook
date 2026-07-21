@@ -47,6 +47,18 @@
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
         </dependency>
+        <!-- Redis -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <!-- Redis 连接池 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+        </dependency>
+
 
         <!-- Druid 数据库连接池 -->
         <dependency>
@@ -59,11 +71,35 @@
             <artifactId>spring-cloud-starter-bootstrap</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.mybook</groupId>
+            <artifactId>mybook-kv-api</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mybook</groupId>
+            <artifactId>mybook-user-api</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mybook.mybook.distributed.id.generator</groupId>
+            <artifactId>mybook-distributed-id-generator-api</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.mybook</groupId>
+            <artifactId>mybook-spring-boot-starter-biz-context</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.mybook</groupId>
+            <artifactId>mybook-spring-boot-starter-biz-operationlog</artifactId>
+        </dependency>
+
         <!-- 服务发现 -->
-<!--        <dependency>-->
-<!--            <groupId>com.alibaba.cloud</groupId>-->
-<!--            <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>-->
-<!--        </dependency>-->
+       <dependency>
+           <groupId>com.alibaba.cloud</groupId>
+           <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
+       </dependency>
     </dependencies>
 
     <build>

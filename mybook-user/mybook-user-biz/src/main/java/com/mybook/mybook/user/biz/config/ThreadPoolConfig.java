@@ -17,8 +17,8 @@ public class ThreadPoolConfig {
     @Bean(name="taskExecutor")
     public Executor taskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(16);
-        executor.setMaxPoolSize(17); // max小而队列大，减少线程切换的资源损耗，多加的1为有效磁盘数
+        executor.setCorePoolSize(8);
+        executor.setMaxPoolSize(9); // max小而队列大，减少线程切换的资源损耗，多加的1为有效磁盘数
         executor.setQueueCapacity(200);
         executor.setThreadNamePrefix("AuthExecutor-");
         executor.setKeepAliveSeconds(30);

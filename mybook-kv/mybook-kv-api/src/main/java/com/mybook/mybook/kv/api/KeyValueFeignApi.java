@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(name = ApiConstants.SERVER_NAME)
-public interface NoteContentFeignApi {
+public interface KeyValueFeignApi {
 
     @PostMapping(value = "/kv/note/content/add")
     Response<?> addNoteContent(@RequestBody AddNoteContentReqDTO addNoteContentReqDTO);
