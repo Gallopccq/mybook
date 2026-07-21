@@ -69,7 +69,8 @@ public class UserServiceImpl  implements UserService {
     private UserRoleDOMapper userRoleDOMapper;
     @Resource
     private RoleDOMapper roleDOMapper;
-    @Resource ThreadPoolTaskExecutor threadPoolTaskExecutor;
+    @Resource 
+    private ThreadPoolTaskExecutor taskExecutor;
 
 
     @Override
@@ -243,7 +244,7 @@ public class UserServiceImpl  implements UserService {
         UserDO userDO = userDOMapper.selectByPrimaryKey(id);
         // 若用户为空，将空数据存入 Redis 缓存 (过期时间不宜设置过长)
         if (Objects.isNull(userDO)){
-            threadPoolTaskExecutor.execute(() -> {
+            taskExecutor.execute(() -> {
                 // 保底1分钟 + 随机秒数
                 long expireSeconds = 60 + RandomUtil.randomInt(60);
                 redisTemplate.opsForValue().set(userInfoRedisKey, "null", expireSeconds, TimeUnit.SECONDS);
@@ -258,7 +259,7 @@ public class UserServiceImpl  implements UserService {
             .build();
 
         // 异步将用户信息存入 Redis 缓存，提升响应速度
-        threadPoolTaskExecutor.submit(() -> {
+        taskExecutor.submit(() -> {
             // 过期时间（保底1天 + 随机秒数，将缓存过期时间打散，防止同一时间大量缓存失效，导致数据库压力太大）
             long expireSeconds = 60*60*24 + RandomUtil.randomInt(60*60*24);
             redisTemplate.opsForValue().set(userInfoRedisKey, JsonUtils.toJsonString(findUserByIdRspDTO), expireSeconds, TimeUnit.SECONDS);

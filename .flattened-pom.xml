@@ -17,6 +17,7 @@
     <module>mybook-user</module>
     <module>mybook-note</module>
     <module>mybook-oss</module>
+    <module>mybook-distributed-id-generator</module>
   </modules>
   <properties>
     <bitwalker.version>1.21</bitwalker.version>
@@ -322,7 +323,17 @@
       </dependency>
       <dependency>
         <groupId>com.mybook</groupId>
+        <artifactId>mybook-kv-api</artifactId>
+        <version>1.0.0</version>
+      </dependency>
+      <dependency>
+        <groupId>com.mybook</groupId>
         <artifactId>mybook-user-api</artifactId>
+        <version>1.0.0</version>
+      </dependency>
+      <dependency>
+        <groupId>com.mybook.mybook.distributed.id.generator</groupId>
+        <artifactId>mybook-distributed-id-generator-api</artifactId>
         <version>1.0.0</version>
       </dependency>
       <dependency>
@@ -335,6 +346,11 @@
         <artifactId>mybook-spring-boot-starter-biz-operationlog</artifactId>
         <version>1.0.0</version>
         <scope>compile</scope>
+      </dependency>
+      <dependency>
+        <groupId>com.mybook</groupId>
+        <artifactId>mybook-spring-boot-starter-biz-context</artifactId>
+        <version>1.0.0</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

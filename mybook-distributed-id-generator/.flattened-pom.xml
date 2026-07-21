@@ -4,22 +4,20 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.mybook</groupId>
-    <artifactId>mybook-note</artifactId>
+    <artifactId>mybook</artifactId>
     <version>1.0.0</version>
   </parent>
-  <groupId>com.mybook.mybook.note</groupId>
-  <artifactId>mybook-note-api</artifactId>
+  <groupId>com.mybook</groupId>
+  <artifactId>mybook-distributed-id-generator</artifactId>
   <version>1.0.0</version>
-  <name>mybook-note-api</name>
+  <packaging>pom</packaging>
+  <name>${project.artifactId}</name>
+  <description>分布式 ID 生成服务</description>
+  <modules>
+    <module>mybook-distributed-id-generator-api</module>
+    <module>mybook-distributed-id-generator-biz</module>
+  </modules>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
 </project>

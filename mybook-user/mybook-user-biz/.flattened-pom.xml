@@ -58,8 +58,10 @@
     <dependency>
       <groupId>com.mybook</groupId>
       <artifactId>mybook-spring-boot-starter-biz-context</artifactId>
-      <version>1.0.0</version>
-      <scope>compile</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.mybook.mybook.distributed.id.generator</groupId>
+      <artifactId>mybook-distributed-id-generator-api</artifactId>
     </dependency>
     <dependency>
       <groupId>com.mybook</groupId>
