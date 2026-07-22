@@ -75,7 +75,7 @@ public class GlobalExceptionHandler {
         String errorCode = ResponseCodeEnum.PARAM_NOT_VALID.getErrorCode();
 
         // 错误信息
-        String errorMessage = e.getMessage();
+        String errorMessage = ResponseCodeEnum.PARAM_NOT_VALID.getErrorMessage() + ": "+ e.getMessage();
 
         log.warn("{} request error, errorCode: {}, errorMessage: {}", request.getRequestURI(), errorCode, errorMessage);
 

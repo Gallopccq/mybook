@@ -34,7 +34,7 @@ public class HeaderUserId2ContextFilter extends OncePerRequestFilter {
             return;
         }
 
-        log.info("===== 设置 userId 到 ThreadLocal 中， 用户 ID: {}", userId);
+        log.info("====== 设置 userId 到 ThreadLocal 中， 用户 ID: {}", userId);
         LoginUserContextHolder.setUserId(userId);
 
         try {
@@ -42,7 +42,7 @@ public class HeaderUserId2ContextFilter extends OncePerRequestFilter {
         } finally {
             // 一定要删除 ThreadLocal ，防止内存泄露
             LoginUserContextHolder.remove();
-            log.info("===== 删除 ThreadLocal， userId: {}", userId);
+            log.info("====== 删除 ThreadLocal， userId: {}", userId);
         }
     }
 }

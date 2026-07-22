@@ -2,6 +2,7 @@ package com.mybook.mybook.note.biz.rpc;
 
 import java.util.Objects;
 
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import com.mybook.framework.common.exception.BizException;
@@ -13,6 +14,7 @@ import com.mybook.mybook.user.dto.resp.FindUserByIdRspDTO;
 
 @Service
 public class UserRpcService {
+    @Resource
     private UserFeignApi userFeignApi;
 
     public FindUserByIdRspDTO findById(Long id){

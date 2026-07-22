@@ -74,3 +74,53 @@ services:
       - ./zookeeper/data:/data
       - ./zookeeper/conf:/conf
     restart: unless-stopped
+
+  rocketmq-dashboard:
+    image: apacherocketmq/rocketmq-dashboard:latest
+    container_name: rocketmq-dashboard
+    ports:
+      - "8050:8082"
+    environment:
+      - JAVA_OPTS=-Xmx200M -Xms200M -Xmn100M -Drocketmq.namesrv.addr=rocketmq-namesrv:9876 -Dcom.rocketmq.sendMessageWithVIPChannel=false
+    depends_on:
+      - rocketmq-namesrv
+      - rocketmq-broker
+
+  rocketmq-namesrv:
+    image: apache/rocketmq:5.3.1
+    container_name: rocketmq-namesrv
+    privileged: true
+    ports:
+      - "9876:9876"
+    volumes:
+      - ./rocketmq/namesrv/logs:/home/rocketmq/logs
+      - ./rocketmq/namesrv/bin/runserver.sh:/home/rocketmq/rocketmq-5.3.1/bin/runserver.sh
+    command: sh mqnamesrv
+    networks:
+      - rocketmq
+
+  rocketmq-broker:
+    image: apache/rocketmq:5.3.1
+    container_name: rocketmq-broker
+    privileged: true
+    ports:
+      - "10912:10912"   # 代理（Proxy）端口
+      - "10911:10911"   # Broker 服务端口
+      - "10909:10909"   # VIP 通道端口（可选）
+    volumes:
+      - ./rocketmq/broker/logs:/home/rocketmq/logs/rocketmqlogs
+      - ./rocketmq/broker/store:/home/rocketmq/store
+      - ./rocketmq/broker/config/broker.conf:/home/rocketmq/rocketmq-5.3.1/conf/broker.conf
+      - ./rocketmq/broker/bin/runbroker.sh:/home/rocketmq/rocketmq-5.3.1/bin/runbroker.sh
+    environment:
+      - NAMESRV_ADDR=rocketmq-namesrv:9876
+    command: sh mqbroker --enable-proxy -c /home/rocketmq/rocketmq-5.3.1/conf/broker.conf
+    depends_on:
+      - rocketmq-namesrv
+    networks:
+      - rocketmq
+
+networks:
+  rocketmq:
+    driver: bridge
+    

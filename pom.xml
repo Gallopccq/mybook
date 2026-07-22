@@ -93,6 +93,7 @@
         <feign-core.version>13.6</feign-core.version>
         <feign-form.version>3.8.0</feign-form.version>
         <nacos-config.version>0.3.0-RC</nacos-config.version>
+        <rocketmq.version>2.2.3</rocketmq.version>
 
     </properties>
 
@@ -392,6 +393,12 @@
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql-connector-java.version}</version>
                 <scope>compile</scope>
+            </dependency>
+            <!-- Rocket MQ -->
+            <dependency>
+                <groupId>org.apache.rocketmq</groupId>
+                <artifactId>rocketmq-spring-boot-starter</artifactId>
+                <version>${rocketmq.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.minio</groupId>

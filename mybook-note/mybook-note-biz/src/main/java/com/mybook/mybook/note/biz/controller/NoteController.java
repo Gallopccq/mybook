@@ -1,5 +1,6 @@
 package com.mybook.mybook.note.biz.controller;
 
+import com.mybook.mybook.note.biz.model.vo.UpdateNoteReqVO;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,13 +33,21 @@ public class NoteController {
     }
 
     @PostMapping("/detail")
+    @ApiOperationLog(description = "查询笔记详情")
     public Response<FindNoteDetailRspVO> findNoteDetail(@RequestBody @Validated FindNoteDetailReqVO findNoteDetailReqVO) {
         return noteService.findNoteDetail(findNoteDetailReqVO);
     }
 
     @PostMapping("/detailWithSync")
+    @ApiOperationLog(description = "查询笔记详情")
     public Response<FindNoteDetailRspVO> findNoteDetailWithSync(@RequestBody @Validated FindNoteDetailReqVO findNoteDetailReqVO) {
         return noteService.findNoteDetailWithSync(findNoteDetailReqVO);
+    }
+
+    @PostMapping("update")
+    @ApiOperationLog(description = "更新笔记信息")
+    public Response<?> updateNote(@RequestBody @Validated UpdateNoteReqVO updateNoteReqVO){
+        return noteService.updateNote(updateNoteReqVO);
     }
     
 }

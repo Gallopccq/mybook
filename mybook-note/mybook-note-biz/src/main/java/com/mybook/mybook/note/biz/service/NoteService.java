@@ -4,6 +4,7 @@ import com.mybook.framework.common.response.Response;
 import com.mybook.mybook.note.biz.model.vo.FindNoteDetailReqVO;
 import com.mybook.mybook.note.biz.model.vo.FindNoteDetailRspVO;
 import com.mybook.mybook.note.biz.model.vo.PublishNoteReqVO;
+import com.mybook.mybook.note.biz.model.vo.UpdateNoteReqVO;
 
 public interface NoteService {
 
@@ -12,4 +13,6 @@ public interface NoteService {
     Response<?> publishNote(PublishNoteReqVO publishNoteReqVO);
 
     Response<FindNoteDetailRspVO> findNoteDetailWithSync(FindNoteDetailReqVO findNoteDetailReqVO);
+
+    Response<?> updateNote(UpdateNoteReqVO updateNoteReqVO);
 }

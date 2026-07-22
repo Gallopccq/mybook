@@ -17,7 +17,7 @@
     from t_topic
     where id = #{id,jdbcType=BIGINT}
   </select>
-  <select id="selectNameByPrimaryKey" resultMap="BaseResultMap">
+  <select id="selectNameByPrimaryKey">
     select name
     from t_topic
     where id = #{id,jdbcType=BIGINT}

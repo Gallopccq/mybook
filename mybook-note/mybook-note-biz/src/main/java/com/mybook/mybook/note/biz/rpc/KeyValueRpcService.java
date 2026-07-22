@@ -1,7 +1,6 @@
 package com.mybook.mybook.note.biz.rpc;
 
 import java.util.Objects;
-import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
@@ -21,7 +20,7 @@ public class KeyValueRpcService {
     @Resource
     KeyValueFeignApi keyValueFeignApi;
 
-    public boolean addNoteContent(String uuid, String noteContent){
+    public boolean saveNoteContent(String uuid, String noteContent){
         AddNoteContentReqDTO addNoteContentReqDTO = AddNoteContentReqDTO.builder()
             .uuid(uuid)
             .noteContent(noteContent)
