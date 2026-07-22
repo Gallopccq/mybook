@@ -5,10 +5,14 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 
+import com.mybook.framework.common.exception.BizException;
 import com.mybook.framework.common.response.Response;
 import com.mybook.mybook.kv.api.KeyValueFeignApi;
 import com.mybook.mybook.kv.dto.req.AddNoteContentReqDTO;
 import com.mybook.mybook.kv.dto.req.DeleteNoteContentReqDTO;
+import com.mybook.mybook.kv.dto.req.FindNoteContentReqDTO;
+import com.mybook.mybook.kv.dto.rsp.FindNoteContentRspDTO;
+import com.mybook.mybook.note.biz.enums.ResponseCodeEnum;
 
 import jakarta.annotation.Resource;
 
@@ -38,5 +42,14 @@ public class KeyValueRpcService {
             return false;
         }
         return true;
+    }
+
+    public String findNoteContent(String uuid){
+        FindNoteContentReqDTO findNoteContentReqDTO = FindNoteContentReqDTO.builder().uuid(uuid).build();
+        Response<FindNoteContentRspDTO> response = keyValueFeignApi.findNoteContent(findNoteContentReqDTO);
+        if (Objects.isNull(response) || !response.isSuccess() || Objects.isNull(response.getData())){
+            throw new BizException(ResponseCodeEnum.NOTE_NOT_FOUND);
+        }
+        return response.getData().getContent();
     }
 }

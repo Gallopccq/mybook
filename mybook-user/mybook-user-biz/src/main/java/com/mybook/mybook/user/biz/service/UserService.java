@@ -22,4 +22,5 @@ public interface UserService {
     Response<?> updatePassword(UpdateUserPasswordReqDTO updateUserPasswordReqDTO);
     Response<FindUserByIdRspDTO> findById(FindUserByIdReqDTO findUserByIdReqDTO);
     Response<FindUserByIdRspDTO> findByIdWithDatabase(FindUserByIdReqDTO findUserByIdReqDTO);
+    Response<FindUserByIdRspDTO> findByIdWithRedis(FindUserByIdReqDTO findUserByIdReqDTO);
 }

@@ -51,7 +51,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 @Service
 public class UserServiceImpl  implements UserService {
-    private static final Cache<Long, Object> LOCAL_CACHE = Caffeine.newBuilder()
+    private static final Cache<Long, FindUserByIdRspDTO> LOCAL_CACHE = Caffeine.newBuilder()
             .initialCapacity(10000)
             .maximumSize(10000)
             .expireAfterWrite(1, TimeUnit.HOURS)
@@ -230,6 +230,65 @@ public class UserServiceImpl  implements UserService {
      */
     @Override
     public Response<FindUserByIdRspDTO> findById(FindUserByIdReqDTO findUserByIdReqDTO) {
+        Long id = findUserByIdReqDTO.getId();
+
+        FindUserByIdRspDTO findUserByIdRspDTOLocalCache = LOCAL_CACHE.getIfPresent(id);
+        if (Objects.nonNull(findUserByIdRspDTOLocalCache)){
+            log.info("==> 命中了本地缓存；{}", findUserByIdRspDTOLocalCache);
+            return Response.success(findUserByIdRspDTOLocalCache);
+        }
+        
+        // 若 Redis 缓存中存在该用户信息
+        String userInfoRedisKey = RedisKeyConstants.buildUserInfoKey(id);
+        String userInfoRedisValue = redisTemplate.opsForValue().get(userInfoRedisKey);
+        if (Objects.nonNull(userInfoRedisValue)){
+            FindUserByIdRspDTO findUserByIdRspDTO = JsonUtils.parseObject(userInfoRedisValue, FindUserByIdRspDTO.class);
+            // 异步线程中将用户信息存入本地缓存
+            taskExecutor.submit(() -> {
+                if (Objects.nonNull(findUserByIdRspDTO)){
+                    LOCAL_CACHE.put(id, findUserByIdRspDTO);
+                }
+            });
+
+            return Response.success(findUserByIdRspDTO);
+        }
+        
+        // 否则, 从数据库中查询
+        UserDO userDO = userDOMapper.selectByPrimaryKey(id);
+        // 若用户为空，将空数据存入 Redis 缓存 (过期时间不宜设置过长)
+        if (Objects.isNull(userDO)){
+            taskExecutor.execute(() -> {
+                // 保底1分钟 + 随机秒数
+                long expireSeconds = 60 + RandomUtil.randomInt(60);
+                redisTemplate.opsForValue().set(userInfoRedisKey, "null", expireSeconds, TimeUnit.SECONDS);
+            });
+
+            throw new BizException(ResponseCodeEnum.USER_NOT_FOUND);
+        }
+        FindUserByIdRspDTO findUserByIdRspDTO = FindUserByIdRspDTO.builder()
+            .id(id)
+            .nickName(userDO.getNickname())
+            .avatar(userDO.getAvatar())
+            .build();
+
+        // 异步将用户信息存入 Redis 缓存，提升响应速度
+        taskExecutor.submit(() -> {
+            // 过期时间（保底1天 + 随机秒数，将缓存过期时间打散，防止同一时间大量缓存失效，导致数据库压力太大）
+            long expireSeconds = 60*60*24 + RandomUtil.randomInt(60*60*24);
+            redisTemplate.opsForValue().set(userInfoRedisKey, JsonUtils.toJsonString(findUserByIdRspDTO), expireSeconds, TimeUnit.SECONDS);
+
+        });
+
+        return Response.success(findUserByIdRspDTO);
+    }
+
+    /**
+     * 通过redis缓存减轻数据库压力
+     * 若redis存在用户信息则直接返回
+     * 否则查数据库并添加用户信息到redis再返回
+     */
+    @Override
+    public Response<FindUserByIdRspDTO> findByIdWithRedis(FindUserByIdReqDTO findUserByIdReqDTO) {
         Long id = findUserByIdReqDTO.getId();
         
         // 若 Redis 缓存中存在该用户信息

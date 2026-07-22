@@ -27,4 +27,11 @@ public interface UserFeignApi {
 
     @PostMapping(value = PREFIX + "/findById")
     Response<FindUserByIdRspDTO> findById(@RequestBody FindUserByIdReqDTO findUserByIdReqDTO);
+
+    @PostMapping(value = PREFIX + "/findByIdWithRedis")
+    Response<FindUserByIdRspDTO> findByIdWithRedis(@RequestBody FindUserByIdReqDTO findUserByIdReqDTO);
+
+    @PostMapping(value = PREFIX + "/findByIdWithDatabase")
+    Response<FindUserByIdRspDTO> findByIdWithDatabase(@RequestBody FindUserByIdReqDTO findUserByIdReqDTO);
 }
+

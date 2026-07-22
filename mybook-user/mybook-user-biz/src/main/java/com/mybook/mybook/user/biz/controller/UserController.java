@@ -65,4 +65,10 @@ public class UserController {
     public Response<FindUserByIdRspDTO> findByIdWithDatabase(@RequestBody @Validated FindUserByIdReqDTO findUserByIdReqDTO) {
         return userService.findByIdWithDatabase(findUserByIdReqDTO);
     }
+
+    @PostMapping("/findByIdWithRedis")
+    @ApiOperationLog(description = "查询用户信息")
+    public Response<FindUserByIdRspDTO> findByIdWithRedis(@RequestBody @Validated FindUserByIdReqDTO findUserByIdReqDTO) {
+        return userService.findByIdWithRedis(findUserByIdReqDTO);
+    }
 }
