@@ -1,14 +1,11 @@
 package com.mybook.mybook.note.biz.controller;
 
-import com.mybook.mybook.note.biz.model.vo.UpdateNoteReqVO;
+import com.mybook.mybook.note.biz.model.vo.*;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mybook.framework.biz.operationlog.aspect.ApiOperationLog;
 import com.mybook.framework.common.response.Response;
-import com.mybook.mybook.note.biz.model.vo.FindNoteDetailReqVO;
-import com.mybook.mybook.note.biz.model.vo.FindNoteDetailRspVO;
-import com.mybook.mybook.note.biz.model.vo.PublishNoteReqVO;
 import com.mybook.mybook.note.biz.service.NoteService;
 
 import jakarta.annotation.Resource;
@@ -48,6 +45,24 @@ public class NoteController {
     @ApiOperationLog(description = "更新笔记信息")
     public Response<?> updateNote(@RequestBody @Validated UpdateNoteReqVO updateNoteReqVO){
         return noteService.updateNote(updateNoteReqVO);
+    }
+
+    @PostMapping("/delete")
+    @ApiOperationLog(description = "删除笔记")
+    public Response<?> deleteNote(@RequestBody @Validated DeleteNoteReqVO deleteNoteReqVO){
+        return noteService.deleteNote(deleteNoteReqVO);
+    }
+
+    @PostMapping("/visible/onlyme")
+    @ApiOperationLog(description = "笔记仅对自己可见")
+    public Response<?> visibleOnlyMe(@RequestBody @Validated UpdateNoteVisibleOnlyMeReqVO updateNoteVisibleOnlyMeReqVO){
+        return noteService.updateNoteVisibleOnlyMe(updateNoteVisibleOnlyMeReqVO);
+    }
+
+    @PostMapping("/top")
+    @ApiOperationLog(description = "置顶/取消置顶笔记")
+    public Response<?> updateNoteIsTop(@RequestBody @Validated UpdateNoteTopReqVO updateNoteTopReqVO){
+        return noteService.updateNoteIsTop(updateNoteTopReqVO);
     }
     
 }

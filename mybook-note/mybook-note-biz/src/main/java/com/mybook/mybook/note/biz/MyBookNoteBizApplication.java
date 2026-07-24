@@ -15,5 +15,4 @@ public class MyBookNoteBizApplication {
     public static void main(String[] args) {
         SpringApplication.run(MyBookNoteBizApplication.class,args);
     }
-    
 }

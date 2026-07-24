@@ -60,10 +60,12 @@ spring:
     keyspace-name: mybook
     contact-points: 10.195.190.178
     port: 9042
+  rocketmq:
+    name-server: 10.195.190.178:9876 # name server 地址
 
 
 rocketmq:
-  name-server: 127.0.0.1:9876 # name server 地址
+  name-server: 10.195.190.178:9876 # name server 地址
   producer:
     group: mybook_group
     send-message-timeout: 3000 # 消息发送超时时间，默认 3s

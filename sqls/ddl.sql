@@ -205,3 +205,20 @@ CREATE TABLE `leaf_alloc` (
 ) ENGINE=InnoDB;
 
 
+create table `t_following` (
+    `id` bigint unsigned not null auto_increment comment '主键ID',
+    `user_id` bigint unsigned not null comment '用户ID',
+    `following_user_id` bigint unsigned not null comment '关注用户ID',
+    `create_time` datetime not null default current_timestamp comment '创建时间',
+    primary key (`id`) using btree,
+    key `idx_user_id` (`user_id`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户关注表';
+
+create table `t_fans` (
+    `id` bigint unsigned not null auto_increment comment '主键ID',
+    `user_id` bigint unsigned not null comment '用户ID',
+    `fans_user_id` bigint unsigned not null comment '粉丝用户ID',
+    `create_time` datetime not null default current_timestamp comment '创建时间',
+    primary key (`id`) using btree,
+    key `idx_user_id` (`user_id`)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户粉丝表';

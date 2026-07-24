@@ -38,7 +38,7 @@
     <revision>1.0.0</revision>
     <mybatisplus.version>3.5.2</mybatisplus.version>
     <jaxb-api.version>2.3.1</jaxb-api.version>
-    <rocketmq-client.version>4.9.4</rocketmq-client.version>
+    <rocketmq-client.version>5.1.0</rocketmq-client.version>
     <canal.version>1.1.7</canal.version>
     <xxl-job.version>2.4.1</xxl-job.version>
     <transmittable-thread-local.version>2.14.2</transmittable-thread-local.version>
@@ -58,7 +58,7 @@
     <kaptcha.version>2.3.3</kaptcha.version>
     <elasticsearch-version>8.1.0</elasticsearch-version>
     <swagger.version>3.0.0</swagger.version>
-    <rocketmq.version>2.2.3</rocketmq.version>
+    <rocketmq.version>2.3.0</rocketmq.version>
     <java.version>17</java.version>
     <aliyun-sdk-oss.version>3.17.4</aliyun-sdk-oss.version>
     <activation.version>1.1.1</activation.version>

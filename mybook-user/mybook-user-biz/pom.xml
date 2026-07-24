@@ -80,7 +80,6 @@
         <dependency>
             <groupId>com.mybook</groupId>
             <artifactId>mybook-oss-api</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>com.mybook</groupId>

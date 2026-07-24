@@ -17,10 +17,7 @@ import com.mybook.mybook.note.biz.enums.NoteStatusEnum;
 import com.mybook.mybook.note.biz.enums.NoteTypeEnum;
 import com.mybook.mybook.note.biz.enums.NoteVisibleEnum;
 import com.mybook.mybook.note.biz.enums.ResponseCodeEnum;
-import com.mybook.mybook.note.biz.model.vo.FindNoteDetailReqVO;
-import com.mybook.mybook.note.biz.model.vo.FindNoteDetailRspVO;
-import com.mybook.mybook.note.biz.model.vo.PublishNoteReqVO;
-import com.mybook.mybook.note.biz.model.vo.UpdateNoteReqVO;
+import com.mybook.mybook.note.biz.model.vo.*;
 import com.mybook.mybook.note.biz.rpc.DistributedIdGeneratorRpcService;
 import com.mybook.mybook.note.biz.rpc.KeyValueRpcService;
 import com.mybook.mybook.note.biz.rpc.UserRpcService;
@@ -33,8 +30,12 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.rocketmq.client.producer.SendCallback;
+import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.messaging.Message;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
@@ -207,6 +208,11 @@ public class NoteServiceImpl implements NoteService {
 
         // 异步线程中将笔记详情存入 Redis
         threadPoolTaskExecutor.submit(() -> {
+//            try {
+//                Thread.sleep(10000);
+//            } catch (InterruptedException e) {
+//                throw new RuntimeException(e);
+//            }
             String noteDetailJson1 = JsonUtils.toJsonString(findNoteDetailRspVO);
             // 过期时间（保底1天 + 随机秒数，将缓存过期时间打散，防止同一时间大量缓存失效，导致数据库压力太大）
             long expireSeconds = 60*60*24 + RandomUtil.randomInt(60*60*24);
@@ -496,8 +502,9 @@ public class NoteServiceImpl implements NoteService {
 
         // 更新笔记
         log.info("==== needUpdate: {}", needUpdate);
+        NoteDO noteDO = null;
         if (needUpdate){
-            NoteDO noteDO = NoteDO.builder()
+            noteDO = NoteDO.builder()
                     .id(noteId)
                     .title(updateNoteReqVO.getTitle())
                     .imgUris(imgUris)
@@ -526,6 +533,26 @@ public class NoteServiceImpl implements NoteService {
         rocketMQTemplate.syncSend(MQConstants.TOPIC_DELETE_NOTE_LOCAL_CACHE, noteId);
         log.info("====> MQ：删除笔记本地缓存发送成功...");
 
+        // 延迟双删 redis 缓存，缓解缓存一致性问题
+        // TODO： 通过租约机制彻底解决缓存一致性问题
+        Message<String> message = MessageBuilder.withPayload(String.valueOf(noteId)).build();
+
+        rocketMQTemplate.asyncSend(MQConstants.TOPIC_DELAY_DELETE_NOTE_REDIS_CACHE, message,
+                new SendCallback(){
+                    @Override
+                    public void onSuccess(SendResult sendResult) {
+                        log.info("## 延时删除 Redis 笔记缓存消息发送成功...");
+                    }
+
+                    @Override
+                    public void onException(Throwable e) {
+                        log.error("## 延时删除 Redis 笔记缓存消息发送失败...", e);
+                    }
+                },
+                3000,  // 超时时间(毫秒)
+                1  // 延迟级别，1 表示延时 1s
+        );
+
 
 
         return Response.success();
@@ -536,6 +563,182 @@ public class NoteServiceImpl implements NoteService {
                 && !Objects.equals(userId, creatorId)){ // 仅自己可见, 并且访问用户为笔记创建者才能访问，非本人则抛出异常
             throw new BizException(ResponseCodeEnum.NOTE_PRIVATE);
         }
+    }
+
+    public void deleteNoteLocalCache(Long noteId){
+        LOCAL_CACHE.invalidate(noteId);
+    }
+
+
+    /**
+     * 删除数据库中的笔记后，删除本地缓存和redis缓存，并实施redis的延迟双删
+     * @param deleteNoteReqVO
+     * @return
+     */
+    @Override
+    public Response<?> deleteNote(DeleteNoteReqVO deleteNoteReqVO) {
+        Long noteId = deleteNoteReqVO.getNoteId();
+
+        // 逻辑删除数据库数据
+        NoteDO noteDO = NoteDO.builder()
+                .id(noteId)
+                .status(Byte.valueOf(NoteStatusEnum.DELETED.getCode().toString()))
+                .updateTime(LocalDateTime.now())
+                .build();
+        int count = noteDOMapper.updateByPrimaryKeySelective(noteDO);
+
+        if (count == 0){
+            throw new BizException(ResponseCodeEnum.NOTE_NOT_FOUND);
+        }
+
+        // 发送删除本地缓存的通知
+        Message<String> deleteNoteLocalCacheMessage = MessageBuilder.withPayload(String.valueOf(noteId)).build();
+        rocketMQTemplate.asyncSend(MQConstants.TOPIC_DELETE_NOTE_LOCAL_CACHE, deleteNoteLocalCacheMessage,
+                new SendCallback() {
+                    @Override
+                    public void onSuccess(SendResult sendResult) {
+                        log.info("## 延时删除 LocalCache 笔记缓存消息发送成功...");
+                    }
+
+                    @Override
+                    public void onException(Throwable e) {
+                        log.error("## 延时删除 LocalCache 笔记缓存消息发送失败...", e);
+                    }
+                },
+                3000,  // 超时时间(毫秒)
+                1  // 延迟级别，1 表示延时 1s
+        );
+
+        // 发送删除 Redis 缓存的通知
+        Message<String> message = MessageBuilder.withPayload(String.valueOf(noteId)).build();
+        rocketMQTemplate.asyncSend(MQConstants.TOPIC_DELAY_DELETE_NOTE_REDIS_CACHE, message,
+                new SendCallback(){
+                    @Override
+                    public void onSuccess(SendResult sendResult) {
+                        log.info("## 延时删除 Redis 笔记缓存消息发送成功...");
+                    }
+
+                    @Override
+                    public void onException(Throwable e) {
+                        log.error("## 延时删除 Redis 笔记缓存消息发送失败...", e);
+                    }
+                },
+                3000,  // 超时时间(毫秒)
+                1  // 延迟级别，1 表示延时 1s
+        );
+
+        return Response.success();
+    }
+
+    @Override
+    public Response<?> updateNoteVisibleOnlyMe(UpdateNoteVisibleOnlyMeReqVO updateNoteVisibleOnlyMeReqVO) {
+        Long noteId = updateNoteVisibleOnlyMeReqVO.getId();
+        Long userId = LoginUserContextHolder.getUserId();
+        NoteDO noteDO = NoteDO.builder()
+                .id(noteId)
+                .visible(Byte.valueOf(NoteVisibleEnum.PRIVATE.getCode().toString()))
+                .updateTime(LocalDateTime.now())
+                .creatorId(userId)
+                .build();
+        int count = noteDOMapper.updateVisibleOnlyMe(noteDO);
+
+        if (count == 0){
+            throw new BizException(ResponseCodeEnum.NOTE_CANT_VISIBLE_ONLY_ME);
+        }
+
+        // 发送删除本地缓存的通知
+        Message<String> deleteNoteLocalCacheMessage = MessageBuilder.withPayload(String.valueOf(noteId)).build();
+        rocketMQTemplate.asyncSend(MQConstants.TOPIC_DELETE_NOTE_LOCAL_CACHE, deleteNoteLocalCacheMessage,
+                new SendCallback() {
+                    @Override
+                    public void onSuccess(SendResult sendResult) {
+                        log.info("## 延时删除 LocalCache 笔记缓存消息发送成功...");
+                    }
+
+                    @Override
+                    public void onException(Throwable e) {
+                        log.error("## 延时删除 LocalCache 笔记缓存消息发送失败...", e);
+                    }
+                },
+                3000,  // 超时时间(毫秒)
+                1  // 延迟级别，1 表示延时 1s
+        );
+
+        // 发送删除 Redis 缓存的通知
+        Message<String> message = MessageBuilder.withPayload(String.valueOf(noteId)).build();
+        rocketMQTemplate.asyncSend(MQConstants.TOPIC_DELAY_DELETE_NOTE_REDIS_CACHE, message,
+                new SendCallback(){
+                    @Override
+                    public void onSuccess(SendResult sendResult) {
+                        log.info("## 延时删除 Redis 笔记缓存消息发送成功...");
+                    }
+
+                    @Override
+                    public void onException(Throwable e) {
+                        log.error("## 延时删除 Redis 笔记缓存消息发送失败...", e);
+                    }
+                },
+                3000,  // 超时时间(毫秒)
+                1  // 延迟级别，1 表示延时 1s
+        );
+
+        return Response.success();
+    }
+
+
+    @Override
+    public Response<?> updateNoteIsTop(UpdateNoteTopReqVO updateNoteTopReqVO) {
+        Long noteId = updateNoteTopReqVO.getId();
+        Long userId = LoginUserContextHolder.getUserId();
+        NoteDO noteDO = NoteDO.builder()
+                .id(noteId)
+                .visible(Byte.valueOf(NoteVisibleEnum.PRIVATE.getCode().toString()))
+                .updateTime(LocalDateTime.now())
+                .creatorId(userId)
+                .build();
+        int count = noteDOMapper.updateVisibleOnlyMe(noteDO);
+
+        if (count == 0){
+            throw new BizException(ResponseCodeEnum.NOTE_CANT_OPERATE);
+        }
+
+        // 发送删除本地缓存的通知
+        Message<String> deleteNoteLocalCacheMessage = MessageBuilder.withPayload(String.valueOf(noteId)).build();
+        rocketMQTemplate.asyncSend(MQConstants.TOPIC_DELETE_NOTE_LOCAL_CACHE, deleteNoteLocalCacheMessage,
+                new SendCallback() {
+                    @Override
+                    public void onSuccess(SendResult sendResult) {
+                        log.info("## 延时删除 LocalCache 笔记缓存消息发送成功...");
+                    }
+
+                    @Override
+                    public void onException(Throwable e) {
+                        log.error("## 延时删除 LocalCache 笔记缓存消息发送失败...", e);
+                    }
+                },
+                3000,  // 超时时间(毫秒)
+                1  // 延迟级别，1 表示延时 1s
+        );
+
+        // 发送删除 Redis 缓存的通知
+        Message<String> message = MessageBuilder.withPayload(String.valueOf(noteId)).build();
+        rocketMQTemplate.asyncSend(MQConstants.TOPIC_DELAY_DELETE_NOTE_REDIS_CACHE, message,
+                new SendCallback(){
+                    @Override
+                    public void onSuccess(SendResult sendResult) {
+                        log.info("## 延时删除 Redis 笔记缓存消息发送成功...");
+                    }
+
+                    @Override
+                    public void onException(Throwable e) {
+                        log.error("## 延时删除 Redis 笔记缓存消息发送失败...", e);
+                    }
+                },
+                3000,  // 超时时间(毫秒)
+                1  // 延迟级别，1 表示延时 1s
+        );
+
+        return Response.success();
     }
 }
 

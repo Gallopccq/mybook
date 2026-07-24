@@ -22,6 +22,7 @@
         <module>mybook-note</module>
         <module>mybook-oss</module>
         <module>mybook-distributed-id-generator</module>
+        <module>mybook-user-relation</module>
 
 
     </modules>
@@ -93,8 +94,8 @@
         <feign-core.version>13.6</feign-core.version>
         <feign-form.version>3.8.0</feign-form.version>
         <nacos-config.version>0.3.0-RC</nacos-config.version>
-        <rocketmq.version>2.2.3</rocketmq.version>
-
+<!--        <rocketmq.version>2.3.0</rocketmq.version>-->
+<!--        <rocketmq-client.version>5.1.0</rocketmq-client.version>-->
     </properties>
 
     <!-- 在 <build><plugins> 部分添加 -->
@@ -393,12 +394,6 @@
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql-connector-java.version}</version>
                 <scope>compile</scope>
-            </dependency>
-            <!-- Rocket MQ -->
-            <dependency>
-                <groupId>org.apache.rocketmq</groupId>
-                <artifactId>rocketmq-spring-boot-starter</artifactId>
-                <version>${rocketmq.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.minio</groupId>
