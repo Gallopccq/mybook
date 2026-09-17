@@ -360,7 +360,7 @@ public class NoteServiceImpl implements NoteService {
 
         Long creatorId = LoginUserContextHolder.getUserId();
         if (Objects.isNull(creatorId)){
-            throw new BizException(ResponseCodeEnum.USER_NOT_FOUND);
+            throw new BizException(ResponseCodeEnum.USER_NOT_LOGIN);
         }
 
         NoteDO noteDO = NoteDO.builder()
@@ -425,8 +425,20 @@ public class NoteServiceImpl implements NoteService {
         NoteDO noteDO1 = noteDOMapper.selectByPrimaryKey(noteId);
         boolean needUpdate = false;
         if (Objects.isNull(noteDO1)){
-            needUpdate = true;
+            throw new BizException(ResponseCodeEnum.NOTE_NOT_FOUND);
         }
+
+        // 判断角色是否登陆
+        Long currUserId = LoginUserContextHolder.getUserId();
+        if (Objects.isNull(currUserId)){
+            throw new BizException(ResponseCodeEnum.USER_NOT_LOGIN);
+        }
+
+        // 判断权限：非笔记发布者不允许修改笔记权限
+        if (!Objects.equals(currUserId, noteDO1.getCreatorId())){
+            throw new BizException(ResponseCodeEnum.NOTE_CANT_OPERATE);
+        }
+
 
         // 笔记类型
         NoteTypeEnum noteTypeEnum = NoteTypeEnum.valueOf(updateNoteReqVO.getType());
@@ -579,6 +591,23 @@ public class NoteServiceImpl implements NoteService {
     public Response<?> deleteNote(DeleteNoteReqVO deleteNoteReqVO) {
         Long noteId = deleteNoteReqVO.getNoteId();
 
+        // 校验用户是否登陆
+        Long currUserId = LoginUserContextHolder.getUserId();
+        if (Objects.isNull(currUserId)){
+            throw new BizException(ResponseCodeEnum.USER_NOT_LOGIN);
+        }
+
+        NoteDO selectNoteDO = noteDOMapper.selectByPrimaryKey(noteId);
+        // 判断笔记是否存在
+        if (Objects.isNull(selectNoteDO)){
+            throw new BizException(ResponseCodeEnum.NOTE_NOT_FOUND);
+        }
+
+        // 判断权限：非笔记发布者不允许删除笔记
+        if (!Objects.equals(currUserId, selectNoteDO.getCreatorId())){
+            throw new BizException(ResponseCodeEnum.NOTE_CANT_OPERATE);
+        }
+
         // 逻辑删除数据库数据
         NoteDO noteDO = NoteDO.builder()
                 .id(noteId)
@@ -634,6 +663,24 @@ public class NoteServiceImpl implements NoteService {
     public Response<?> updateNoteVisibleOnlyMe(UpdateNoteVisibleOnlyMeReqVO updateNoteVisibleOnlyMeReqVO) {
         Long noteId = updateNoteVisibleOnlyMeReqVO.getId();
         Long userId = LoginUserContextHolder.getUserId();
+        // 校验用户是否登陆
+        if (Objects.isNull(userId)){
+            throw new BizException(ResponseCodeEnum.USER_NOT_LOGIN);
+        }
+
+        NoteDO selectNoteDO = noteDOMapper.selectByPrimaryKey(noteId);
+        // 判断笔记是否存在
+        if (Objects.isNull(selectNoteDO)){
+            throw new BizException(ResponseCodeEnum.NOTE_NOT_FOUND);
+        }
+
+        // 判断权限：非笔记发布者不允许删除笔记
+        if (!Objects.equals(userId, selectNoteDO.getCreatorId())){
+            throw new BizException(ResponseCodeEnum.NOTE_CANT_OPERATE);
+        }
+
+
+
         NoteDO noteDO = NoteDO.builder()
                 .id(noteId)
                 .visible(Byte.valueOf(NoteVisibleEnum.PRIVATE.getCode().toString()))

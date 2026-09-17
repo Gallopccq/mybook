@@ -1,8 +1,10 @@
 package com.mybook.mybook.user.biz.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import com.mybook.framework.biz.context.holder.LoginUserContextHolder;
 import com.mybook.framework.common.enums.DeletedEnum;
 import com.mybook.framework.common.enums.StatusEnum;
@@ -24,10 +26,7 @@ import com.mybook.mybook.user.biz.model.vo.UpdateUserInfoReqVO;
 import com.mybook.mybook.user.biz.rpc.DistributedIdGeneratorRpcService;
 import com.mybook.mybook.user.biz.rpc.OssRpcService;
 import com.mybook.mybook.user.biz.service.UserService;
-import com.mybook.mybook.user.dto.req.FindUserByIdReqDTO;
-import com.mybook.mybook.user.dto.req.FindUserByPhoneReqDTO;
-import com.mybook.mybook.user.dto.req.RegisterUserReqDTO;
-import com.mybook.mybook.user.dto.req.UpdateUserPasswordReqDTO;
+import com.mybook.mybook.user.dto.req.*;
 import com.mybook.mybook.user.dto.resp.FindUserByIdRspDTO;
 import com.mybook.mybook.user.dto.resp.FindUserByPhoneRspDTO;
 
@@ -35,7 +34,10 @@ import cn.hutool.core.util.RandomUtil;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.dao.DataAccessException;
+import org.springframework.data.redis.core.RedisOperations;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.SessionCallback;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,8 +47,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -269,6 +273,7 @@ public class UserServiceImpl  implements UserService {
             .id(id)
             .nickName(userDO.getNickname())
             .avatar(userDO.getAvatar())
+            .introduction(userDO.getIntroduction())
             .build();
 
         // 异步将用户信息存入 Redis 缓存，提升响应速度
@@ -315,6 +320,7 @@ public class UserServiceImpl  implements UserService {
             .id(id)
             .nickName(userDO.getNickname())
             .avatar(userDO.getAvatar())
+            .introduction(userDO.getIntroduction())
             .build();
 
         // 异步将用户信息存入 Redis 缓存，提升响应速度
@@ -340,11 +346,96 @@ public class UserServiceImpl  implements UserService {
             .id(id)
             .nickName(userDO.getNickname())
             .avatar(userDO.getAvatar())
+            .introduction(userDO.getIntroduction())
             .build();
 
         return Response.success(findUserByIdRspDTO);
     }
-    
-    
 
+    @Override
+    public Response<List<FindUserByIdRspDTO>> findByIds(FindUsersByIdsReqDTO findUsersByIdsReqDTO) {
+        // 用户 ID 集合
+        List<Long> userIds = findUsersByIdsReqDTO.getIds();
+
+        // 构建 Redis Key 集合
+        List<String> userIdsRedisKey = userIds.stream()
+                .map(RedisKeyConstants::buildUserInfoKey)
+                .toList();
+
+        // 先从 Redis 中查，multiGet 批量查询提升性能
+        List<String> userInfosRedisValues = redisTemplate.opsForValue().multiGet(userIdsRedisKey);
+
+        // 如果缓存不为空，过滤掉为空的数据
+        if (Objects.nonNull(userInfosRedisValues) && CollUtil.isNotEmpty(userInfosRedisValues)){
+            userInfosRedisValues = userInfosRedisValues.stream().filter(Objects::nonNull).toList();
+        }
+
+        // 返参
+        List<FindUserByIdRspDTO> findUserByIdRspDTOS = Lists.newArrayList();
+
+        // 将过滤掉的集合转化为 DTO 返参实体类
+        if (Objects.nonNull(userInfosRedisValues) && CollUtil.isNotEmpty(userInfosRedisValues)) {
+            findUserByIdRspDTOS = userInfosRedisValues.stream()
+                    .map(value -> JsonUtils.parseObject(String.valueOf(value), FindUserByIdRspDTO.class))
+                    .collect(Collectors.toList());
+        }
+
+        // 如果被查询的用户信息，都在 Redis 中，直接返回
+        if (CollUtil.size(findUserByIdRspDTOS) == CollUtil.size(userIds)){
+            return Response.success(findUserByIdRspDTOS);
+        }
+
+        // 另外两种情况：缓存中没有用户数据，或者缓存中数据不全，需要从数据库中补
+        // 筛选出缓存中没有的用户数据，去数据库查
+        List<Long> userIdsNeedQuery = null;
+        if (CollUtil.isNotEmpty(findUserByIdRspDTOS)){
+            Map<Long, FindUserByIdRspDTO> map = findUserByIdRspDTOS.stream()
+                    .collect(Collectors.toMap(FindUserByIdRspDTO::getId, p -> p));
+            userIdsNeedQuery = userIds.stream()
+                    .filter(id -> Objects.nonNull(map.get(id)))
+                    .toList();
+        } else {
+            userIdsNeedQuery = userIds;
+        }
+
+        // 从数据库中批量查询
+        List<UserDO> userDOS = userDOMapper.selectByIds(userIdsNeedQuery);
+        List<FindUserByIdRspDTO> findUserByIdRspDTOS2 = null;
+
+        // 若数据库查询的记录不为空
+        if (CollUtil.isNotEmpty(userDOS)){
+            // DO to DTO
+            findUserByIdRspDTOS2 = userDOS.stream()
+                    .map(userDO -> FindUserByIdRspDTO.builder()
+                            .id(userDO.getId())
+                            .nickName(userDO.getNickname())
+                            .avatar(userDO.getAvatar())
+                            .introduction(userDO.getIntroduction())
+                            .build())
+                    .toList();
+            // TODO: 异步线程将用户信息同步到 Redis 中，只需同步数据库查询的数据
+            List<FindUserByIdRspDTO> finalFindUserByIdRspDTOS = findUserByIdRspDTOS2;
+            taskExecutor.submit(() -> {
+                redisTemplate.executePipelined(new SessionCallback<>() {
+                    @Override
+                    public Object execute(RedisOperations operations){
+                        for (FindUserByIdRspDTO findUserByIdRspDTO : finalFindUserByIdRspDTOS){
+                            String userInfoRedisKey = RedisKeyConstants.buildUserInfoKey(findUserByIdRspDTO.getId());
+                            long expireSeconds = 60*60*24 + RandomUtil.randomInt(60*60*24);
+                            operations.opsForValue().set(userInfoRedisKey, JsonUtils.toJsonString(findUserByIdRspDTO), expireSeconds, TimeUnit.SECONDS);
+                        }
+                        return null;
+                    }
+                });
+            });
+
+        }
+
+        // 合并数据
+        if (Objects.nonNull(findUserByIdRspDTOS2) && CollUtil.isNotEmpty(findUserByIdRspDTOS2)){
+            findUserByIdRspDTOS.addAll(findUserByIdRspDTOS2);
+        }
+
+        return Response.success(findUserByIdRspDTOS);
+    }
 }

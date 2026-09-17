@@ -8,3 +8,9 @@ spring:
 mybatis:
   # MyBatis xml 配置文件路径
   mapper-locations: classpath:/mapper/**/*.xml
+
+mq-consumer: # MQ 消费者
+  follow-unfollow: # 关注、取关
+    rate-limit: 1 # 每秒限流阈值
+
+

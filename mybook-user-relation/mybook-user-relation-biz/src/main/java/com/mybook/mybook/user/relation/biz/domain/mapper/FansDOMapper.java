@@ -1,9 +1,12 @@
 package com.mybook.mybook.user.relation.biz.domain.mapper;
 
 import com.mybook.mybook.user.relation.biz.domain.dataobject.FansDO;
+import org.apache.ibatis.annotations.Param;
 
 public interface FansDOMapper {
     int deleteByPrimaryKey(Long id);
+
+    int deleteByUserIdAndFansUserId(@Param("userId") Long userId, @Param("fansUserId") Long fansUserId);
 
     int insert(FansDO record);
 
@@ -14,4 +17,6 @@ public interface FansDOMapper {
     int updateByPrimaryKeySelective(FansDO record);
 
     int updateByPrimaryKey(FansDO record);
+
+    Long selectCountByUserId(Long userId);
 }

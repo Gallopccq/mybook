@@ -4,10 +4,7 @@ import com.mybook.framework.biz.operationlog.aspect.ApiOperationLog;
 import com.mybook.framework.common.response.Response;
 import com.mybook.mybook.user.biz.model.vo.UpdateUserInfoReqVO;
 import com.mybook.mybook.user.biz.service.UserService;
-import com.mybook.mybook.user.dto.req.FindUserByIdReqDTO;
-import com.mybook.mybook.user.dto.req.FindUserByPhoneReqDTO;
-import com.mybook.mybook.user.dto.req.RegisterUserReqDTO;
-import com.mybook.mybook.user.dto.req.UpdateUserPasswordReqDTO;
+import com.mybook.mybook.user.dto.req.*;
 import com.mybook.mybook.user.dto.resp.FindUserByIdRspDTO;
 
 import jakarta.annotation.Resource;
@@ -15,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -70,5 +69,11 @@ public class UserController {
     @ApiOperationLog(description = "查询用户信息")
     public Response<FindUserByIdRspDTO> findByIdWithRedis(@RequestBody @Validated FindUserByIdReqDTO findUserByIdReqDTO) {
         return userService.findByIdWithRedis(findUserByIdReqDTO);
+    }
+
+    @PostMapping("/findByIds")
+    @ApiOperationLog(description = "批量查询用户信息")
+    public Response<List<FindUserByIdRspDTO>> findByIds(@RequestBody @Validated FindUsersByIdsReqDTO findUsersByIdsReqDTO){
+        return userService.findByIds(findUsersByIdsReqDTO);
     }
 }

@@ -214,6 +214,12 @@ create table `t_following` (
     key `idx_user_id` (`user_id`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='用户关注表';
 
+-- 为 t_following 表添加联合唯一索引，实现关注操作的幂等性
+ALTER TABLE t_following ADD UNIQUE uk_user_id_following_user_id(user_id, following_user_id);
+
+
+
+
 create table `t_fans` (
     `id` bigint unsigned not null auto_increment comment '主键ID',
     `user_id` bigint unsigned not null comment '用户ID',

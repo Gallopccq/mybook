@@ -2,15 +2,14 @@ package com.mybook.mybook.user.api;
 
 import com.mybook.framework.common.response.Response;
 import com.mybook.mybook.user.constant.ApiConstants;
-import com.mybook.mybook.user.dto.req.FindUserByIdReqDTO;
-import com.mybook.mybook.user.dto.req.FindUserByPhoneReqDTO;
-import com.mybook.mybook.user.dto.req.RegisterUserReqDTO;
-import com.mybook.mybook.user.dto.req.UpdateUserPasswordReqDTO;
+import com.mybook.mybook.user.dto.req.*;
 import com.mybook.mybook.user.dto.resp.FindUserByIdRspDTO;
 import com.mybook.mybook.user.dto.resp.FindUserByPhoneRspDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import java.util.List;
 
 @FeignClient(name = ApiConstants.SERVICE_NAME)
 public interface UserFeignApi {
@@ -33,5 +32,8 @@ public interface UserFeignApi {
 
     @PostMapping(value = PREFIX + "/findByIdWithDatabase")
     Response<FindUserByIdRspDTO> findByIdWithDatabase(@RequestBody FindUserByIdReqDTO findUserByIdReqDTO);
+
+    @PostMapping(value = PREFIX + "/findByIds")
+    Response<List<FindUserByIdRspDTO>> findByIds(@RequestBody FindUsersByIdsReqDTO findUsersByIdsReqDTO);
 }
 

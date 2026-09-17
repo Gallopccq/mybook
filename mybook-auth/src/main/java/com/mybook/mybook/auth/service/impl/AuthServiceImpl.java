@@ -86,7 +86,6 @@ public class AuthServiceImpl implements AuthService {
                 // 构建redis key
                 String key = RedisKeyConstants.buildVerificationCodeKey(phone);
                 String sendCode = (String)redisTemplate.opsForValue().get(key);
-//                log.info(redisTemplate.getKeySerializer().toString());
 
                 // 判断key是否匹配
                 if (!StringUtils.equals(verificationCode, sendCode)) {

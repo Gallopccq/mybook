@@ -1,0 +1,18 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="MyBookAuthApplication-1" type="Application" factoryName="Application">
+    <envs>
+      <env name="--server.port" value="8077" />
+    </envs>
+    <option name="MAIN_CLASS_NAME" value="com.mybook.mybook.auth.MyBookAuthApplication" />
+    <module name="mybook-auth" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="com.mybook.mybook.auth.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
