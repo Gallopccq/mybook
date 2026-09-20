@@ -1,20 +1,4 @@
 #!/bin/bash
-APP_PURE=mybook-auth
-APP_NAME=target/mybook-auth*.jar
-
-pid=$(ps -ef | grep $APP_NAME | grep -v grep | awk '{print $2}')
-case "$1" in
- start)
-   cd ../$APP_PURE && mvn package
-   nohup java -jar $APP_NAME > $APP_PURE.log 2>&1 &
-   ;;
- stop)
-   [ -n "$pid" ] && kill -9 $pid
-   ;;
- restart)
-   [ -n "$pid" ] && kill -9 $pid
-   cd ../$APP_PURE && mvn package
-   nohup java -jar $APP_NAME > $APP_PURE.log 2>&1 &
-   ;;
-esac
-
+# 兼容旧入口：实际逻辑已统一在 run.sh
+# 用法: run-mybook-auth.sh [start|stop|restart|status|build]
+exec "$(dirname "$0")/run.sh" mybook-auth "$@"
