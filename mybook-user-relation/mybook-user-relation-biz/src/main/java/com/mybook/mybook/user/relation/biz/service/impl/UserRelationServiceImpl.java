@@ -374,7 +374,7 @@ public class UserRelationServiceImpl implements UserRelationService{
             long expireSeconds = 60*60*24 + RandomUtil.randomInt(60*60*24);
             Object[] luaArgs = buildLuaArgs(followingDOS, expireSeconds);
             DefaultRedisScript<Long> script = new DefaultRedisScript<>();
-            script.setScriptSource(new ResourceScriptSource(new ClassPathResource("/lua/following_batch_add_and_expire.lua")));
+            script.setScriptSource(new ResourceScriptSource(new ClassPathResource("/lua/follow_batch_add_and_expire.lua")));
             script.setResultType(Long.class);
             redisTemplate.execute(script, Collections.singletonList(followingListRedisKey), luaArgs);
         }
