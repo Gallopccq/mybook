@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/id")
-public class LeafController {
+public class
+LeafController {
     private Logger logger = LoggerFactory.getLogger(LeafController.class);
 
     @Autowired
