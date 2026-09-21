@@ -21,13 +21,13 @@ public class SaTokenConfigure {
                 // 拦截地址
                 .addInclude("/**")
                 // 开放地址
-//                .addExclude("/favicon.ico")
+                .addExclude("/actuator/health")
                 // 鉴权方法: 每次访问进入
                 .setAuth(obj -> {
                     SaRouter.match("/**")
                             .notMatch("/auth/verification/code/send")
                             .notMatch("/auth/login")
-                            .notMatch("/actuator")
+//                            .notMatch("/actuator")
                             .check(r -> StpUtil.checkLogin());
                     SaRouter.match("/auth/logout")
                             .check(r -> StpUtil.checkRole("admin"));
