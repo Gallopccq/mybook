@@ -40,7 +40,6 @@ DRY_RUN="${DRY_RUN:-0}"
 declare -A MODULES=(
   [gateway]="mybook-gateway"
   [auth]="mybook-auth"
-  [server]="mybook-server"
   [user]="mybook-user/mybook-user-biz"
   [note]="mybook-note/mybook-note-biz"
   [oss]="mybook-oss/mybook-oss-biz"
@@ -54,7 +53,7 @@ declare -A ALIASES=(
 )
 
 MODULE_ORDER=(
-  gateway auth server user note oss kv user-relation distributed-id-generator
+  gateway auth user note oss kv user-relation distributed-id-generator
 )
 
 ENABLED=1

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.mybook</groupId>
+    <artifactId>mybook-user-relation</artifactId>
+    <version>1.0.0</version>
+  </parent>
+  <groupId>com.mybook</groupId>
+  <artifactId>mybook-user-relation-api</artifactId>
+  <version>1.0.0</version>
+  <properties>
+    <maven.compiler.target>${java.version}</maven.compiler.target>
+    <maven.compiler.source>${java.version}</maven.compiler.source>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>com.mybook</groupId>
+      <artifactId>mybook-spring-boot-starter-biz-context</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.mybook.mybook.distributed.id.generator</groupId>
+      <artifactId>mybook-distributed-id-generator-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.mybook</groupId>
+      <artifactId>mybook-oss-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.mybook</groupId>
+      <artifactId>mybook-user-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.mybook</groupId>
+      <artifactId>mybook-spring-boot-starter-biz-operationlog</artifactId>
+    </dependency>
+  </dependencies>
+</project>

@@ -13,7 +13,6 @@
     <description>我的小红书系统</description>
 
     <modules>
-        <module>mybook-server</module>
         <module>mybook-auth</module>
         <module>mybook-framework</module>
         <module>mybook-kv</module>
