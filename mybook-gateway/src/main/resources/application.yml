@@ -73,3 +73,9 @@ sa-token:
   token-style: uuid
   # 是否输出操作日志
   is-log: true
+
+############## 跨域配置 ##############
+# 允许跨源访问的前端源（Pattern 写法，多个用逗号分隔，* 表示不限制），对应 config/CorsConfig
+mybook:
+  cors:
+    allowed-origin-patterns: "*"
