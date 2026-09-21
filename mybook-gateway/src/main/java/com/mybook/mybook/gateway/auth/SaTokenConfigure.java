@@ -27,7 +27,7 @@ public class SaTokenConfigure {
                     SaRouter.match("/**")
                             .notMatch("/auth/verification/code/send")
                             .notMatch("/auth/login")
-                            .notMatch("/actuators")
+                            .notMatch("/actuator")
                             .check(r -> StpUtil.checkLogin());
                     SaRouter.match("/auth/logout")
                             .check(r -> StpUtil.checkRole("admin"));
