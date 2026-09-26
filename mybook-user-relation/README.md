@@ -31,3 +31,37 @@ user relation
   "id": 100
 }
 ```
+/relation/fans/list:
+```json
+{
+  "userId": 27,
+  "pageNo": 1
+}
+```
+```json
+{
+  "success": true,
+  "message": null,
+  "errorCode": null,
+  "data": [
+    {
+      "userId": 101, // 用户ID
+      "avatar": "http://127.0.0.1:9000/xiaohashu/f22e21fb0c144c088bd20bc616916ff3.jpg", // 头像
+      "nickname": "犬小哈", // 昵称
+      "fansTotal": 0, // 粉丝总量
+      "noteTotal": 0 // 笔记总量
+    },
+    {
+      "userId": 28,
+      "avatar": null,
+      "nickname": "小红薯10100",
+      "fansTotal": 0,
+      "noteTotal": 0
+    }
+  ],
+  "pageNo": 1,
+  "totalCount": 3,
+  "pageSize": 10,
+  "totalPage": 1
+}
+```

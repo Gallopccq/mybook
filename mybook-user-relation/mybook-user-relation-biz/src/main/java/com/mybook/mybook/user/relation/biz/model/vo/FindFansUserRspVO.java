@@ -21,4 +21,5 @@ public class FindFansUserRspVO {
     private String avatar;
     private long followerTotal;
     private long noteTotal;
+    private String introduction;
 }

@@ -33,7 +33,7 @@
   </select>
   <select id="selectPageListByUserId" parameterType="map" resultMap="BaseResultMap">
     select
-      user_id, following_user_id, create_time
+      <include refid="Base_Column_List"/>
     from t_following
     where user_id = #{userId} order by create_time desc limit #{offset}, #{limit}
   </select>

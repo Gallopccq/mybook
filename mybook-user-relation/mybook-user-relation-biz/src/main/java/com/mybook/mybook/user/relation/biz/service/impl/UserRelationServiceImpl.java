@@ -12,6 +12,7 @@ import com.mybook.framework.common.util.JsonUtils;
 import com.mybook.mybook.user.dto.resp.FindUserByIdRspDTO;
 import com.mybook.mybook.user.relation.biz.constant.MQConstants;
 import com.mybook.mybook.user.relation.biz.constant.RedisKeyConstants;
+import com.mybook.mybook.user.relation.biz.domain.dataobject.FansDO;
 import com.mybook.mybook.user.relation.biz.domain.dataobject.FollowingDO;
 import com.mybook.mybook.user.relation.biz.domain.mapper.FansDOMapper;
 import com.mybook.mybook.user.relation.biz.domain.mapper.FollowingDOMapper;
@@ -29,6 +30,7 @@ import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
@@ -37,10 +39,8 @@ import org.springframework.scripting.support.ResourceScriptSource;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -121,7 +121,7 @@ public class UserRelationServiceImpl implements UserRelationService{
                 // 如何判断呢？可以从计数服务获取用户的粉丝数，目前计数服务还没创建，则暂时采用统一的过期策略
                 redisTemplate.execute(script2, Collections.singletonList(follwingKey), followerId, timestamp, expireSeconds);
             } else { // 若记录不为空，则将关注关系数据全量同步到 Redis 中，并设置过期时间；
-                Object[] luaArgs = buildLuaArgs(followingDOS, expireSeconds);
+                Object[] luaArgs = buildFollowingLuaArgs(followingDOS, expireSeconds);
 
                 // 执行 Lua 脚本，批量同步关注关系数据到 Redis 中
                 DefaultRedisScript<Long> script3 = new DefaultRedisScript<>();
@@ -169,7 +169,20 @@ public class UserRelationServiceImpl implements UserRelationService{
         return Response.success();
     }
 
-    private Object[] buildLuaArgs(List<FollowingDO> followingDOS, long expireSeconds) {
+    private Object[] buildFansLuaArgs(List<FansDO> fansDOS, long expireSeconds){
+        int argLength = fansDOS.size() * 2 + 1;
+        Object[] luaArgs = new Object[argLength];
+        int i=0;
+        for (FansDO fansDO : fansDOS){
+            luaArgs[i] = DateUtils.localDateTime2Timestamp(fansDO.getCreateTime());
+            luaArgs[i+1] = fansDO.getFansUserId();
+            i+=2;
+        }
+        luaArgs[argLength - 1] = expireSeconds;
+        return luaArgs;
+    }
+
+    private Object[] buildFollowingLuaArgs(List<FollowingDO> followingDOS, long expireSeconds) {
         int argsLength = followingDOS.size() * 2 + 1; // 每个关注关系有 2 个参数（score 和 value），再加一个过期时间
         Object[] luaArgs = new Object[argsLength];
 
@@ -372,7 +385,7 @@ public class UserRelationServiceImpl implements UserRelationService{
         if (CollUtil.isNotEmpty(followingDOS)){
             String followingListRedisKey = RedisKeyConstants.buildFollowingKey(userId);
             long expireSeconds = 60*60*24 + RandomUtil.randomInt(60*60*24);
-            Object[] luaArgs = buildLuaArgs(followingDOS, expireSeconds);
+            Object[] luaArgs = buildFollowingLuaArgs(followingDOS, expireSeconds);
             DefaultRedisScript<Long> script = new DefaultRedisScript<>();
             script.setScriptSource(new ResourceScriptSource(new ClassPathResource("/lua/follow_batch_add_and_expire.lua")));
             script.setResultType(Long.class);
@@ -426,7 +439,10 @@ public class UserRelationServiceImpl implements UserRelationService{
         // 当前分页所有粉丝 ID
         List<Long> fansIds = Lists.newArrayList();
 
+        // 先查 redis ，若没有则查数据库
         if (Objects.nonNull(total) && total > 0) { // reids 中有数据
+            /* 查 redis 中是否存储了粉丝列表的数据，按照分页查询：
+             */
             // 计算 总页数
             long pageTotal = PageResponse.getTotalPage(total, limit);
             // 页码检查
@@ -435,31 +451,52 @@ public class UserRelationServiceImpl implements UserRelationService{
             Set<Object> fansIdsSet = redisTemplate.opsForZSet().reverseRangeByScore(fansRedisKey, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, pageNo, limit);
             if (CollUtil.isNotEmpty(fansIdsSet)) {
                 fansIds = fansIdsSet.stream().map(obj -> Long.valueOf(obj.toString())).toList();
-
             }
 
         } else { // 查数据库
-            // 计算总页数
-
+            /* 若redis中无数据，则从数据库中查询数据，并将数据缓存到 redis 中。
+            * */
+            // 查询总页数
+            // 通过 FansDOMapper 的 selectCountByUserId 得到用户的粉丝数
+            total = fansDOMapper.selectCountByUserId(userId);
+            long pageTotal = PageResponse.getTotalPage(total, limit);
             // 页码检查
-
+            if (pageNo > pageTotal) return PageResponse.success(null, total, limit);
             // 获取当前分页所有粉丝的 ID
+            List<FansDO> fansDOS = fansDOMapper.selectPageListByUserId(userId, pageNo, limit);
+            if (CollUtil.isEmpty(fansDOS)) {
+                // 若查询结果为空，用null填入 redis
+                fansDOS = null;
+            }
+            // 缓存数据到 redis 中，若查询结果为空，也放入 redis 中，防止恶意攻击。
+            Set<ZSetOperations.TypedTuple<Object>> tuples = new HashSet<>();
+            long expireSeconds = 60 * 60 * 24 + RandomUtil.randomInt(60 * 60 * 24);
+            fansDOS.stream().forEach(fansDO -> {
+                Long fansId = fansDO.getFansUserId();
+                Double timestamp = Double.valueOf(String.valueOf(DateUtils.localDateTime2Timestamp(fansDO.getCreateTime())));
+                tuples.add(ZSetOperations.TypedTuple.of(fansId, timestamp));
+            });
+            // 这里可以优化为lua脚本: fans_batch_add_and_expire.lua
+            redisTemplate.opsForZSet().add(fansRedisKey, tuples);
+            redisTemplate.expire(fansRedisKey, expireSeconds, TimeUnit.SECONDS);
 
+            fansIds = fansDOS.stream().map(fansDO -> fansDO.getFansUserId()).toList();
         }
 
-
-
-        // 先查 redis ，若没有则查数据库
-
-
         // 查询所有用户信息，通过userRpcService，信息需要：用户昵称，用户头像
-
-
-        // 通过 FansDOMapper 的 selectCountByUserId 得到用户的粉丝数
-
+        List<FindUserByIdRspDTO> findUserByIdRspDTOS = null;
+        if (CollUtil.isNotEmpty(fansIds)) {
+            findUserByIdRspDTOS = userRpcService.findByIds(fansIds);
+        }
         // TODO： 获取用户的笔记总数
-
-        // TODO： 获取用户的是否已关注信息
+        findUserByIdRspDTOS.stream().forEach(findUserByIdRspDTO -> {
+            FindFansUserRspVO findFansUserRspVO = FindFansUserRspVO.builder()
+                    .userId(findUserByIdRspDTO.getId())
+                    .avatar(findUserByIdRspDTO.getAvatar())
+                    .nickName(findUserByIdRspDTO.getNickName())
+                    .introduction(findUserByIdRspDTO.getIntroduction())
+                    .build();
+        });
 
         return PageResponse.success(findFansUserRspVOS, pageNo, total);
     }

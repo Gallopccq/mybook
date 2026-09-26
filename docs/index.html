@@ -1,0 +1,1915 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>mybook · 内容设计与设计原理</title>
+<style>
+:root{
+  --bg:#0d0e12; --bg-soft:#12141a; --panel:#171a21; --panel-2:#1d212b;
+  --border:#282d3a; --border-soft:#20242e;
+  --text:#e7e9ef; --text-2:#b9bfcd; --muted:#868d9e;
+  --accent:#ff2442; --accent-soft:rgba(255,36,66,.12);
+  --ok:#3ddc97; --warn:#ffb454; --info:#59a6ff; --purple:#a98bfa; --cyan:#4fd1c5;
+  --radius:14px; --radius-sm:9px;
+  --shadow:0 8px 28px rgba(0,0,0,.38);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:"Segoe UI","PingFang SC","Microsoft YaHei","Hiragino Sans GB",system-ui,-apple-system,sans-serif;
+  font-size:15px; line-height:1.72; -webkit-font-smoothing:antialiased;
+}
+a{color:inherit}
+code,kbd,pre,.mono{font-family:"JetBrains Mono","Cascadia Mono",Consolas,"Courier New",monospace}
+code{background:rgba(255,255,255,.06);border:1px solid var(--border-soft);border-radius:5px;padding:1px 6px;font-size:.86em;color:#ffc7d1}
+pre{background:#0a0b0f;border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 16px;overflow:auto;font-size:12.5px;line-height:1.62}
+pre code{background:none;border:0;padding:0;color:#c9d1e4}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#2c3140;border-radius:6px}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ---------- 布局 ---------- */
+.layout{display:grid;grid-template-columns:264px minmax(0,1fr);gap:0;max-width:1560px;margin:0 auto}
+.sidebar{
+  position:sticky;top:0;height:100vh;overflow-y:auto;padding:26px 16px 40px;
+  border-right:1px solid var(--border-soft);background:var(--bg-soft);
+}
+.brand{display:flex;align-items:center;gap:10px;padding:0 10px 18px;margin-bottom:14px;border-bottom:1px solid var(--border-soft)}
+.brand .logo{
+  width:34px;height:34px;border-radius:10px;flex:0 0 34px;
+  background:linear-gradient(135deg,var(--accent),#ff5f7a);
+  display:grid;place-items:center;font-weight:700;font-size:15px;color:#fff;
+  box-shadow:0 4px 14px rgba(255,36,66,.35)
+}
+.brand b{display:block;font-size:15px;letter-spacing:.3px}
+.brand span{display:block;font-size:11.5px;color:var(--muted);letter-spacing:.4px}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav-title{font-size:11px;text-transform:uppercase;letter-spacing:1.1px;color:#5d6473;margin:16px 10px 7px}
+.nav a{
+  display:flex;align-items:center;gap:9px;padding:8px 11px;border-radius:var(--radius-sm);
+  text-decoration:none;color:var(--text-2);font-size:13.5px;transition:.16s;border-left:2px solid transparent
+}
+.nav a:hover{background:var(--panel);color:var(--text)}
+.nav a.active{background:var(--accent-soft);color:#fff;border-left-color:var(--accent)}
+.nav a .idx{font-size:11px;color:#5d6473;font-variant-numeric:tabular-nums;min-width:16px}
+.nav a.active .idx{color:var(--accent)}
+.content{padding:38px 44px 120px;min-width:0}
+
+/* ---------- 通用块 ---------- */
+.hero{
+  background:
+    radial-gradient(900px 320px at 8% -10%,rgba(255,36,66,.16),transparent 62%),
+    radial-gradient(700px 300px at 96% 0%,rgba(89,166,255,.09),transparent 60%),
+    var(--panel);
+  border:1px solid var(--border);border-radius:18px;padding:34px 36px;margin-bottom:34px
+}
+.hero .kicker{color:var(--accent);font-size:12.5px;letter-spacing:2px;text-transform:uppercase;font-weight:600}
+.hero h1{margin:10px 0 12px;font-size:33px;line-height:1.28;letter-spacing:-.4px}
+.hero p{margin:0;color:var(--text-2);max-width:960px}
+.stats{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+.stat{background:rgba(255,255,255,.035);border:1px solid var(--border);border-radius:11px;padding:11px 16px;min-width:104px}
+.stat b{display:block;font-size:21px;color:#fff;letter-spacing:-.3px}
+.stat span{font-size:11.5px;color:var(--muted)}
+
+section{margin-bottom:56px;scroll-margin-top:24px}
+h2{
+  font-size:23px;margin:0 0 6px;letter-spacing:-.2px;display:flex;align-items:center;gap:12px;flex-wrap:wrap
+}
+h2 .num{
+  font-size:12px;font-weight:700;color:var(--accent);background:var(--accent-soft);
+  border:1px solid rgba(255,36,66,.3);border-radius:6px;padding:2px 8px;letter-spacing:1px
+}
+h3{font-size:16.5px;margin:30px 0 12px;color:#fff;display:flex;align-items:center;gap:9px}
+h3::before{content:"";width:3px;height:15px;border-radius:2px;background:var(--accent);flex:0 0 3px}
+h4{font-size:14px;margin:20px 0 9px;color:var(--text);letter-spacing:.2px}
+.lead{color:var(--text-2);margin:0 0 20px;max-width:1000px}
+p{margin:0 0 12px}
+ul,ol{margin:0 0 12px;padding-left:22px}
+li{margin:5px 0}
+li>code{white-space:nowrap}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:20px 22px;margin-bottom:16px}
+.card.tight{padding:16px 18px}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(340px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(196px,1fr))}
+.muted{color:var(--muted)}
+.small{font-size:12.8px}
+.tiny{font-size:11.8px;color:var(--muted)}
+.mono-key{font-family:"JetBrains Mono",Consolas,monospace;font-size:12.3px;color:#8fd4ff}
+
+/* ---------- 标签 ---------- */
+.tag{
+  display:inline-block;font-size:11.5px;padding:2px 9px;border-radius:20px;
+  border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--text-2);
+  margin:2px 4px 2px 0;white-space:nowrap
+}
+.tag.red{border-color:rgba(255,36,66,.42);background:var(--accent-soft);color:#ff8b9c}
+.tag.ok{border-color:rgba(61,220,151,.34);background:rgba(61,220,151,.1);color:#7fe9bd}
+.tag.warn{border-color:rgba(255,180,84,.34);background:rgba(255,180,84,.1);color:#ffcd85}
+.tag.info{border-color:rgba(89,166,255,.34);background:rgba(89,166,255,.1);color:#9ccbff}
+.tag.purple{border-color:rgba(169,139,250,.34);background:rgba(169,139,250,.1);color:#c8b4ff}
+.tag.cyan{border-color:rgba(79,209,197,.34);background:rgba(79,209,197,.1);color:#8ee3db}
+
+/* ---------- 表格 ---------- */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius);background:var(--panel)}
+table{width:100%;border-collapse:collapse;font-size:13.2px;min-width:560px}
+th{
+  text-align:left;padding:11px 14px;background:var(--panel-2);color:var(--text-2);
+  font-weight:600;font-size:12.2px;letter-spacing:.4px;border-bottom:1px solid var(--border);white-space:nowrap
+}
+td{padding:10px 14px;border-bottom:1px solid var(--border-soft);vertical-align:top;color:var(--text-2)}
+tr:last-child td{border-bottom:0}
+tbody tr:hover td{background:rgba(255,255,255,.022)}
+td b,td strong{color:var(--text)}
+td code{white-space:nowrap}
+
+/* ---------- 架构图 ---------- */
+.diagram{border:1px solid var(--border);border-radius:var(--radius);background:linear-gradient(180deg,#101219,#0c0e13);padding:22px;overflow-x:auto}
+.diagram .cap{font-size:11.8px;color:var(--muted);text-align:center;margin-top:14px;letter-spacing:.3px}
+.layer{border:1px dashed var(--border);border-radius:11px;padding:12px;margin:0 auto;background:rgba(255,255,255,.015)}
+.layer + .arrow-down{margin:9px 0}
+.layer-head{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  font-size:11px;letter-spacing:1.1px;text-transform:uppercase;margin-bottom:10px
+}
+.layer-head{color:#6b7387}
+.row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.node{
+  flex:1 1 168px;min-width:148px;background:var(--panel-2);border:1px solid var(--border);
+  border-radius:10px;padding:11px 13px;text-align:left
+}
+.node .t{font-size:13px;font-weight:600;color:#fff;display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.node .s{font-size:11.4px;color:var(--muted);margin-top:3px;line-height:1.55}
+.node .port{font-size:10.5px;color:var(--cyan);font-family:Consolas,monospace}
+.node.acc{border-color:rgba(255,36,66,.4);background:linear-gradient(180deg,rgba(255,36,66,.1),rgba(255,36,66,.03))}
+.node.blue{border-color:rgba(89,166,255,.32)}
+.node.purple{border-color:rgba(169,139,250,.32)}
+.node.cyan{border-color:rgba(79,209,197,.3)}
+.node.green{border-color:rgba(61,220,151,.3)}
+.node.warn{border-color:rgba(255,180,84,.3)}
+.arrow-down{text-align:center;color:#4a5164;font-size:15px;line-height:1}
+.arrow-down .lbl{display:block;font-size:10.5px;color:#5f6779;margin-top:-2px}
+@media (max-width:1080px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{position:static;height:auto;border-right:0;border-bottom:1px solid var(--border-soft)}
+  .nav{flex-direction:row;flex-wrap:wrap}
+  .nav-title{display:none}
+  .content{padding:26px 20px 90px}
+}
+/* ---------- 流程 Tab 与步骤条 ---------- */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 18px}
+.tab{
+  background:var(--panel);border:1px solid var(--border);color:var(--text-2);
+  border-radius:9px;padding:8px 15px;font-size:13.2px;cursor:pointer;font-family:inherit;
+  transition:.16s;line-height:1.4
+}
+.tab:hover{color:var(--text);border-color:#3a4152}
+.tab.active{background:var(--accent-soft);border-color:rgba(255,36,66,.5);color:#fff;font-weight:600}
+.tab-panel{display:none}
+.tab-panel.active{display:block;animation:fadeUp .22s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.steps{display:flex;flex-direction:column;gap:12px;margin-top:8px}
+.step{display:flex;gap:11px;align-items:flex-start}
+.step .sn{
+  flex:0 0 25px;height:25px;border-radius:7px;display:grid;place-items:center;
+  background:var(--accent-soft);border:1px solid rgba(255,36,66,.32);color:#ff8b9c;
+  font-size:11px;font-weight:700;font-family:Consolas,monospace;margin-top:1px
+}
+.step .sd{font-size:12.7px;color:var(--muted);line-height:1.7;margin-top:3px}
+.step b{color:var(--text)}
+.tab-panel .grid > .card{height:100%}
+table code{font-size:12.1px}
+#apiFilter:focus{border-color:rgba(255,36,66,.55);box-shadow:0 0 0 3px rgba(255,36,66,.1)}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<aside class="sidebar">
+  <div class="brand">
+    <div class="logo">M</div>
+    <div><b>mybook</b><span>内容设计 · 设计原理</span></div>
+  </div>
+  <nav class="nav" id="nav">
+    <a href="#overview"><span class="idx">01</span>项目概览</a>
+    <a href="#modules"><span class="idx">02</span>领域与模块</a>
+    <a href="#data"><span class="idx">03</span>数据模型</a>
+    <a href="#api"><span class="idx">04</span>接口清单</a>
+    <a href="#flows"><span class="idx">05</span>核心流程</a>
+    <a href="#principles"><span class="idx">06</span>架构设计原理</a>
+    <a href="#deepdive"><span class="idx">07</span>关键设计点</a>
+    <a href="#engineering"><span class="idx">08</span>工程化与规约</a>
+    <a href="#roadmap"><span class="idx">09</span>演进建议</a>
+  </nav>
+</aside>
+
+<main class="content">
+
+<div class="hero">
+  <div class="kicker">Content Design &amp; Design Principles</div>
+  <h1>mybook —— 仿小红书社区内容平台<br>内容设计与设计原理说明</h1>
+  <p>
+    本页由代码库静态分析整理而成：先讲清「这个系统里有什么」（内容设计：领域、数据、接口、流程），
+    再讲清「为什么这样设计」（设计原理：分层、缓存、一致性、削峰、存储选型的取舍）。
+    所有结论均可在仓库对应文件中核对，文中给出了文件路径与关键类名。
+  </p>
+  <div class="stats">
+    <div class="stat"><b>9</b><span>Maven 模块</span></div>
+    <div class="stat"><b>8</b><span>可部署服务</span></div>
+    <div class="stat"><b>16</b><span>MySQL 数据表</span></div>
+    <div class="stat"><b>4</b><span>存储引擎选型</span></div>
+    <div class="stat"><b>JDK 17</b><span>Spring Boot 3.0</span></div>
+  </div>
+</div>
+
+<!-- ============ 01 ============ -->
+<section id="overview">
+  <h2><span class="num">01</span>项目概览</h2>
+  <p class="lead">
+    mybook 是一个以「图文 / 视频笔记」为核心内容的社区平台，业务形态对标小红书：
+    用户注册登录后发布笔记，可以关注其他用户、浏览关注流与笔记详情。
+    工程上采用 Spring Cloud 微服务架构，按业务域拆分服务，并在若干关键链路上
+    引入了分布式 ID、多级缓存、消息削峰与异构存储。
+  </p>
+
+  <div class="grid g2">
+    <div class="card">
+      <h4 style="margin-top:0">技术栈</h4>
+      <div class="tbl-wrap" style="border:0;background:none">
+      <table style="min-width:0">
+        <tbody>
+          <tr><td style="width:132px"><b>语言 / 运行时</b></td><td>JDK 17</td></tr>
+          <tr><td><b>框架</b></td><td>Spring Boot <code>3.0.2</code> · Spring Cloud <code>2022.0.0</code> · Spring Cloud Alibaba <code>2022.0.0.0-RC2</code></td></tr>
+          <tr><td><b>注册 / 配置</b></td><td>Nacos <code>v2.3.2</code>（namespace <code>mybook</code>，group <code>DEFAULT_GROUP</code>）</td></tr>
+          <tr><td><b>网关</b></td><td>Spring Cloud Gateway（WebFlux）+ Sa-Token Reactor 适配</td></tr>
+          <tr><td><b>服务调用</b></td><td>OpenFeign + 自定义 <code>RequestInterceptor</code> 透传上下文</td></tr>
+          <tr><td><b>认证授权</b></td><td>Sa-Token <code>1.38.0</code>（token-name <code>Authorization</code>，prefix <code>Bearer</code>，uuid 风格，30 天）</td></tr>
+          <tr><td><b>持久层</b></td><td>MyBatis + MyBatis Generator XML · Druid 连接池 · PageHelper</td></tr>
+          <tr><td><b>存储</b></td><td>MySQL 8.0 · Redis 7.2 · Cassandra · MinIO（备用 Aliyun OSS）</td></tr>
+          <tr><td><b>消息</b></td><td>RocketMQ <code>5.3.1</code>（客户端 <code>4.9.4</code>，启用 Proxy）</td></tr>
+          <tr><td><b>工具库</b></td><td>Lombok · Hutool · Guava · Caffeine · TransmittableThreadLocal</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h4 style="margin-top:0">服务与端口</h4>
+      <div class="tbl-wrap" style="border:0;background:none">
+      <table style="min-width:0">
+        <thead><tr><th>服务</th><th>端口</th><th>对外</th></tr></thead>
+        <tbody>
+          <tr><td><b>mybook-gateway</b></td><td><code>8000</code></td><td><span class="tag ok">是</span></td></tr>
+          <tr><td><b>mybook-auth</b></td><td><code>8081</code></td><td><span class="tag ok">是</span> <span class="tag">/auth/**</span></td></tr>
+          <tr><td><b>mybook-user</b></td><td><code>8083</code></td><td><span class="tag ok">是</span> <span class="tag">/user/**</span></td></tr>
+          <tr><td><b>mybook-note</b></td><td><code>8086</code></td><td><span class="tag ok">是</span> <span class="tag">/note/**</span></td></tr>
+          <tr><td><b>mybook-user-relation</b></td><td><code>8078</code></td><td><span class="tag ok">是</span> <span class="tag">/relation/**</span></td></tr>
+          <tr><td><b>mybook-oss</b></td><td><code>8082</code></td><td><span class="tag warn">内网</span></td></tr>
+          <tr><td><b>mybook-kv</b></td><td><code>8084</code></td><td><span class="tag warn">内网</span></td></tr>
+          <tr><td><b>mybook-distributed-id-generator</b></td><td><code>8075</code></td><td><span class="tag warn">内网</span></td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="tiny" style="margin:10px 0 0">
+        端口取自各模块 <code>application.yml</code>；「对外」指是否在网关
+        <code>mybook-gateway/src/main/resources/application.yml</code> 的 <code>spring.cloud.gateway.routes</code> 中注册了路由。
+      </p>
+    </div>
+  </div>
+
+  <h3>基础设施编排</h3>
+  <p class="lead small">
+    所有中间件由 <code>external/docker-compose.yml</code> 统一编排，一条命令拉起开发环境。
+  </p>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>组件</th><th>镜像 / 版本</th><th>端口映射</th><th>用途</th></tr></thead>
+      <tbody>
+        <tr><td><b>MySQL</b></td><td><code>mysql:8.0.27</code></td><td>3307 → 3306</td><td>业务主库 <code>mybook</code>、发号器库 <code>leaf</code></td></tr>
+        <tr><td><b>Redis</b></td><td><code>redis:7.2.3</code></td><td>6379</td><td>会话 / 缓存 / ZSET 关系存储，开启 AOF</td></tr>
+        <tr><td><b>Nacos</b></td><td><code>nacos/nacos-server:v2.3.2</code></td><td>8848 / 9848</td><td>服务注册发现 + 配置中心（standalone）</td></tr>
+        <tr><td><b>MinIO</b></td><td><code>minio:RELEASE.2023-09-30</code></td><td>9001 / 9081</td><td>对象存储，图片与视频</td></tr>
+        <tr><td><b>Cassandra</b></td><td><code>cassandra:latest</code></td><td>9042</td><td>笔记正文宽表存储</td></tr>
+        <tr><td><b>RocketMQ</b></td><td><code>apache/rocketmq:5.3.1</code></td><td>9876 / 10911 / 10912</td><td>异步解耦、延迟消息、削峰</td></tr>
+        <tr><td><b>ZooKeeper</b></td><td><code>zookeeper:3.5.6</code></td><td>2181</td><td>Leaf 雪花模式 workerId 分配</td></tr>
+        <tr><td><b>RocketMQ Dashboard</b></td><td><code>rocketmq-dashboard</code></td><td>8050</td><td>消息可视化运维</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+<!-- ============ 02 ============ -->
+<section id="modules">
+  <h2><span class="num">02</span>领域与模块（内容设计）</h2>
+  <p class="lead">
+    系统按「业务域」纵向切分服务，每个业务域内部再横向切分为 <code>-api</code> 与 <code>-biz</code> 两个子模块，
+    另有 <code>mybook-framework</code> 沉淀公共能力。切分依据是<b>变更频率与生命周期</b>：
+    API 契约稳定、演进慢；业务实现迭代快、需要独立部署与扩容。
+  </p>
+
+  <h3>整体架构</h3>
+  <div class="diagram">
+    <div class="layer" style="border-style:solid;border-color:#3a4053">
+      <div class="layer-head"><span>客户端层 · Client</span></div>
+      <div class="row">
+        <div class="node"><div class="t">App / 小程序</div><div class="s">以 <code>Authorization: Bearer &lt;token&gt;</code> 访问</div></div>
+        <div class="node"><div class="t">Web 前端</div><div class="s">跨源请求，由网关统一放行 CORS</div></div>
+      </div>
+    </div>
+
+    <div class="arrow-down">↓<span class="lbl">HTTP · 唯一入口</span></div>
+
+    <div class="layer" style="border-style:solid;border-color:rgba(255,36,66,.45);background:rgba(255,36,66,.05)">
+      <div class="layer-head"><span>接入层 · Gateway</span><span class="port">:8000</span></div>
+      <div class="row">
+        <div class="node acc"><div class="t">mybook-gateway</div><div class="s">路由转发 · Sa-Token 全局鉴权 · CORS · <b>userId 请求头透传</b></div></div>
+      </div>
+    </div>
+
+    <div class="arrow-down">↓<span class="lbl">lb:// 负载均衡（Nacos 服务发现）</span></div>
+
+    <div class="layer" style="border-style:solid;border-color:rgba(89,166,255,.34)">
+      <div class="layer-head"><span>业务服务层 · Business Services</span></div>
+      <div class="row">
+        <div class="node blue"><div class="t">mybook-auth <span class="port">:8081</span></div><div class="s">登录 / 注册 / 登出 / 改密 / 短信验证码</div></div>
+        <div class="node blue"><div class="t">mybook-user <span class="port">:8083</span></div><div class="s">用户资料 · 角色权限 · 用户信息缓存</div></div>
+        <div class="node blue"><div class="t">mybook-note <span class="port">:8086</span></div><div class="s">笔记发布 / 详情 / 更新 / 删除 / 可见性 / 置顶</div></div>
+        <div class="node blue"><div class="t">mybook-user-relation <span class="port">:8078</span></div><div class="s">关注 / 取关 / 关注列表 / 粉丝列表</div></div>
+      </div>
+    </div>
+
+    <div class="arrow-down">↓<span class="lbl">OpenFeign 内网调用</span></div>
+
+    <div class="layer" style="border-style:solid;border-color:rgba(169,139,250,.34)">
+      <div class="layer-head"><span>基础能力层 · Infrastructure Services</span><span class="tiny">不暴露网关路由</span></div>
+      <div class="row">
+        <div class="node purple"><div class="t">mybook-kv <span class="port">:8084</span></div><div class="s">笔记正文 K-V 存储（Cassandra）</div></div>
+        <div class="node purple"><div class="t">mybook-oss <span class="port">:8082</span></div><div class="s">文件上传（MinIO / Aliyun OSS 策略切换）</div></div>
+        <div class="node purple"><div class="t">mybook-distributed-id-generator <span class="port">:8075</span></div><div class="s">Leaf 号段模式 + Snowflake</div></div>
+      </div>
+    </div>
+
+    <div class="arrow-down">↓</div>
+
+    <div class="layer" style="border-style:solid;border-color:rgba(79,209,197,.3)">
+      <div class="layer-head"><span>中间件层 · Middleware</span></div>
+      <div class="row">
+        <div class="node cyan"><div class="t">MySQL 8.0</div><div class="s">结构化与事务数据</div></div>
+        <div class="node cyan"><div class="t">Redis 7.2</div><div class="s">缓存 / ZSET / 会话</div></div>
+        <div class="node cyan"><div class="t">Cassandra</div><div class="s">笔记正文宽表</div></div>
+        <div class="node cyan"><div class="t">RocketMQ</div><div class="s">异步 / 延迟消息</div></div>
+        <div class="node cyan"><div class="t">MinIO</div><div class="s">图片视频对象存储</div></div>
+        <div class="node cyan"><div class="t">Nacos / ZK</div><div class="s">注册配置 / workerId</div></div>
+      </div>
+    </div>
+    <div class="cap">mybook-framework 提供的公共库与 Spring Boot Starter 贯穿所有业务服务（下方说明）</div>
+  </div>
+
+  <h3>业务域职责</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>模块</th><th>业务域</th><th>核心职责</th><th>关键实现类</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>mybook-auth</b></td><td>认证域</td>
+          <td>手机号验证码登录、账号密码登录、登录即注册、登出、修改密码、下发验证码（Redis 3 分钟有效，含发送频率校验）</td>
+          <td><code>AuthServiceImpl</code><br><code>VerificationCodeServiceImpl</code></td>
+        </tr>
+        <tr>
+          <td><b>mybook-user</b></td><td>用户域</td>
+          <td>用户注册（分布式 ID 生成 mybook_id / user_id）、资料查询与修改、头像上传、角色权限装配并预热到 Redis</td>
+          <td><code>UserServiceImpl</code><br><code>PushRolePermission2RedisRunner</code></td>
+        </tr>
+        <tr>
+          <td><b>mybook-note</b></td><td>内容域</td>
+          <td>笔记发布（元数据落 MySQL、正文落 KV）、详情查询、更新、删除、可见性切换、置顶，附带多级缓存与延迟双删</td>
+          <td><code>NoteServiceImpl</code></td>
+        </tr>
+        <tr>
+          <td><b>mybook-user-relation</b></td><td>社交关系域</td>
+          <td>关注 / 取关（Redis 前置 + MQ 异步落库）、关注列表、粉丝列表；关注上限与粉丝上限控制</td>
+          <td><code>UserRelationServiceImpl</code><br><code>FollowUnfollowConsumer</code></td>
+        </tr>
+        <tr>
+          <td><b>mybook-kv</b></td><td>内容存储域</td>
+          <td>笔记正文的增 / 查 / 删，主键为 UUID，落 Cassandra <code>note_content</code> 表</td>
+          <td><code>NoteContentServiceImpl</code></td>
+        </tr>
+        <tr>
+          <td><b>mybook-oss</b></td><td>存储能力域</td>
+          <td>文件上传抽象，按 <code>storage.type</code> 运行时选择 MinIO 或 Aliyun OSS 实现，支持配置热刷新</td>
+          <td><code>FileStrategyFactory</code><br><code>MinioFileStrategy</code></td>
+        </tr>
+        <tr>
+          <td><b>mybook-distributed-id-generator</b></td><td>基础能力域</td>
+          <td>提供号段模式与雪花模式两种分布式 ID 生成，含监控接口</td>
+          <td><code>SegmentIDGenImpl</code><br><code>SnowflakeIDGenImpl</code></td>
+        </tr>
+        <tr>
+          <td><b>mybook-gateway</b></td><td>接入域</td>
+          <td>统一路由、鉴权拦截、跨域处理、把登录态解析为 userId 请求头</td>
+          <td><code>SaTokenConfigure</code><br><code>AddUserId2HeaderFilter</code><br><code>CorsConfig</code></td>
+        </tr>
+        <tr>
+          <td><b>mybook-framework</b></td><td>公共支撑</td>
+          <td>统一响应体、业务异常、全局异常处理、登录上下文、操作日志切面、Jackson 时间规约</td>
+          <td><code>Response</code> / <code>BizException</code><br><code>LoginUserContextHolder</code><br><code>ApiOperationLog</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>模块结构：api / biz 分包</h3>
+  <div class="grid g2">
+    <div class="card tight">
+      <h4 style="margin-top:0">目录结构</h4>
+<pre><code>mybook-note/
+├── mybook-note-api/          # 契约层：只放接口与 DTO
+│   └── src/main/java/.../note/api/
+│       ├── NoteFeignApi.java # @FeignClient 声明
+│       ├── constant/ApiConstants.java  # SERVER_NAME
+│       └── dto/{req,resp}/   # 出入参对象
+└── mybook-note-biz/          # 实现层：可独立部署
+    └── src/main/java/.../note/biz/
+        ├── controller/  service/  rpc/
+        ├── domain/{dataobject,mapper}/
+        ├── model/vo/  enums/  config/  constant/
+        └── MyBookNoteBizApplication.java</code></pre>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:0">设计意图</h4>
+      <ul class="small" style="margin-bottom:0">
+        <li><b>契约与实现解耦</b>：调用方只依赖 <code>-api</code> 这个薄 JAR，不需要知道对方如何实现，也不可能反向依赖到对方的 <code>biz</code>。</li>
+        <li><b>依赖单向</b>：<code>auth → user-api</code>、<code>note → user-api / kv-api / id-api</code>，
+            被依赖方不感知调用方，天然避免循环依赖。</li>
+        <li><b>服务名集中定义</b>：<code>ApiConstants.SERVER_NAME = "mybook-kv"</code>，
+            与 Nacos 中 <code>spring.application.name</code> 对齐，改一处即可。</li>
+        <li><b>Feign 客户端统一扫描</b>：启动类通过
+            <code>@EnableFeignClients(basePackages = "com.mybook.mybook")</code> 跨模块扫描，
+            因为各服务包名都收拢在 <code>com.mybook.mybook.*</code> 下。</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>framework：公共能力下沉</h3>
+  <p class="lead small">
+    <code>mybook-framework</code> 由 4 个可独立引用的模块组成，其中三个做成 Spring Boot Starter，
+    通过 <code>META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports</code>
+    自动装配，业务服务只需加依赖即可获得能力，无需任何注解。
+  </p>
+  <div class="grid g4">
+    <div class="card tight">
+      <div class="t" style="font-weight:600;color:#fff">mybook-common</div>
+      <div class="tiny" style="margin:6px 0 8px">普通 JAR，非 Starter</div>
+      <ul class="small" style="margin:0;padding-left:18px">
+        <li><code>Response&lt;T&gt;</code> 统一响应</li>
+        <li><code>PageResponse&lt;T&gt;</code> 统一分页</li>
+        <li><code>BizException</code> + <code>BaseExceptionInterface</code></li>
+        <li><code>GlobalConstants.USER_ID</code></li>
+        <li><code>JsonUtils</code> / <code>DateUtils</code> / 日期常量</li>
+      </ul>
+    </div>
+    <div class="card tight">
+      <div class="t" style="font-weight:600;color:#fff">starter-biz-context</div>
+      <div class="tiny" style="margin:6px 0 8px">登录上下文传递</div>
+      <ul class="small" style="margin:0;padding-left:18px">
+        <li><code>HeaderUserId2ContextFilter</code>：请求头 → ThreadLocal</li>
+        <li><code>LoginUserContextHolder</code>：基于 TTL</li>
+        <li><code>FeignRequestInterceptor</code>：上下文 → 下游请求头</li>
+      </ul>
+    </div>
+    <div class="card tight">
+      <div class="t" style="font-weight:600;color:#fff">starter-biz-operationlog</div>
+      <div class="tiny" style="margin:6px 0 8px">操作日志切面</div>
+      <ul class="small" style="margin:0;padding-left:18px">
+        <li><code>@ApiOperationLog(description=...)</code></li>
+        <li>AOP 环绕，统一记录入参、出参、耗时</li>
+      </ul>
+    </div>
+    <div class="card tight">
+      <div class="t" style="font-weight:600;color:#fff">starter-jackson</div>
+      <div class="tiny" style="margin:6px 0 8px">序列化规约</div>
+      <ul class="small" style="margin:0;padding-left:18px">
+        <li>时区固定 <code>Asia/Shanghai</code></li>
+        <li>JSON 时间格式统一 <code>yyyy-MM-dd HH:mm:ss</code></li>
+        <li>支持 <code>LocalDateTime/Date/YearMonth</code></li>
+        <li>忽略未知属性，初始化 <code>JsonUtils</code></li>
+      </ul>
+    </div>
+  </div>
+</section>
+<!-- ============ 03 ============ -->
+<section id="data">
+  <h2><span class="num">03</span>数据模型（内容设计）</h2>
+  <p class="lead">
+    数据模型按业务域分库表设计，DDL 集中在 <code>sqls/ddl.sql</code>，初始化数据在 <code>sqls/insert.sql</code>。
+    共 <b>16 张 MySQL 表</b>（业务库 <code>mybook</code> 15 张 + 发号器库 <code>leaf</code> 1 张），
+    另有 1 张 Cassandra 宽表承载笔记正文。
+  </p>
+
+  <h3>建模范式与约定</h3>
+  <div class="grid g2">
+    <div class="card tight">
+      <h4 style="margin-top:0">统一字段约定</h4>
+      <ul class="small" style="margin-bottom:0">
+        <li><b>主键</b>：<code>id bigint unsigned auto_increment</code>，InnoDB + BTREE。</li>
+        <li><b>逻辑删除</b>：<code>is_deleted bit(1) default b'0'</code>，不物理删除业务数据。</li>
+        <li><b>审计字段</b>：<code>create_time</code> / <code>update_time</code> 均默认 <code>CURRENT_TIMESTAMP</code>。</li>
+        <li><b>字符集</b>：<code>utf8mb4 / utf8mb4_unicode_ci</code>，支持 emoji（社区内容刚需）。</li>
+        <li><b>枚举落地</b>：状态类字段用 <code>tinyint</code> 存码值，Java 侧由
+            <code>NoteStatusEnum</code> 等枚举收口，避免魔法数字散落。</li>
+      </ul>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:0">索引即业务约束</h4>
+      <ul class="small" style="margin-bottom:0">
+        <li><code>t_user</code>：<code>uk_mybook_id</code>、<code>uk_phone</code> —— 账号唯一性由数据库兜底。</li>
+        <li><code>t_following</code>：<code>uk_user_id_following_user_id</code> —— <b>用联合唯一索引实现关注幂等</b>，
+            重复消费消息不会产生重复关系。</li>
+        <li><code>t_note_like</code> / <code>t_note_collection</code>：<code>uk_user_id_note_id</code> ——
+            一人对一篇笔记只能有一条点赞 / 收藏记录，状态用 <code>status</code> 位切换而非插入新行。</li>
+        <li><code>t_note</code>：<code>idx_creator_id</code>、<code>idx_topic_id</code>、<code>idx_status</code> ——
+            覆盖「查某人的笔记」「查某话题下的笔记」「过滤待审核 / 已下架」三类主查询。</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>用户与权限域</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>表名</th><th>说明</th><th>关键字段</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>t_user</b></td><td>用户主表</td>
+          <td><code>mybook_id</code>（唯一凭证，可改）· <code>phone</code> · <code>password</code>（BCrypt 加密）·
+              <code>nickname</code> · <code>avatar</code> · <code>background_img</code> · <code>sex</code> ·
+              <code>status</code> · <code>introduction</code> · <code>birthday</code></td>
+        </tr>
+        <tr>
+          <td><b>t_role</b></td><td>角色表</td>
+          <td><code>role_name</code> · <code>role_key</code>（唯一）· <code>status</code> · <code>sort</code></td>
+        </tr>
+        <tr>
+          <td><b>t_permission</b></td><td>权限表（树形）</td>
+          <td><code>parent_id</code> · <code>type</code>（1 目录 / 2 菜单 / 3 按钮）· <code>menu_url</code> ·
+              <code>menu_icon</code> · <code>permission_key</code>（如 <code>app:note:publish</code>）</td>
+        </tr>
+        <tr>
+          <td><b>t_user_role_rel</b></td><td>用户-角色关联</td>
+          <td><code>user_id</code> · <code>role_id</code></td>
+        </tr>
+        <tr>
+          <td><b>t_role_permission_rel</b></td><td>角色-权限关联</td>
+          <td><code>role_id</code> · <code>permission_id</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="tiny">
+    初始化数据（<code>insert.sql</code>）：权限 <code>app:note:publish</code>、<code>app:comment:publish</code>，
+    角色 <code>common_user</code>，并把两个权限都授予该角色 —— 即「普通用户可发笔记、可发评论」。
+  </p>
+
+  <h3>内容域</h3>
+  <div class="grid g2">
+    <div class="card tight">
+      <h4 style="margin-top:0">t_note —— 笔记元数据（核心表）</h4>
+      <div class="tbl-wrap" style="border:0;background:none">
+      <table style="min-width:0">
+        <tbody>
+          <tr><td style="width:150px"><code>title</code></td><td>标题，最长 64</td></tr>
+          <tr><td><code>creator_id</code></td><td>发布者 ID，索引字段</td></tr>
+          <tr><td><code>topic_id</code> / <code>topic_name</code></td><td>话题</td></tr>
+          <tr><td><code>type</code></td><td>0 图文 / 1 视频</td></tr>
+          <tr><td><code>img_uris</code></td><td>图片链接，<b>逗号分隔存一行</b></td></tr>
+          <tr><td><code>video_uris</code></td><td>视频链接</td></tr>
+          <tr><td><code>content_uuid</code></td><td><b>指向 Cassandra 正文的外键</b></td></tr>
+          <tr><td><code>is_content_empty</code></td><td>正文是否为空，决定是否需要回查 KV</td></tr>
+          <tr><td><code>visible</code></td><td>0 公开 / 1 仅自己可见</td></tr>
+          <tr><td><code>is_top</code></td><td>是否置顶</td></tr>
+          <tr><td><code>status</code></td><td>0 待审核 / 1 正常 / 2 被删除 / 3 被下架</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="tiny" style="margin:10px 0 0">
+        注意 <code>content_uuid</code> 是后期通过 <code>ALTER TABLE</code> 追加的字段 ——
+        说明「正文外置」是一次演进决策，而非最初设计。
+      </p>
+    </div>
+
+    <div class="card tight">
+      <h4 style="margin-top:0">频道与话题</h4>
+      <div class="tbl-wrap" style="border:0;background:none">
+      <table style="min-width:0">
+        <tbody>
+          <tr><td style="width:150px"><code>t_channel</code></td><td>频道表，如「美食」「娱乐」</td></tr>
+          <tr><td><code>t_topic</code></td><td>话题表，如「高分美剧推荐」</td></tr>
+          <tr><td><code>t_channel_topic_rel</code></td><td>频道-话题关联表（如「娱乐」下挂两个话题）</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <h4>Cassandra：note_content</h4>
+      <div class="tbl-wrap" style="border:0;background:none">
+      <table style="min-width:0">
+        <tbody>
+          <tr><td style="width:150px"><code>id</code> (PK)</td><td>UUID 主键</td></tr>
+          <tr><td><code>content</code></td><td>笔记正文全文</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="tiny" style="margin:10px 0 0">
+        正文与元数据分离，元数据留在 MySQL 承担索引与事务，正文进 Cassandra 承担大文本与水平扩展。
+      </p>
+    </div>
+  </div>
+
+  <h3>互动与计数域</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>表名</th><th>说明</th><th>关键字段与设计点</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>t_note_like</b></td><td>笔记点赞</td>
+          <td><code>uk_user_id_note_id</code> 唯一；<code>status</code> 0 取消 / 1 点赞 ——
+              <b>点赞与取消共用一行</b>，避免表无限膨胀</td>
+        </tr>
+        <tr>
+          <td><b>t_note_collection</b></td><td>笔记收藏</td>
+          <td>同上结构，<code>status</code> 控制收藏状态</td>
+        </tr>
+        <tr>
+          <td><b>t_note_count</b></td><td>笔记计数</td>
+          <td><code>uk_note_id</code> 唯一；<code>like_total</code> · <code>collect_total</code> · <code>comment_total</code> ——
+              <b>计数与明细分离</b>，列表页只读计数表，不做聚合查询</td>
+        </tr>
+        <tr>
+          <td><b>t_user_count</b></td><td>用户计数</td>
+          <td><code>uk_user_id</code> 唯一；<code>fans_total</code> · <code>following_total</code> ·
+              <code>note_total</code> · <code>like_total</code> · <code>collect_total</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>社交关系域</h3>
+  <div class="grid g2">
+    <div class="card tight">
+      <h4 style="margin-top:0">t_following / t_fans —— 双向冗余存两份</h4>
+<pre><code>-- 关注表：我关注了谁
+t_following(user_id, following_user_id, create_time)
+  PRIMARY KEY (id)
+  KEY idx_user_id (user_id)
+  UNIQUE uk_user_id_following_user_id(user_id, following_user_id)
+
+-- 粉丝表：谁关注了我
+t_fans(user_id, fans_user_id, create_time)
+  PRIMARY KEY (id)
+  KEY idx_user_id (user_id)</code></pre>
+      <p class="small" style="margin:0">
+        同一段关系被<b>同事务写入两行</b>（关注行 + 粉丝行）。
+        这是典型的<b>读多写少场景下用写放大换读性能</b>：查「我关注的人」与查「我的粉丝」
+        都只需单表按 <code>user_id</code> 走索引，不必反向 JOIN 或扫描。
+      </p>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:0">leaf_alloc —— 发号器号段表（库 <code>leaf</code>）</h4>
+      <div class="tbl-wrap" style="border:0;background:none">
+      <table style="min-width:0">
+        <tbody>
+          <tr><td style="width:132px"><code>biz_tag</code> (PK)</td><td>业务标识，如 <code>leaf-segment-mybook-id</code></td></tr>
+          <tr><td><code>max_id</code></td><td>当前已分配到的最大 ID</td></tr>
+          <tr><td><code>step</code></td><td>号段长度，初始化 <code>2000</code></td></tr>
+          <tr><td><code>description</code></td><td>业务描述</td></tr>
+          <tr><td><code>update_time</code></td><td>ON UPDATE 自动刷新</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <p class="tiny" style="margin:10px 0 0">
+        初始化两条号段：<code>leaf-segment-mybook-id</code>（max_id 10100）、
+        <code>leaf-segment-user-id</code>（max_id 100）—— 起步值不同，说明 ID 起始段是可运营配置的。
+      </p>
+    </div>
+  </div>
+</section>
+<!-- ============ 04 ============ -->
+<section id="api">
+  <h2><span class="num">04</span>接口清单（内容设计）</h2>
+  <p class="lead">
+    接口分两类：<b>对外 REST 接口</b>（经网关暴露给客户端）与<b>对内 Feign 接口</b>（服务间调用，不注册网关路由）。
+    这种「内外有别」是刻意的：<code>kv</code> / <code>oss</code> / <code>id-generator</code> 都是能力型服务，
+    不应被客户端直接触达。
+  </p>
+
+  <h3>网关路由表</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>路由 ID</th><th>断言 Path</th><th>目标服务</th><th>过滤器</th></tr></thead>
+      <tbody>
+        <tr><td><code>auth</code></td><td><code>/auth/**</code></td><td><code>lb://mybook-auth</code></td><td><code>StripPrefix=1</code></td></tr>
+        <tr><td><code>user</code></td><td><code>/user/**</code></td><td><code>lb://mybook-user</code></td><td><code>StripPrefix=1</code></td></tr>
+        <tr><td><code>note</code></td><td><code>/note/**</code></td><td><code>lb://mybook-note</code></td><td><code>StripPrefix=1</code></td></tr>
+        <tr><td><code>user-relation</code></td><td><code>/relation/**</code></td><td><code>lb://mybook-user-relation</code></td><td><code>StripPrefix=1</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="tiny">
+    <code>StripPrefix=1</code> 会剥掉第一段前缀，所以客户端请求 <code>/auth/login</code> 到达 <code>mybook-auth</code> 后是 <code>/login</code>；
+    这与 <code>AuthController</code> 上直接标注 <code>@PostMapping("/login")</code>（类上无 <code>@RequestMapping</code>）是一致的。
+  </p>
+
+  <h3>对外接口</h3>
+  <div style="margin:14px 0 10px">
+    <input id="apiFilter" type="text" placeholder="筛选接口 / 方法 / 说明，例如 note、login、relation …"
+      style="width:100%;max-width:460px;background:var(--panel);border:1px solid var(--border);color:var(--text);
+      border-radius:9px;padding:9px 13px;font-size:13.5px;outline:none">
+  </div>
+  <div class="tbl-wrap">
+    <table id="apiTable">
+      <thead><tr><th style="width:210px">路径</th><th style="width:64px">方法</th><th>说明</th><th style="width:230px">入参 / 出参</th></tr></thead>
+      <tbody>
+        <tr><td><code>/auth/verification/code/send</code></td><td><span class="tag ok">POST</span></td><td>下发手机验证码</td><td><code>SendVerificationCodeReqVO</code> → 验证码</td></tr>
+        <tr><td><code>/auth/login</code></td><td><span class="tag ok">POST</span></td><td>登录 / 未注册自动注册</td><td><code>UserLoginReqVO</code> → Token 字符串</td></tr>
+        <tr><td><code>/auth/logout</code></td><td><span class="tag ok">POST</span></td><td>登出（网关额外要求 <code>admin</code> 角色）</td><td>—</td></tr>
+        <tr><td><code>/auth/password/update</code></td><td><span class="tag ok">POST</span></td><td>修改密码（BCrypt 加密后落库）</td><td><code>UpdatePasswordReqVO</code></td></tr>
+        <tr><td><code>/user/...</code></td><td><span class="tag info">POST</span></td><td>用户资料查询 / 修改、注册（Feign 与网关共用）</td><td>详见 <code>UserController</code></td></tr>
+        <tr><td><code>/note/publish</code></td><td><span class="tag info">POST</span></td><td>发布笔记</td><td><code>PublishNoteReqVO</code></td></tr>
+        <tr><td><code>/note/detail</code></td><td><span class="tag info">POST</span></td><td>查询笔记详情（多级缓存 + 并发 RPC）</td><td><code>FindNoteDetailReqVO</code> → <code>FindNoteDetailRspVO</code></td></tr>
+        <tr><td><code>/note/detailWithSync</code></td><td><span class="tag info">POST</span></td><td>同步版详情查询（对照实现，用于对比异步编排）</td><td>同上</td></tr>
+        <tr><td><code>/note/update</code></td><td><span class="tag info">POST</span></td><td>更新笔记内容与元数据</td><td><code>UpdateNoteReqVO</code></td></tr>
+        <tr><td><code>/note/delete</code></td><td><span class="tag info">POST</span></td><td>删除笔记（含 KV 正文回收 + 缓存双删）</td><td><code>DeleteNoteReqVO</code></td></tr>
+        <tr><td><code>/note/visible/onlyme</code></td><td><span class="tag info">POST</span></td><td>切换「仅自己可见」</td><td><code>UpdateNoteVisibleOnlyMeReqVO</code></td></tr>
+        <tr><td><code>/note/top</code></td><td><span class="tag info">POST</span></td><td>置顶 / 取消置顶</td><td><code>UpdateNoteTopReqVO</code></td></tr>
+        <tr><td><code>/relation/follow</code></td><td><span class="tag info">POST</span></td><td>关注用户</td><td><code>FollowUserReqVO{id, followerId}</code></td></tr>
+        <tr><td><code>/relation/following/list</code></td><td><span class="tag info">POST</span></td><td>分页查询关注列表</td><td><code>FindFollowingListReqVO</code> → <code>PageResponse&lt;FindFollowingListRspVO&gt;</code></td></tr>
+        <tr><td><code>/relation/fans/list</code></td><td><span class="tag info">POST</span></td><td>分页查询粉丝列表 <span class="tag warn">实现未完成</span></td><td><code>FindFansListReqVO</code> → <code>PageResponse&lt;FindFansUserRspVO&gt;</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>对内 Feign 接口</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th style="width:190px">服务</th><th>接口声明</th><th>方法</th><th>被谁调用</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>mybook-kv</b><br><span class="tiny">KeyValueFeignApi</span></td>
+          <td><code>/kv/note/content/add</code><br><code>/kv/note/content/find</code><br><code>/kv/note/content/delete</code></td>
+          <td>add / find / delete</td>
+          <td><code>mybook-note</code>（<code>KeyValueRpcService</code>）</td>
+        </tr>
+        <tr>
+          <td><b>mybook-oss</b><br><span class="tiny">FileFeignApi</span></td>
+          <td><code>/file/upload</code> <span class="tiny">multipart/form-data</span></td>
+          <td>uploadFile</td>
+          <td><code>mybook-user</code>（<code>OssRpcService</code>，头像上传）</td>
+        </tr>
+        <tr>
+          <td><b>mybook-distributed-id-generator</b><br><span class="tiny">DistributedIdGeneratorFeignApi</span></td>
+          <td><code>/id/segment/get/{key}</code><br><code>/id/snowflake/get/{key}</code></td>
+          <td>getSegmentId / getSnowflakeId</td>
+          <td><code>mybook-user</code>（mybook_id、user_id）<br><code>mybook-note</code>（笔记 ID）</td>
+        </tr>
+        <tr>
+          <td><b>mybook-user</b><br><span class="tiny">UserFeignApi</span></td>
+          <td>findById / findByIds / findByPhone<br>registerUser / updatePassword</td>
+          <td>用户信息与注册</td>
+          <td><code>mybook-auth</code>（认证）<br><code>mybook-note</code>（补创作者信息）<br><code>mybook-user-relation</code>（补关注对象信息）</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>统一响应契约</h3>
+  <div class="grid g2">
+    <div class="card tight">
+      <h4 style="margin-top:0">Response&lt;T&gt;（framework/mybook-common）</h4>
+<pre><code>{
+  "success": true,
+  "message": null,
+  "errorCode": null,
+  "data": { ... }
+}</code></pre>
+      <p class="small" style="margin:0">
+        失败时 <code>success=false</code>，并带上 <code>errorCode</code> 与 <code>message</code>。
+        所有 Controller 无论成功失败都返回 HTTP 200，业务结果由 <code>success</code> 表达 ——
+        让客户端只需一套解析逻辑。
+      </p>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:0">PageResponse&lt;T&gt; 扩展分页字段</h4>
+<pre><code>{
+  "success": true,
+  "data": [ ... ],
+  "pageNo": 1,
+  "pageSize": 10,
+  "totalCount": 3,
+  "totalPage": 1
+}</code></pre>
+      <p class="small" style="margin:0">
+        <code>pageSize</code> 固定 10，<code>totalPage</code> 由
+        <code>PageResponse.success()</code> 内部按
+        <code>(totalCount + pageSize - 1) / pageSize</code> 计算，调用方无需自行推导。
+      </p>
+    </div>
+  </div>
+
+  <h3>错误码分段</h3>
+  <p class="lead small">
+    每个服务用<b>独立前缀 + 分段</b>定义错误码，便于日志定位与客户端分类处理，统一实现
+    <code>BaseExceptionInterface</code> 后由 <code>BizException</code> 承载。
+  </p>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th style="width:130px">服务前缀</th><th style="width:180px">段位</th><th>含义</th><th>示例</th></tr></thead>
+      <tbody>
+        <tr><td rowspan="2"><b>KV-</b></td><td><code>10000+</code></td><td>系统级错误</td><td><code>KV-10000</code> 系统异常、<code>KV-10001</code> 参数错误</td></tr>
+        <tr><td><code>20000+</code></td><td>业务级错误</td><td><code>KV-20000</code> 该笔记内容不存在</td></tr>
+        <tr><td rowspan="2"><b>其他服务</b></td><td><code>x10000+</code></td><td>系统级错误</td><td><code>ResponseCodeEnum.SYSTEM_ERROR</code></td></tr>
+        <tr><td><code>x20000+</code></td><td>业务级错误</td><td>如笔记不存在、非发布者不可操作、关注对象不存在等</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="tiny">
+    每个 <code>-biz</code> 模块都有自己的 <code>enums/ResponseCodeEnum</code> 与
+    <code>exception/GlobalExceptionHandler</code>，后者统一捕获
+    <code>BizException</code>、<code>MethodArgumentNotValidException</code>（参数校验）、
+    <code>IllegalArgumentException</code>（Guava <code>Preconditions</code>）与兜底 <code>Exception</code>。
+  </p>
+</section>
+<!-- ============ 05 ============ -->
+<section id="flows">
+  <h2><span class="num">05</span>核心流程（内容设计）</h2>
+  <p class="lead">以下 6 条流程覆盖了系统的主要写入与读取路径，也是设计原理最集中的地方。</p>
+
+  <div class="tabs" id="flowTabs">
+    <button class="tab active" data-tab="f1">① 登录 / 注册</button>
+    <button class="tab" data-tab="f2">② 笔记发布</button>
+    <button class="tab" data-tab="f3">③ 笔记详情查询</button>
+    <button class="tab" data-tab="f4">④ 笔记删除</button>
+    <button class="tab" data-tab="f5">⑤ 关注 / 取关</button>
+    <button class="tab" data-tab="f6">⑥ 文件上传</button>
+  </div>
+
+  <!-- f1 -->
+  <div class="tab-panel active" id="f1">
+    <div class="grid g2">
+      <div class="card tight">
+        <h4 style="margin-top:0">时序</h4>
+        <div class="steps">
+          <div class="step"><span class="sn">1</span><div><b>下发验证码</b> <code>POST /auth/verification/code/send</code>
+            <div class="sd">先 <code>hasKey</code> 判断是否已发送（存在即视为频繁，抛 <code>VERIFICATION_CODE_SEND_FREQUENTLY</code>）；
+              生成 6 位随机数字，写入 Redis <code>verification.code.{phone}</code>，TTL 3 分钟。</div></div></div>
+          <div class="step"><span class="sn">2</span><div><b>提交登录</b> <code>POST /auth/login</code>
+            <div class="sd"><code>LoginTypeEnum</code> 分流：<code>1</code> 验证码登录、<code>2</code> 账号密码登录。</div></div></div>
+          <div class="step"><span class="sn">3</span><div><b>验证码分支</b>
+            <div class="sd">比对 Redis 中的验证码；通过后调用 <code>userRpcService.registerUser(phone)</code> ——
+              <b>登录即注册</b>，未注册用户在此自动建号。</div></div></div>
+          <div class="step"><span class="sn">4</span><div><b>密码分支</b>
+            <div class="sd"><code>findByPhone</code> 取回 BCrypt 密文，<code>passwordEncoder.matches()</code> 校验。</div></div></div>
+          <div class="step"><span class="sn">5</span><div><b>签发令牌</b>
+            <div class="sd"><code>StpUtil.login(userId)</code> → <code>StpUtil.getTokenInfo().tokenValue</code>
+              作为 <code>Response.data</code> 返回。token 风格 uuid，有效期 30 天，允许多端并存且共用同一 token。</div></div></div>
+        </div>
+      </div>
+      <div class="card tight">
+        <h4 style="margin-top:0">设计要点</h4>
+        <ul class="small">
+          <li><b>验证码即注册凭证</b>：省掉独立的注册流程，降低新用户门槛，这是社区产品的常见取舍。</li>
+          <li><b>验证码只存 Redis</b>：天然带 TTL，不需要定时清理任务；<code>hasKey</code> 兼作 60s 级频控。</li>
+          <li><b>认证与用户资料分离</b>：<code>mybook-auth</code> 不持有用户表，密码规则、用户主数据都归 <code>mybook-user</code>，
+              认证服务只是「编排者」，未来接入第三方登录时改动面很小。</li>
+          <li><b>密码不落明文</b>：<code>PasswordEncoderConfig</code> 提供 BCrypt。</li>
+        </ul>
+        <h4>已知待办</h4>
+        <ul class="small" style="margin-bottom:0">
+          <li>短信通道未接入（<code>// todo: 三方</code>），当前直接把验证码写日志并回传，便于本地联调。</li>
+          <li><code>AuthServiceImpl.loginAndRegister</code> 中两种登录方式混在一个 <code>switch</code> 里，
+              后续可拆为策略实现。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- f2 -->
+  <div class="tab-panel" id="f2">
+    <div class="grid g2">
+      <div class="card tight">
+        <h4 style="margin-top:0">时序</h4>
+        <div class="steps">
+          <div class="step"><span class="sn">1</span><div><b>类型分流与校验</b>
+            <div class="sd">图文：图片非空且 <b>≤ 8 张</b>，用逗号拼成 <code>imgUris</code>；
+              视频：<code>videoUri</code> 非空。校验用 Guava <code>Preconditions</code>，失败由全局异常处理转成参数错误响应。</div></div></div>
+          <div class="step"><span class="sn">2</span><div><b>申请分布式 ID</b>
+            <div class="sd"><code>distributedIdGeneratorRpcService.getSnowflakeId()</code> ——
+              笔记 ID 走<b>雪花算法</b>，不落库、趋势递增。</div></div></div>
+          <div class="step"><span class="sn">3</span><div><b>正文先落 KV</b>
+            <div class="sd">正文非空时生成 <code>UUID</code> 作为 <code>contentUuid</code>，
+              调 <code>keyValueRpcService.saveNoteContent(uuid, content)</code> 写入 Cassandra；
+              失败直接抛 <code>NOTE_PUBLISH_FAIL</code>。</div></div></div>
+          <div class="step"><span class="sn">4</span><div><b>补话题名</b>
+            <div class="sd">有 <code>topicId</code> 时查 <code>t_topic</code> 取 <code>topicName</code> 冗余进笔记行，避免列表页 JOIN。</div></div></div>
+          <div class="step"><span class="sn">5</span><div><b>元数据落 MySQL</b>
+            <div class="sd">默认 <code>isTop=false</code>、<code>status=NORMAL</code>、<code>visible=PUBLIC</code>，
+              <code>insertSelective</code> 插入 <code>t_note</code>。</div></div></div>
+          <div class="step"><span class="sn">6</span><div><b>失败补偿</b>
+            <div class="sd">插入异常时，若已写过正文，则调 <code>deleteNoteContent</code> 回收 Cassandra 中的孤儿数据。</div></div></div>
+        </div>
+      </div>
+      <div class="card tight">
+        <h4 style="margin-top:0">设计要点</h4>
+        <ul class="small" style="margin-bottom:0">
+          <li><b>先写正文、后写元数据</b>：正文写入失败会导致「无元数据的孤儿正文」，用删除补偿；
+              反之若先写元数据再写正文，失败会留下「查得到但打不开」的笔记，体验更差。顺序本身就是取舍。</li>
+          <li><b>两种 ID 策略按业务分工</b>：用户侧标识（mybook_id）需要可读、可从固定值起步，
+              故用号段；笔记量大且并发生成，故用雪花。见第 07 节。</li>
+          <li><b>正文外置（content_uuid 间接引用）</b>让 <code>t_note</code> 行保持窄小，
+              列表分页不会因为大文本撑爆 <code>innodb_page_size</code>。</li>
+          <li><b>外部依赖前置校验</b>：<code>creatorId</code> 为空（未登录）在写任何存储之前就抛出，不做无用 IO。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- f3 -->
+  <div class="tab-panel" id="f3">
+    <div class="grid g2">
+      <div class="card tight">
+        <h4 style="margin-top:0">读取路径（三级）</h4>
+<pre><code>Caffeine 本地缓存  ──miss──▶  Redis  ──miss──▶  MySQL
+   ↑ 命中即返回             ↑ 命中则异步回填本地    ↑
+   （同进程、纳秒级）        （跨实例共享）       （含并发 RPC 编排）</code></pre>
+        <div class="steps">
+          <div class="step"><span class="sn">L1</span><div><b>Caffeine</b>
+            <div class="sd"><code>LOCAL_CACHE.getIfPresent(noteId)</code>；命中后<b>仍需做可见性校验</b>，
+              因为缓存内容对所有人都一样，而「仅自己可见」的判断依赖当前登录人。</div></div></div>
+          <div class="step"><span class="sn">L2</span><div><b>Redis</b>
+            <div class="sd">命中则<b>异步</b>（<code>threadPoolTaskExecutor</code>）把结果回填 Caffeine，再返回。</div></div></div>
+          <div class="step"><span class="sn">L3</span><div><b>MySQL + 并发 RPC</b>
+            <div class="sd"><code>selectByPrimaryKey</code> 查不到 → 异步写入 <code>"null"</code> 短过期占位；
+              查到后用 <code>CompletableFuture.allOf</code> <b>并行</b>调用户服务（取头像昵称）与 KV 服务（取正文）。</div></div></div>
+          <div class="step"><span class="sn">L4</span><div><b>回填</b>
+            <div class="sd">组装 <code>FindNoteDetailRspVO</code> 返回客户端的<b>同时</b>，
+              异步把 JSON 写入 Redis，过期时间 = 1 天 + 随机 0~1 天。</div></div></div>
+        </div>
+      </div>
+      <div class="card tight">
+        <h4 style="margin-top:0">设计要点</h4>
+        <ul class="small">
+          <li><b>防穿透</b>：不存在的笔记写 <code>"null"</code> 占位，过期 60 + 随机 0~60 秒 ——
+              短过期既挡住恶意刷不存在 ID 的流量，又不会长期占用内存。</li>
+          <li><b>防雪崩</b>：所有过期时间都加随机量（正文 1 天 + 随机 1 天；用户信息同理），
+              避免同一时刻批量失效导致数据库被击穿。</li>
+          <li><b>并发编排</b>：两次 RPC 无依赖关系，用 <code>CompletableFuture</code> 并行执行，
+              响应时间从「A + B」降到「max(A, B)」。</li>
+          <li><b>回填与返回解耦</b>：写缓存放在异步线程，不阻塞用户响应 ——
+              代价是存在极短的缓存空窗，对详情页可接受。</li>
+          <li><b>可见性校验位置</b>：无论从哪一级缓存命中都要校验，且校验逻辑收敛在
+              <code>checkNoteVisible()</code> 一处。</li>
+        </ul>
+        <h4>对照实现</h4>
+        <p class="small" style="margin-bottom:0">
+          <code>findNoteDetailWithSync</code> 是一份<b>同步版</b>实现，与异步版并存，
+          说明这套缓存编排是逐步演进出来的，保留旧实现便于对比验证。
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- f4 -->
+  <div class="tab-panel" id="f4">
+    <div class="grid g2">
+      <div class="card tight">
+        <h4 style="margin-top:0">时序（延迟双删 + 广播失效）</h4>
+        <div class="steps">
+          <div class="step"><span class="sn">1</span><div><b>鉴权</b>
+            <div class="sd">查 <code>t_note</code>；非发布者抛 <code>NOTE_CANT_OPERATE</code>。</div></div></div>
+          <div class="step"><span class="sn">2</span><div><b>删元数据 + 回收正文</b>
+            <div class="sd">删除 MySQL 笔记行；若 <code>contentUuid</code> 存在则调 KV 服务删正文。</div></div></div>
+          <div class="step"><span class="sn">3</span><div><b>发本地缓存失效消息</b>
+            <div class="sd"><code>TOPIC_DELETE_NOTE_LOCAL_CACHE</code>，延迟级别 <code>1</code>（约 1s）。</div></div></div>
+          <div class="step"><span class="sn">4</span><div><b>发 Redis 缓存失效消息</b>
+            <div class="sd"><code>TOPIC_DELAY_DELETE_NOTE_REDIS_CACHE</code>，同样延迟 1s。</div></div></div>
+          <div class="step"><span class="sn">5</span><div><b>消费者执行删除</b>
+            <div class="sd"><code>DelayDeleteNoteRedisCacheConsumer</code> 删 Redis；
+              <code>DeleteNoteLocalCacheConsumer</code> 删本地缓存。</div></div></div>
+        </div>
+      </div>
+      <div class="card tight">
+        <h4 style="margin-top:0">为什么是「延迟」双删</h4>
+        <ul class="small">
+          <li>删除动作发生在数据库提交<b>之后</b>，此刻可能仍有并发读线程正持有旧值，
+              并在稍后写回缓存 —— 如果立刻删，这个「脏回填」会留在缓存里。</li>
+          <li>延迟约 1 秒再删一次，让那批在途读请求的<b>回填动作先落地、再被清掉</b>，
+              从而把脏数据窗口压到最小。</li>
+        </ul>
+        <h4>为什么用 MQ 而不是本地延迟队列</h4>
+        <ul class="small" style="margin-bottom:0">
+          <li><b>本地缓存是每台实例私有的</b>：<code>Caffeine</code> 只存在于处理该请求的进程内。
+            用广播型消息让所有实例各自清理，是分布式本地缓存失效的标准做法。</li>
+          <li>RocketMQ 原生支持延迟级别，不引入额外的调度组件；失败还有重试。</li>
+          <li>服务重启后消息不丢，比进程内的 <code>ScheduledExecutorService</code> 更可靠。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- f5 -->
+  <div class="tab-panel" id="f5">
+    <div class="grid g2">
+      <div class="card tight">
+        <h4 style="margin-top:0">关注：写路径</h4>
+        <div class="steps">
+          <div class="step"><span class="sn">1</span><div><b>四项前置校验</b>
+            <div class="sd">已登录、不能关注自己、目标用户存在（<code>userRpcService.findById</code>）。</div></div></div>
+          <div class="step"><span class="sn">2</span><div><b>Lua 原子校验并写入</b>
+            <div class="sd"><code>follow_check_and_add.lua</code> 在一个原子操作里完成：
+              检查 ZSET 是否存在 → 是否已达 1000 上限 → 是否已关注 → <code>ZADD key timestamp followerId</code>。
+              返回码：<code>-1</code> 未初始化 / <code>-2</code> 超上限 / <code>-3</code> 重复关注 / <code>0</code> 成功。</div></div></div>
+          <div class="step"><span class="sn">3</span><div><b>冷启动回填</b>
+            <div class="sd">返回 <code>-1</code> 说明 Redis 中该 ZSET 不存在，从 <code>t_following</code> 全量查出，
+              经 <code>follow_batch_add_and_expire.lua</code> 批量 <code>ZADD</code> 并设置随机过期（1 天 + 随机 1 天），然后重试关注。</div></div></div>
+          <div class="step"><span class="sn">4</span><div><b>发送 MQ 异步落库</b>
+            <div class="sd"><code>asyncSend</code> 到 <code>TOPIC_FOLLOW_OR_UNFOLLOW</code>，
+              tag = <code>TAG_FOLLOW</code>，携带 <code>FollowUserMqDTO{userId, followerId, createTime}</code>。
+              Redis 写入已成功，因此对用户而言「关注即时生效」。</div></div></div>
+        </div>
+        <h4>取关：写路径</h4>
+        <div class="steps">
+          <div class="step"><span class="sn">1</span><div><b>删 Redis ZSET 成员</b>
+            <div class="sd">从自己的关注 ZSET 中 <code>ZREM</code>。</div></div></div>
+          <div class="step"><span class="sn">2</span><div><b>发 MQ</b>
+            <div class="sd">tag = <code>TAG_UNFOLLOW</code>，由消费者删除数据库中的双向记录。</div></div></div>
+        </div>
+      </div>
+      <div class="card tight">
+        <h4 style="margin-top:0">消费端：削峰 + 事务 + 幂等</h4>
+        <div class="steps">
+          <div class="step"><span class="sn">1</span><div><b>令牌桶削峰</b>
+            <div class="sd"><code>rateLimiter.acquire()</code>（Guava <code>RateLimiter</code>），
+              阈值来自 <code>mq-consumer.follow-unfollow.rate-limit</code>，配合 <code>@RefreshScope</code>
+              可在 Nacos 改配置后<b>运行时生效</b>，无需重启。</div></div></div>
+          <div class="step"><span class="sn">2</span><div><b>按 tag 分流</b>
+            <div class="sd">同一个 topic 承载关注与取关两种事件，用 tag 区分，消费者内部分派到
+              <code>handleFollowTagMessage</code> / <code>handleUnfollowTagMessage</code>。</div></div></div>
+          <div class="step"><span class="sn">3</span><div><b>编程式事务</b>
+            <div class="sd"><code>transactionTemplate.execute()</code> 保证
+              <code>t_following</code> 与 <code>t_fans</code> 两张表<b>同生共死</b>；
+              粉丝行插入失败则整体 <code>setRollbackOnly()</code>。</div></div></div>
+          <div class="step"><span class="sn">4</span><div><b>幂等</b>
+            <div class="sd">依赖 <code>uk_user_id_following_user_id</code> 联合唯一索引 ——
+              消息重投不会产生重复关系（异常被吞掉、事务回滚，属于可接受的幂等语义）。</div></div></div>
+          <div class="step"><span class="sn">5</span><div><b>回写被关注者的粉丝 ZSET</b>
+            <div class="sd">数据库写成功后，用 <code>follow_check_and_update_fans_zset.lua</code>
+              维护对方的粉丝列表；<b>若粉丝 ZSET 不存在则跳过</b>（<code>-1</code>），
+              等对方主动查粉丝列表时再从数据库全量重建，避免热 key 膨胀。</div></div></div>
+        </div>
+        <h4>读路径</h4>
+        <ul class="small" style="margin-bottom:0">
+          <li><b>关注列表</b>：优先 <code>ZSET</code> 按时间倒序分页；未命中则查数据库，
+            并<b>异步</b>把全量关注关系 <code>ZADD</code> 回 Redis（<code>syncFollowingList2Redis</code>），
+            再用 <code>userRpcService.findByIds</code> 批量补齐昵称头像。</li>
+          <li><b>粉丝列表</b>：<code>zCard</code> 取总数、<code>reverseRangeByScore</code> 分页取 ID。
+            当粉丝 ZSET 超过 <code>5000</code> 时用 <code>ZPOPMIN</code> 淘汰最早关注的粉丝 ——
+            <b>只保活跃粉丝</b>，把内存控制在可控范围（属于实现中的容量取舍）。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- f6 -->
+  <div class="tab-panel" id="f6">
+    <div class="grid g2">
+      <div class="card tight">
+        <h4 style="margin-top:0">时序</h4>
+        <div class="steps">
+          <div class="step"><span class="sn">1</span><div><b>接收文件</b>
+            <div class="sd"><code>POST /file/upload</code>，<code>consumes = multipart/form-data</code>，
+              参数名固定为 <code>file</code>。</div></div></div>
+          <div class="step"><span class="sn">2</span><div><b>策略选择</b>
+            <div class="sd"><code>FileStrategyFactory</code> 按 <code>storage.type</code> 返回
+              <code>MinioFileStrategy</code> 或 <code>AliyunOSSFileStrategy</code>。</div></div></div>
+          <div class="step"><span class="sn">3</span><div><b>上传</b>
+            <div class="sd">校验文件非空 → 取原文件名后缀 → 生成 <code>UUID(去横线) + 后缀</code> 作为 objectName，
+              避免文件名冲突与中文名问题。</div></div></div>
+          <div class="step"><span class="sn">4</span><div><b>返回访问地址</b>
+            <div class="sd">拼装 <code>{endpoint}/{bucket}/{objectName}</code> 返回给调用方，
+              由业务侧写进 <code>t_user.avatar</code> 或 <code>t_note.img_uris</code>。</div></div></div>
+        </div>
+      </div>
+      <div class="card tight">
+        <h4 style="margin-top:0">设计要点</h4>
+        <ul class="small" style="margin-bottom:0">
+          <li><b>策略模式 + 工厂</b>：上传能力抽象为 <code>FileStrategy</code> 接口，
+            新增存储厂商只需加一个实现类 + 一个分支，调用方零改动。</li>
+          <li><b>配置热更新</b>：<code>FileStrategyFactory</code> 与 <code>getFileStrategy()</code> 都标注
+            <code>@RefreshScope</code>，在 Nacos 把 <code>storage.type</code> 从 <code>minio</code> 改成
+            <code>aliyun</code> 后 bean 自动重建 —— <b>切换存储后端不需要重启与重新发版</b>。</li>
+          <li><b>返回 URL 而非对象路径</b>：调用方拿到的就是可直接展示的地址，无需了解 bucket 规则。</li>
+          <li><b>待完善</b>：<code>AliyunOSSFileStrategy</code> 目前是空实现（仅打日志），
+            MinIO 分支在上传异常时返回空字符串而非抛异常，调用方需要自行判空。</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ============ 06 ============ -->
+<section id="principles">
+  <h2><span class="num">06</span>架构设计原理</h2>
+  <p class="lead">
+    这一节回答「为什么这样设计」。每条原理都对应到具体代码，而不是泛泛的架构口号。
+  </p>
+
+  <h3>原理 1 · 统一入口：把横切关注点全部收敛到网关</h3>
+  <p class="lead small">
+    鉴权、跨域、身份解析这类「每个服务都要做、但都不该各自实现」的事情，全部由
+    <code>mybook-gateway</code> 承担，业务服务对此完全无感。
+  </p>
+  <div class="diagram">
+    <div class="row" style="align-items:stretch">
+      <div class="node" style="flex:1 1 150px"><div class="t">客户端</div><div class="s"><code>Authorization:<br>Bearer &lt;token&gt;</code></div></div>
+      <div class="node acc" style="flex:1 1 210px"><div class="t">SaReactorFilter <span class="tag red">鉴权</span></div>
+        <div class="s">拦截 <code>/**</code>，白名单放行 <code>/auth/login</code>、<code>/auth/verification/code/send</code>、<code>/actuator/health</code></div></div>
+      <div class="node acc" style="flex:1 1 210px"><div class="t">AddUserId2HeaderFilter <span class="tag red">@Order(-90)</span></div>
+        <div class="s"><code>StpUtil.getLoginIdAsLong()</code> 解析 token，把 userId 塞进请求头；未登录则原样放行</div></div>
+      <div class="node blue" style="flex:1 1 230px"><div class="t">业务服务 <span class="tag blue">HeaderUserId2ContextFilter</span></div>
+        <div class="s">请求头 → <code>LoginUserContextHolder</code>（TTL），请求结束 <code>finally</code> 中 <code>remove()</code></div></div>
+      <div class="node purple" style="flex:1 1 210px"><div class="t">下游服务 <span class="tag purple">FeignRequestInterceptor</span></div>
+        <div class="s">从 TTL 取出 userId，继续写入下游请求头，<b>身份沿着调用链传递</b></div></div>
+    </div>
+    <div class="cap">身份透传链路：token → 网关解析 → 请求头 → ThreadLocal → Feign → 下游服务</div>
+  </div>
+  <div class="grid g3" style="margin-top:16px">
+    <div class="card tight">
+      <h4 style="margin-top:0">为什么让网关解析 token</h4>
+      <p class="small" style="margin:0">
+        业务服务只认 <code>userId</code> 请求头，不引入 Sa-Token 依赖、不关心 token 用什么算法签发。
+        将来换认证方案（JWT / OAuth2），只需改网关一处。
+        <b>代价</b>：内网服务若被绕过网关直接调用将失去鉴权 —— 因此 <code>kv</code> / <code>oss</code> /
+        <code>id-generator</code> 都不暴露在网关路由中，只在集群内网可达。
+      </p>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:0">为什么要用 TTL 而不是 ThreadLocal</h4>
+      <p class="small" style="margin:0">
+        业务里大量使用 <code>threadPoolTaskExecutor.submit(...)</code> 做异步回填。
+        普通 <code>ThreadLocal</code> 在<b>线程池复用</b>场景下会丢上下文（子线程拿不到 userId，
+        甚至拿到上一个任务的残留值）。<code>TransmittableThreadLocal</code> 在任务提交时快照、
+        执行时回放，保证异步链路里 <code>LoginUserContextHolder.getUserId()</code> 依然正确。
+        <code>MyBookAuthApplication</code> 的 <code>logout()</code> 中特意在异步线程里再取一次 userId 打日志，
+        就是对这一行为的验证。
+      </p>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:0">CORS 与 Sa-Token 的顺序陷阱</h4>
+      <p class="small" style="margin:0">
+        浏览器预检 <code>OPTIONS</code> 请求<b>不带</b> <code>Authorization</code>，会被 Sa-Token 判为未登录并返回 401，
+        导致跨域失败。<code>CorsConfig</code> 把 <code>CorsWebFilter</code> 标注为
+        <code>@Order(Ordered.HIGHEST_PRECEDENCE)</code>，排在 Sa-Token 过滤器之前命中预检并短路返回；
+        同时 CORS 响应头在进入后续过滤器链前就已写入响应，因此 Sa-Token 抛出的 401 JSON 也带得上该头，
+        浏览器才能读到错误体。这段设计意图被明确写在 <code>CorsConfig</code> 的类注释里。
+      </p>
+    </div>
+  </div>
+
+  <h3>原理 2 · 存储选型：一种数据一种存储</h3>
+  <p class="lead small">
+    系统刻意使用了 4 种存储，每种都对应一类明确的数据特征 —— 这是「按访问模式选型」而非「有什么用什么」。
+  </p>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th style="width:132px">存储</th><th style="width:200px">承载数据</th><th>选型理由</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>MySQL 8.0</b></td>
+          <td>用户、角色权限、笔记元数据、频道话题、点赞收藏、计数、关注粉丝</td>
+          <td>需要<b>事务、唯一约束、二级索引与多条件查询</b>的数据。
+            关注幂等靠唯一索引实现，关系双写靠事务保证，这些能力其他存储给不了。</td>
+        </tr>
+        <tr>
+          <td><b>Redis 7.2</b></td>
+          <td>验证码、登录态、笔记详情缓存、用户信息缓存、关注/粉丝 ZSET</td>
+          <td>需要<b>高并发读写、TTL、原子脚本、有序集合</b>的场景。
+            ZSET 天然支持「按关注时间排序 + 分页 + 计数（ZCARD）」，用 MySQL 实现这三件事代价高得多。</td>
+        </tr>
+        <tr>
+          <td><b>Cassandra</b></td>
+          <td>笔记正文 <code>note_content(id uuid, content)</code></td>
+          <td>正文是<b>大文本、单键点查、无复杂条件、写多读多</b>。
+            宽表 + 一致性哈希让它可以线性扩容，且写入无锁、无 JOIN，非常适合这种纯 KV 访问模式。
+            只有 <code>id</code> 一个查询入口，也说明它被设计成「按 UUID 取正文」的专用存储。</td>
+        </tr>
+        <tr>
+          <td><b>MinIO / OSS</b></td>
+          <td>图片、视频等二进制文件</td>
+          <td>非结构化大文件不适合进数据库或走应用进程，
+            用对象存储 + HTTP 直链访问，配合策略模式屏蔽厂商差异。</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>原理 3 · 缓存：多级、三防、可失效</h3>
+  <div class="grid g3">
+    <div class="card tight">
+      <h4 style="margin-top:0">多级缓存</h4>
+      <p class="small" style="margin:0">
+        Caffeine（进程内，纳秒级，容量 10000，写后 1 小时过期）→ Redis（跨实例共享）→ MySQL。
+        设计意图是让绝大多数详情页请求在<b>本地内存</b>就结束，
+        代价是引入了一致性问题，因此必须配合失效机制（见下）。
+      </p>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:0">三防</h4>
+      <ul class="small" style="margin:0;padding-left:18px">
+        <li><b>穿透</b>：查不到时写 <code>"null"</code> 占位，60 + 随机 60 秒过期。</li>
+        <li><b>雪崩</b>：过期时间统一加随机量（1 天 + 随机 0~1 天），打散失效时刻。</li>
+        <li><b>击穿</b>：Caffeine 与 Redis 两级命中率高，数据库压力被大幅削减；
+            进一步可加互斥锁，当前实现未做。</li>
+      </ul>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:0">可失效：延迟双删</h4>
+      <p class="small" style="margin:0">
+        写操作后通过 <b>RocketMQ 延迟消息</b>（延迟级别 1 ≈ 1s）清理 Redis 与本地缓存：
+        Redis 用一条消息，本地缓存用广播消息让所有实例各自清理。
+        延迟的意义是「等在途读请求的脏回填落地后再删」，最小化不一致窗口。
+      </p>
+    </div>
+  </div>
+  <div class="card tight" style="margin-top:14px">
+    <h4 style="margin-top:0">用户信息缓存：批量 + pipeline 回写</h4>
+    <p class="small" style="margin:0">
+      <code>UserServiceImpl.findByIds</code> 体现了另一种缓存模式 —— <b>批量读 + 增量补 + 异步回写</b>：
+      先用 <code>multiGet</code> 批量查 Redis，过滤空值；若全部命中直接返回；
+      否则只把没命中的 ID 在数据库查询，然后用 <code>executePipelined</code> 异步写回 Redis（带随机过期）。
+      这在「关注列表要一次补齐 10 个用户昵称头像」的场景下，把 10 次往返压成 2 次。
+    </p>
+  </div>
+
+  <h3>原理 4 · 分布式 ID：两种策略各司其职</h3>
+  <div class="grid g2">
+    <div class="card tight">
+      <h4 style="margin-top:0">号段模式（Leaf Segment）</h4>
+      <p class="small">
+        用于 <code>mybook_id</code> 与 <code>user_id</code>。核心是
+        <b>批量取号 + 内存发号</b>：一次从 <code>leaf_alloc</code> 取走 <code>step=2000</code> 个 ID 放在内存里，
+        之后 2000 次发号完全不碰数据库。
+      </p>
+      <p class="small" style="margin-bottom:0"><b>双 buffer 是它的关键设计</b>（<code>SegmentBuffer</code>）：</p>
+      <ul class="small" style="margin:6px 0 0;padding-left:18px">
+        <li>内部持有两个 <code>Segment</code>，一个在服役、一个待命，<code>currentPos</code> 标记当前段。</li>
+        <li>当前段消耗到一定比例时，后台线程（<code>UpdateThreadFactory</code> 创建的独立线程）
+          <b>异步</b>加载下一段到待命 buffer，<code>nextReady</code> 置位。</li>
+        <li>当前段用完时若下一段已就绪，则<b>瞬间切换</b>，不等数据库 —— 这是它比「用完再取」方案吞吐高的根本原因。</li>
+        <li>支持动态调整 step：以 15 分钟（<code>SEGMENT_DURATION</code>）为窗口、上限 <code>MAX_STEP = 1000000</code>，
+          按消耗速度自动伸缩；<code>minStep</code> 不小于数据库配置值。</li>
+        <li>每分钟有一轮 <code>updateCacheFromDb</code>，把数据库新增的 <code>biz_tag</code> 灌进 cache、
+          已删除的从 cache 移除，因此<b>新增业务标识不需要重启服务</b>。</li>
+      </ul>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:0">雪花模式（Snowflake）</h4>
+      <p class="small">
+        用于<b>笔记 ID</b>：<code>distributedIdGeneratorRpcService.getSnowflakeId()</code>。
+      </p>
+      <ul class="small">
+        <li><b>完全无状态</b>，不依赖数据库，不会成为写瓶颈，适合笔记这种量的数据。</li>
+        <li><b>趋势递增</b>：作为主键对 InnoDB 聚簇索引友好，
+          比 UUID 随机主键导致的页分裂要健康得多。</li>
+        <li><b>workerId 由 ZooKeeper 分配</b>（<code>leaf.snowflake.zk.address=127.0.0.1:2181</code>），
+          解决多实例 workerId 冲突问题。</li>
+      </ul>
+      <h4>为什么不全用一种</h4>
+      <p class="small" style="margin-bottom:0">
+        <code>mybook_id</code> 是<b>用户可见、可运营</b>的标识（长度 15，可从 <code>10100</code> 起步），
+        需要按业务定制起始值 —— 这只有号段模式（依赖数据库里的 <code>max_id</code>）才能做到；
+        而笔记 ID 用户不可见、只求高并发不重复，雪花更合适。<b>把 ID 当作业务属性来选型，而不是技术喜好。</b>
+      </p>
+    </div>
+  </div>
+
+  <h3>原理 5 · 异步化：RocketMQ 的三种用法</h3>
+  <div class="grid g3">
+    <div class="card tight">
+      <h4 style="margin-top:0">① 异步落库（写扩散）</h4>
+      <p class="small" style="margin:0">
+        关注操作<b>先写 Redis 立即返回</b>，数据库更新交给消费者。
+        用户感知延迟从「两次 insert + 事务」降到「一次 ZADD」。
+        用最终一致性换取响应速度 —— 这是社交产品里最典型的取舍。
+      </p>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:0">② 延迟消息（缓存双删）</h4>
+      <p class="small" style="margin:0">
+        <code>DelayDeleteNoteRedisCacheTopic</code> 使用 RocketMQ 延迟级别控制「1 秒后再删」，
+        避免自行实现延迟队列（时间轮 / 定时任务）带来的复杂度与可靠性问题。
+      </p>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:0">③ 广播失效（本地缓存）</h4>
+      <p class="small" style="margin:0">
+        <code>DeleteNoteLocalCacheTopic</code> 用于通知<b>所有实例</b>清理各自的 Caffeine 缓存 ——
+        这是进程内缓存在分布式环境下唯一可行的失效手段。
+      </p>
+    </div>
+  </div>
+
+  <h3>原理 6 · 一致性与幂等：把约束下沉到存储</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th style="width:190px">场景</th><th style="width:210px">手段</th><th>说明</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>关注 / 取关两表双写</td>
+          <td><code>TransactionTemplate</code> 编程式事务</td>
+          <td>转发 A → B 的两条记录必须同时成立，任一失败即 <code>setRollbackOnly()</code></td>
+        </tr>
+        <tr>
+          <td>消息重复投递</td>
+          <td>数据库唯一索引</td>
+          <td><code>uk_user_id_following_user_id</code>；把幂等交给数据库，而不是在应用层做「先查再插」
+            （后者在并发下有竞态）</td>
+        </tr>
+        <tr>
+          <td>点赞 / 收藏重复操作</td>
+          <td>唯一索引 + <code>status</code> 位</td>
+          <td><code>uk_user_id_note_id</code> 保证一人一行，重复点赞只更新状态，不新增行</td>
+        </tr>
+        <tr>
+          <td>Redis 与数据库不一致</td>
+          <td>以数据库为准 + 重建</td>
+          <td>关注列表 ZSET 未命中即从 <code>t_following</code> 全量重建；
+            粉丝 ZSET 不存在时消费者跳过，等读路径重建</td>
+        </tr>
+        <tr>
+          <td>正文写入后元数据失败</td>
+          <td>补偿删除</td>
+          <td>发布流程 catch 中调用 <code>deleteNoteContent</code> 回收孤儿正文（Saga 式补偿思路）</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>原理 7 · 配置外部化与运行时热更新</h3>
+  <p class="lead small">
+    可调参数一律外置到 Nacos，并对「希望不重启就生效」的配置加 <code>@RefreshScope</code>：
+  </p>
+  <div class="grid g3">
+    <div class="card tight">
+      <h4 style="margin-top:0">限流阈值</h4>
+      <p class="small" style="margin:0">
+        <code>mq-consumer.follow-unfollow.rate-limit: 1</code> →
+        <code>FollowUnfollowMqConsumerRateLimitConfig</code>（<code>@RefreshScope</code>）
+        构造 Guava <code>RateLimiter</code>。<b>大促时可在 Nacos 直接调大消费速率。</b>
+      </p>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:0">存储后端</h4>
+      <p class="small" style="margin:0">
+        <code>storage.type: minio | aliyun</code> → <code>FileStrategyFactory</code>（<code>@RefreshScope</code>），
+        切换对象存储无需重新发版。
+      </p>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:0">跨域白名单</h4>
+      <p class="small" style="margin:0">
+        <code>mybook.cors.allowed-origin-patterns</code> 默认 <code>*</code>，
+        生产环境应收窄为具体域名（用 Pattern 写法如 <code>https://app.example.com</code>）。
+      </p>
+    </div>
+  </div>
+</section>
+<!-- ============ 07 ============ -->
+<section id="deepdive">
+  <h2><span class="num">07</span>关键设计点（代码级）</h2>
+  <p class="lead">挑选 5 处「看起来简单、实际有讲究」的实现细节展开。</p>
+
+  <h3>7.1 用 Lua 脚本把「校验 + 写入」变成一次原子操作</h3>
+  <p class="lead small">
+    关注接口需要判断三件事（ZSET 是否存在、是否超 1000 上限、是否已关注）后再写入。
+    如果分成多条命令，<b>并发下会出现「查完没超限、写入时已超限」或重复关注</b>。
+    Redis 单线程执行 Lua，天然是原子的 —— 这是防并发竞态最直接的手段。
+  </p>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th style="width:280px">脚本</th><th style="width:150px">返回码</th><th>用途与触发场景</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>follow_check_and_add.lua</code></td>
+          <td><code>-1</code> / <code>-2</code> / <code>-3</code> / <code>0</code></td>
+          <td><b>关注主链路</b>。ZSET 不存在返回 -1（触发冷启动回填）；已达 1000 返回 -2；已关注返回 -3；
+            成功 <code>ZADD</code> 返回 0。Java 侧 <code>checkLuaScriptResult()</code> 统一翻译为业务异常。</td>
+        </tr>
+        <tr>
+          <td><code>follow_batch_add_and_expire.lua</code></td>
+          <td><code>0</code></td>
+          <td><b>冷启动 / 回填</b>。把 ARGV 按「分数, 值」成对组装成 <code>ZADD</code> 参数批量写入，
+            末尾参数作为 <code>EXPIRE</code>。一次往返完成 N 条记录回填 + 过期设置。</td>
+        </tr>
+        <tr>
+          <td><code>follow_check_and_update_fans_zset.lua</code></td>
+          <td><code>-1</code> / <code>0</code></td>
+          <td><b>被关注者粉丝列表</b>。ZSET 不存在（<code>-1</code>）就跳过 ——
+            避免为每个用户都维护粉丝 ZSET 导致内存爆炸；存在时若超 <code>5000</code> 先
+            <code>ZPOPMIN</code> 淘汰最早粉丝再 <code>ZADD</code>。</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="card tight">
+    <h4 style="margin-top:0">值得注意的实现细节</h4>
+    <ul class="small" style="margin-bottom:0">
+      <li><b>脚本资源按需加载</b>：每次调用都 <code>new DefaultRedisScript</code> + <code>ResourceScriptSource</code>，
+        语义清晰但有开销。生产上更常见的是把 <code>DefaultRedisScript</code> 做成单例 bean（或直接传脚本文本，
+        走 <code>EVALSHA</code> 缓存），可减少 IO。</li>
+      <li><b>时间戳入参</b>：<code>DateUtils.localDateTime2Timestamp(now)</code> 作为 ZSET 的 score，
+          这样「按关注时间排序」直接由 Redis 的分数排序能力提供，不需要额外排序字段。</li>
+      <li><b><code>Collections.singletonList</code> 的用意</b>：代码注释明确写了「高并发场景下避免创建多余数组」，
+          单 key 脚本用 <code>singletonList</code> 而非 <code>Arrays.asList</code>，省一次对象分配。</li>
+    </ul>
+  </div>
+
+  <h3>7.2 线程池：参数是算出来的，不是拍出来的</h3>
+  <div class="grid g2">
+    <div class="card tight">
+      <h4 style="margin-top:0">三处线程池配置对比</h4>
+      <div class="tbl-wrap" style="border:0;background:none">
+      <table style="min-width:0">
+        <thead><tr><th>模块</th><th>core</th><th>max</th><th>队列</th></tr></thead>
+        <tbody>
+          <tr><td><b>auth</b></td><td>16</td><td>17</td><td>200</td></tr>
+          <tr><td><b>user-relation</b></td><td>8</td><td>9</td><td>200</td></tr>
+          <tr><td><b>note</b></td><td>16</td><td>50</td><td>200</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <ul class="small" style="margin:10px 0 0;padding-left:18px">
+        <li>代码注释中保留了推导过程：<b>CPU 密集型 core = N + 1，IO 密集型 core = N × 2</b>。</li>
+        <li>「<code>max = core + 1</code>，多加的 1 为有效磁盘数」—— 因为队列容量给到 200，
+          队列大时 max 设大反而<b>增加线程切换成本</b>而无收益（任务先进队列，队列满了才会扩到 max）。</li>
+        <li>拒绝策略统一 <code>CallerRunsPolicy</code>：队列满时由<b>提交任务的线程自己执行</b>，
+          形成天然的背压，让上游变慢而不是直接丢任务。<b>相比 <code>AbortPolicy</code> 抛异常丢数据，这是更稳的选择。</b></li>
+        <li>优雅停机：<code>setWaitForTasksToCompleteOnShutdown(true)</code> +
+          <code>setAwaitTerminationSeconds(60)</code>，发布时不丢在途的缓存回填任务。</li>
+      </ul>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:0">本地缓存参数</h4>
+<pre><code>Caffeine.newBuilder()
+  .initialCapacity(10000)   // 预分配，减少扩容
+  .maximumSize(10000)       // 容量上限，防 OOM
+  .expireAfterWrite(1, HOURS) // 写后 1 小时过期
+  .build();</code></pre>
+      <p class="small" style="margin-bottom:0">
+        <code>maximumSize</code> 是本地缓存的<b>安全阀</b>：进程内缓存没有 TTL 兜底就是内存泄漏。
+        这里用「容量 + 写后过期」双保险，再叠加 MQ 广播主动失效。
+        <b>注意</b>：<code>expireAfterWrite</code> 意味着热点数据也会在 1 小时后失效并回源一次，
+        这是「确定性」优于「最优命中率」的取舍。
+      </p>
+    </div>
+  </div>
+
+  <h3>7.3 自动装配：业务服务零注解获得公共能力</h3>
+  <p class="lead small">
+    三个 starter 都通过 Spring Boot 3 的 <code>AutoConfiguration.imports</code> 注册，
+    业务服务只需在 <code>pom.xml</code> 里加依赖，不需要 <code>@Import</code> 或 <code>@ComponentScan</code> 扩展。
+  </p>
+  <div class="grid g3">
+    <div class="card tight">
+      <div class="tiny mono-key">…starter-biz-context/</div>
+      <div class="small" style="margin-top:6px"><b>META-INF/spring/…AutoConfiguration.imports</b></div>
+<pre style="margin:8px 0 0"><code>com.mybook.framework.biz.
+  context.config.
+  ContextAutoConfiguration</code></pre>
+    </div>
+    <div class="card tight">
+      <div class="tiny mono-key">…starter-biz-operationlog/</div>
+      <div class="small" style="margin-top:6px"><b>META-INF/spring/…AutoConfiguration.imports</b></div>
+<pre style="margin:8px 0 0"><code>com.mybook.framework.biz.
+  operationlog.config.
+  ApiOperationLogAutoConfiguration</code></pre>
+    </div>
+    <div class="card tight">
+      <div class="tiny mono-key">…starter-jackson/</div>
+      <div class="small" style="margin-top:6px"><b>META-INF/spring/…AutoConfiguration.imports</b></div>
+<pre style="margin:8px 0 0"><code>com.mybook.framework.
+  jackson.config.
+  JacksonAutoConfiguration</code></pre>
+    </div>
+  </div>
+  <div class="card tight" style="margin-top:14px">
+    <h4 style="margin-top:0">为什么 starter 里要手动注册过滤器</h4>
+    <p class="small" style="margin-bottom:0">
+      <code>ContextAutoConfiguration</code> 用 <code>FilterRegistrationBean</code> 显式注册
+      <code>HeaderUserId2ContextFilter</code>，而不是直接给 Filter 加 <code>@Component</code>。
+      原因是 starter 里的类不由业务服务扫描（包路径不同），必须显式声明；
+      同时 <code>FilterRegistrationBean</code> 可以控制 <code>urlPatterns</code> 与 <code>order</code>，
+      比裸 <code>@Component</code> 更可控。<b>这是 starter 与普通业务组件的关键区别。</b>
+    </p>
+  </div>
+
+  <h3>7.4 网关过滤器顺序：<code>@Order(-90)</code> 的含义</h3>
+  <p class="lead small">
+    <code>AddUserId2HeaderFilter</code> 标注 <code>@Order(-90)</code>，属于<b>靠前执行</b>的全局过滤器。
+    它必须在路由转发（默认 order 较大的 <code>NettyRoutingFilter</code>）之前完成，
+    否则 userId 请求头根本来不及加进请求。
+  </p>
+  <div class="card tight">
+    <h4 style="margin-top:0">一处需要留意的实现</h4>
+<pre><code>try {
+    userId = StpUtil.getLoginIdAsLong();
+} catch (Exception e) {
+    chain.filter(exchange);   // ← 未 return
+}
+Long finalUserId = userId;    // 未登录时仍是 null
+... .header(USER_ID, String.valueOf(finalUserId))  // 写入 "null" 字符串
+return chain.filter(newExchange);</code></pre>
+    <p class="small" style="margin-bottom:0">
+      未登录分支调用 <code>chain.filter(exchange)</code> 后<b>没有 <code>return</code></b>，
+      过滤器会继续往下走并执行一次 <code>chain.filter(newExchange)</code>，
+      导致请求被<b>转发两次</b>（且第二次会写入字符串 <code>"null"</code> 的 userId 头）。
+      由于网关已由 Sa-Token 拦截未登录请求，这条分支实际很难触发，但仍是应该修掉的缺陷。
+    </p>
+  </div>
+
+  <h3>7.5 契约设计：为什么所有接口都是 POST</h3>
+  <div class="grid g2">
+    <div class="card tight">
+      <h4 style="margin-top:0">现状</h4>
+      <p class="small" style="margin:0">
+        对外接口清一色 <code>@PostMapping</code> + <code>@RequestBody</code>，
+        包括语义上明显是查询的 <code>/note/detail</code>、<code>/relation/following/list</code>。
+      </p>
+      <h4>这么做的合理性</h4>
+      <ul class="small" style="margin:0;padding-left:18px">
+        <li><b>参数体统一</b>：查询也会携带登录人、分页、过滤条件等结构化参数，
+          JSON body 比 query string 更易扩展且无需 URL 编码烦恼。</li>
+        <li><b>避免 URL 泄露</b>：手机号、笔记 ID 等不出现在访问日志与浏览器历史里。</li>
+        <li><b>Feign 契约一致</b>：内外部接口形态相同，减少认知负担。</li>
+      </ul>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:0">代价与建议</h4>
+      <ul class="small" style="margin-bottom:0">
+        <li><b>无法利用 HTTP 缓存</b>：POST 默认不可缓存，浏览器与 CDN 层都帮不上忙，
+          所有缓存压力都落在应用层的 Caffeine/Redis 上。</li>
+        <li><b>语义不清晰</b>：幂等性无法从方法判断，客户端重试策略只能靠约定。</li>
+        <li><b>建议</b>：查询类接口改为 <code>GET</code>（分页/过滤走 query 参数），
+          写操作保持 <code>POST/PUT/DELETE</code>；若担心 URL 泄露，可改为把敏感参数放 header。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 08 ============ -->
+<section id="engineering">
+  <h2><span class="num">08</span>工程化与规约</h2>
+
+  <h3>依赖治理：<code>${revision}</code> + flatten 插件</h3>
+  <div class="grid g2">
+    <div class="card tight">
+      <h4 style="margin-top:0">问题</h4>
+      <p class="small" style="margin:0">
+        根 <code>pom.xml</code> 用 <code>${revision}</code> 统一版本号（<code>1.0.0</code>），
+        但子模块被单独安装 / 被其他项目依赖时，<code>flatten-maven-plugin</code> 不生效就会
+        解析不到 <code>${revision}</code>，报「无法解析版本号」。
+      </p>
+      <h4>方案</h4>
+      <ul class="small" style="margin:0;padding-left:18px">
+        <li><code>flatten-maven-plugin</code>，<code>flattenMode = resolveCiFriendliesOnly</code>，
+          在 <code>process-resources</code> 阶段把 <code>${revision}</code> 展开成真实版本并写入
+          <code>.flattened-pom.xml</code>（仓库根目录可见该文件）。</li>
+        <li>代价是生成物不自动清理，需清理时在 <code>clean</code> 阶段执行 <code>flatten.clean</code>。</li>
+      </ul>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:0">根 pom 的两种治理手段</h4>
+      <ul class="small" style="margin-bottom:0">
+        <li><b>统一版本变量</b>：近 40 个依赖版本全部集中在 <code>&lt;properties&gt;</code>
+          （<code>sa-token.version</code>、<code>rocketmq.version</code>、<code>mybatisplus.version</code> …），
+          升级只改一处。</li>
+        <li><b>统一依赖管理</b>：所有自研模块（含 <code>-api</code>、starter）在
+          <code>&lt;dependencyManagement&gt;</code> 中声明版本，业务模块引依赖<b>不写版本号</b>，
+          避免多模块版本漂移。</li>
+        <li><b>插件统一</b>：<code>spring-boot-maven-plugin</code>（<code>repackage</code> 打成可执行 jar）、
+          <code>maven-compiler-plugin</code>（含 Lombok 注解处理器路径）、
+          <code>mybatis-generator-maven-plugin</code>（代码生成）都在 <code>pluginManagement</code> 中收口。</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>运维脚本：<code>scripts/run.sh</code></h3>
+  <div class="card tight">
+    <p class="small" style="margin-top:0">
+      一个 10KB 的 Bash 脚本把「编译 → 启动 → 停止 → 看日志 → 看状态」全部封装，
+      模块名支持短名（<code>user</code>）与全名（<code>mybook-user</code>）两种写法。
+    </p>
+<pre><code>scripts/run.sh                       # 帮助 + 各服务状态
+scripts/run.sh status                # 查看运行状态
+scripts/run.sh user                  # 默认动作 restart：编译 + 启动
+scripts/run.sh restart all           # 全部重新编译并启动
+scripts/run.sh build user            # 只编译（含依赖模块）
+scripts/run.sh log user              # 跟踪日志
+scripts/run.sh clean user            # 清理 target
+scripts/run.sh -n restart user       # dry-run，只打印命令
+scripts/run.sh user -- --server.port=8084   # 追加 Spring 启动参数</code></pre>
+    <p class="small" style="margin-bottom:0">
+      支持 <code>JAVA_BIN</code> / <code>JAVA_HOME</code> / <code>JVM_OPTS</code> / <code>APP_ARGS</code> /
+      <code>MVN_FLAGS</code> / <code>WITH_TESTS</code> / <code>DRY_RUN</code> 等环境变量；
+      默认跳过单元测试（<code>WITH_TESTS=1</code> 才执行），并把日志统一收拢到 <code>logs/</code> 目录。
+      <b>把「开发环境怎么跑起来」也当作代码来维护</b>，这是这个仓库做得比较扎实的一点。
+    </p>
+  </div>
+
+  <h3>其他工程实践</h3>
+  <div class="grid g4">
+    <div class="card tight">
+      <div style="font-weight:600;color:#fff">SQL 版本化</div>
+      <p class="small" style="margin:6px 0 0">
+        <code>sqls/ddl.sql</code>（建表）、<code>drop.sql</code>（清理）、
+        <code>insert.sql</code>（初始化数据）三件套，便于重建环境。
+      </p>
+    </div>
+    <div class="card tight">
+      <div style="font-weight:600;color:#fff">代码生成</div>
+      <p class="small" style="margin:6px 0 0">
+        user / note / user-relation 模块各有
+        <code>generatorConfig.xml</code>，用 MyBatis Generator 从表结构生成
+        DO 与 Mapper XML，保证字段映射不出错。
+      </p>
+    </div>
+    <div class="card tight">
+      <div style="font-weight:600;color:#fff">日志规范</div>
+      <p class="small" style="margin:6px 0 0">
+        各服务统一 <code>logback-spring.xml</code>；关键链路日志带
+        <code>==&gt;</code> / <code>##</code> 前缀，便于 grep 定位。
+      </p>
+    </div>
+    <div class="card tight">
+      <div style="font-weight:600;color:#fff">压测资产</div>
+      <p class="small" style="margin:6px 0 0">
+        <code>test/login.jmx</code>（JMeter）与 <code>test/test_login.ps1</code>，
+        以及若干接口响应的截图留档。
+      </p>
+    </div>
+  </div>
+</section>
+<!-- ============ 09 ============ -->
+<section id="roadmap">
+  <h2><span class="num">09</span>演进建议</h2>
+  <p class="lead">
+    以下条目来自对代码的逐处核对，按「缺陷 → 未完成 → 待补齐能力」三档列出，
+    每条都标注了位置，便于直接跟进。
+  </p>
+
+  <h3>已确认的逻辑缺陷</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th style="width:250px">位置</th><th style="width:110px">影响</th><th>说明与建议</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>NoteServiceImpl.updateNoteIsTop()</code></td>
+          <td><span class="tag red">功能错误</span></td>
+          <td>置顶接口实际调用的是 <code>noteDOMapper.updateVisibleOnlyMe(noteDO)</code>，
+            且构建 <code>NoteDO</code> 时设置的是 <code>visible = PRIVATE</code>、完全没有用到
+            <code>updateNoteTopReqVO</code> 的 <code>top</code> 值。
+            <b>结果：调用「置顶」会把笔记改成「仅自己可见」</b>，且不影响 <code>is_top</code>。
+            应改为读取 <code>top</code> 参数并调用更新 <code>is_top</code> 的 mapper 方法。</td>
+        </tr>
+        <tr>
+          <td><code>gateway AddUserId2HeaderFilter</code></td>
+          <td><span class="tag warn">潜在缺陷</span></td>
+          <td>未登录分支 <code>chain.filter(exchange)</code> 后缺少 <code>return</code>，
+            会继续执行到方法末尾的第二次 <code>chain.filter(newExchange)</code>，导致重复转发，
+            并在已放行的请求上写入字符串 <code>"null"</code> 的 <code>userId</code> 头。
+            建议补 <code>return</code>，并把 <code>userId</code> 为 null 时不加请求头作为处理逻辑。</td>
+        </tr>
+        <tr>
+          <td><code>note/config/ThreadPoolConfig.java</code></td>
+          <td><span class="tag warn">配置未生效</span></td>
+          <td>该类<b>没有 <code>@Configuration</code>，方法也没有 <code>@Bean</code></b>，
+            全仓库无任何引用。而 <code>NoteServiceImpl</code> 通过
+            <code>@Resource(name = "taskExecutor")</code> 强依赖该 bean。
+            这意味着线程池参数（core 16 / max 50 / 队列 200）并未按此文件生效，
+            真实 bean 来源需要确认（对比 <code>auth</code> 与 <code>user-relation</code> 两个已正确标注的同类配置）。
+            建议补齐注解并确认 bean 唯一性。</td>
+        </tr>
+        <tr>
+          <td><code>AuthServiceImpl.loginAndRegister</code></td>
+          <td><span class="tag info">代码异味</span></td>
+          <td>同一方法里用 <code>switch</code> 混合了验证码登录与密码登录两套流程，
+            且错误处理不一致（参数问题返回 <code>Response.fail</code>，校验失败抛异常），
+            代码内的注释也标注了这处困惑。建议拆为两个策略实现，错误处理口径统一。</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3>未完成的功能</h3>
+  <div class="grid g2">
+    <div class="card tight">
+      <h4 style="margin-top:0">粉丝列表 <code>findFansList</code></h4>
+      <p class="small">
+        <code>UserRelationServiceImpl.findFansList</code> 只完成了 Redis 侧的总数与分页取 ID，
+        方法内留有 4 处 TODO：数据库兜底分支、批量查用户信息、
+        取粉丝数（<code>selectCountByUserId</code>）、取笔记数与「是否已关注」，
+        最终返回的 <code>findFansUserRspVOS</code> 始终为 <code>null</code>。
+        另外该方法<b>没有在 <code>UserRelationController</code> 中暴露</b>。
+      </p>
+      <p class="small" style="margin-bottom:0">
+        同样地，<code>updateNoteIsTop</code> 之外的
+        <code>FollowUnfollowConsumer</code> 逻辑完整，但取关链路在
+        <code>UserRelationServiceImpl.unfollow</code> 中也有待核对。
+      </p>
+    </div>
+    <div class="card tight">
+      <h4 style="margin-top:0">权限 / 计数 / 短信通道</h4>
+      <ul class="small" style="margin-bottom:0">
+        <li><b>权限列表</b>：<code>StpInterfaceImpl.getPermissionList</code> 已能从 Redis 聚合
+          <code>role.permission.{roleKey}</code> 的值并解析 JSON，但返回 <code>null</code> 的分支未收敛，
+          且没有任何 <code>StpUtil.checkPermission()</code> 调用点 —— 权限模型已搭好但未被消费。</li>
+        <li><b>计数服务</b>：<code>t_note_count</code> 与 <code>t_user_count</code> 两张表已建，
+          但没有对应的服务与写入逻辑，点赞/收藏/评论功能整体缺失。</li>
+        <li><b>短信通道</b>：验证码只写日志（<code>// todo: 三方</code>），
+          开发期方便，上线前必须接入真实短信服务商并移除「把验证码回传前端」的行为。</li>
+        <li><b>话题 / 频道</b>：<code>t_channel</code>、<code>t_topic</code> 已有数据，
+          但没有查询频道的接口。</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>待补齐的架构能力</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th style="width:170px">能力</th><th style="width:150px">现状</th><th>建议</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><b>服务熔断降级</b></td>
+          <td><span class="tag red">缺失</span></td>
+          <td>系统有 8 个服务且 Feign 调用链较长（note → user / kv / id）。
+            当前 <code>note</code> 详情查询里 <code>userRpcService.findById</code> 与
+            <code>keyValueRpcService.findNoteContent</code> 任一超时都会拖慢整个详情页。
+            建议接入 Sentinel 或 Resilience4j，对 RPC 设置超时 + 降级兜底
+            （如用户信息缺失时返回默认头像昵称，而不是整个页面失败）。</td>
+        </tr>
+        <tr>
+          <td><b>链路追踪</b></td>
+          <td><span class="tag warn">仅日志</span></td>
+          <td>有 <code>@ApiOperationLog</code> 与带前缀的日志，但跨服务无法串联。
+            建议接入 Sleuth/Micrometer Tracing + Zipkin，或至少把 traceId 加入 MDC
+            并随 Feign 请求头透传（可复用现有 <code>FeignRequestInterceptor</code> 的位置）。</td>
+        </tr>
+        <tr>
+          <td><b>配置安全</b></td>
+          <td><span class="tag red">明文</span></td>
+          <td>Redis 密码 <code>qwe123!@#</code>、MinIO 密钥、数据库密码均明文写在
+            <code>application.yml</code> 中且已提交进仓库。
+            建议改用 Nacos 加密配置 / 环境变量注入，并<b>轮换已泄露的凭据</b>；
+            该密码串在多个模块中重复出现，轮换后需统一替换。</td>
+        </tr>
+        <tr>
+          <td><b>网关鉴权粒度</b></td>
+          <td><span class="tag warn">偏粗</span></td>
+          <td><code>SaTokenConfigure</code> 中 <code>/auth/logout</code> 被要求
+            <code>StpUtil.checkRole("admin")</code> —— 但登出应当是普通用户自身能力，
+            否则普通用户无法登出。建议去掉该角色要求，改为「校验登录态」即可。</td>
+        </tr>
+        <tr>
+          <td><b>接口幂等与并发</b></td>
+          <td><span class="tag warn">部分</span></td>
+          <td>关注靠唯一索引幂等；但笔记发布、点赞等写操作没有幂等键。
+            建议对写接口引入客户端幂等 token（Redis <code>SETNX</code>），
+            或至少在前端做防重复提交。</td>
+        </tr>
+        <tr>
+          <td><b>测试覆盖</b></td>
+          <td><span class="tag warn">偏少</span></td>
+          <td>测试类集中在 auth 与 kv（<code>CaffeineTests</code>、<code>ThreadPoolTaskExecutorTests</code>、
+            <code>CassandraTests</code>、<code>MQTest</code>），偏「学习验证」性质。
+            建议对 <code>NoteServiceImpl</code> 的缓存降级路径、
+            <code>FollowUnfollowConsumer</code> 的幂等与回滚补单元测试。</td>
+        </tr>
+        <tr>
+          <td><b>粉丝列表容量</b></td>
+          <td><span class="tag info">设计取舍</span></td>
+          <td><code>ZPOPMIN</code> 淘汰超过 5000 的粉丝会导致<b>老粉丝从列表消失</b>，
+            对大 V 账号是可见问题。建议改为分页从数据库读的兜底策略，
+            或把淘汰阈值做成可配置项，并明确产品预期。</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card" style="margin-top:20px;border-color:rgba(61,220,151,.3);background:linear-gradient(180deg,rgba(61,220,151,.07),transparent)">
+    <h4 style="margin-top:0">做得好的地方</h4>
+    <div class="grid g2">
+      <ul class="small" style="margin:0">
+        <li><b>取舍有记录</b>：大段代码注释写明了「为什么用 TTL 不用 ThreadLocal」「为什么 max = core + 1」
+          「为什么先写 KV 再写 MySQL」，工程意图没有随人流失。</li>
+        <li><b>关注链路完整度高</b>：Lua 原子校验 + 双写冗余 + MQ 异步落库 + 令牌桶削峰 +
+          唯一索引幂等 + 缓存冷启动回填 + 超限淘汰，一条链路把分布式关系系统的关键问题都覆盖了。</li>
+        <li><b>Leaf 集成是真实实现</b>：双 buffer、动态 step、定时同步 biz_tag、
+          ZooKeeper 分配 workerId 都在，不是简化版玩具。</li>
+      </ul>
+      <ul class="small" style="margin:0">
+        <li><b>开发体验受重视</b>：<code>run.sh</code> 运维脚本、docker-compose 一键起中间件、
+          SQL 三件套、MyBatis 生成器配置，新人拉下代码能较快跑起来。</li>
+        <li><b>基础设施完备</b>：Nacos 配置中心 + 注册中心、RocketMQ Dashboard、
+          Druid 监控（<code>/druid/*</code>）、<code>/actuator/health</code> 白名单都已就位。</li>
+        <li><b>渐进式演进痕迹清晰</b>：<code>content_uuid</code> 靠 ALTER 追加、
+          <code>findNoteDetailWithSync</code> 与新实现并存、
+          <code>api/biz</code> 拆分与 starter 下沉，都能看出是在真实重构中逐步成型的架构。</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<footer style="margin-top:56px;padding-top:24px;border-top:1px solid var(--border-soft);color:var(--muted);font-size:12.5px">
+  <p style="margin:0 0 6px">
+    本页由仓库静态分析生成，全部结论可在下列文件中核对：
+  </p>
+  <p class="mono-key" style="margin:0;line-height:2">
+    pom.xml · sqls/ddl.sql · sqls/insert.sql · external/docker-compose.yml · scripts/run.sh<br>
+    mybook-gateway/src/main/resources/application.yml · mybook-gateway/.../auth/SaTokenConfigure.java ·
+    mybook-gateway/.../filter/AddUserId2HeaderFilter.java · mybook-gateway/.../config/CorsConfig.java<br>
+    mybook-framework/.../common/response/Response.java · .../common/exception/BizException.java ·
+    .../biz/context/holder/LoginUserContextHolder.java<br>
+    mybook-auth/.../service/impl/AuthServiceImpl.java · mybook-user/.../service/impl/UserServiceImpl.java ·
+    mybook-note/.../service/impl/NoteServiceImpl.java · mybook-note/.../resources/lua/*.lua ·
+    mybook-user-relation/.../service/impl/UserRelationServiceImpl.java ·
+    mybook-user-relation/.../consumer/FollowUnfollowConsumer.java ·
+    mybook-distributed-id-generator/.../core/segment/SegmentIDGenImpl.java · .../resources/leaf.properties
+  </p>
+</footer>
+
+</main>
+</div>
+
+<script>
+(function () {
+  // ---------- 侧边栏滚动高亮 ----------
+  var links = Array.prototype.slice.call(document.querySelectorAll('#nav a'));
+  var sections = links.map(function (a) {
+    return document.querySelector(a.getAttribute('href'));
+  }).filter(Boolean);
+
+  function syncNav() {
+    var pos = window.scrollY + 120;
+    var current = sections[0];
+    sections.forEach(function (s) {
+      if (s.offsetTop <= pos) current = s;
+    });
+    links.forEach(function (a) {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current.id);
+    });
+  }
+  window.addEventListener('scroll', syncNav, { passive: true });
+  window.addEventListener('resize', syncNav);
+  syncNav();
+
+  // ---------- 流程 Tab 切换 ----------
+  var tabBox = document.getElementById('flowTabs');
+  if (tabBox) {
+    var buttons = Array.prototype.slice.call(tabBox.querySelectorAll('.tab'));
+    buttons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        buttons.forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        document.querySelectorAll('#flows .tab-panel').forEach(function (p) {
+          p.classList.toggle('active', p.id === btn.dataset.tab);
+        });
+      });
+    });
+  }
+
+  // ---------- 接口清单筛选 ----------
+  var filter = document.getElementById('apiFilter');
+  var table = document.getElementById('apiTable');
+  if (filter && table) {
+    var rows = Array.prototype.slice.call(table.querySelectorAll('tbody tr'));
+    filter.addEventListener('input', function () {
+      var q = filter.value.trim().toLowerCase();
+      rows.forEach(function (tr) {
+        var hit = !q || tr.textContent.toLowerCase().indexOf(q) !== -1;
+        tr.style.display = hit ? '' : 'none';
+      });
+    });
+  }
+
+  // ---------- 表格里的代码块自动加粗关键路径 ----------
+  document.querySelectorAll('.nav a').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      var target = document.querySelector(a.getAttribute('href'));
+      if (!target) return;
+      e.preventDefault();
+      window.scrollTo({ top: target.offsetTop - 16, behavior: 'smooth' });
+    });
+  });
+})();
+</script>
+</body>
+</html>
+
+
