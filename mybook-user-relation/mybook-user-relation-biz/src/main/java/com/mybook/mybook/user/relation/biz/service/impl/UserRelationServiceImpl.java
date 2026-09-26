@@ -471,11 +471,13 @@ public class UserRelationServiceImpl implements UserRelationService{
             // 缓存数据到 redis 中，若查询结果为空，也放入 redis 中，防止恶意攻击。
             Set<ZSetOperations.TypedTuple<Object>> tuples = new HashSet<>();
             long expireSeconds = 60 * 60 * 24 + RandomUtil.randomInt(60 * 60 * 24);
-            fansDOS.stream().forEach(fansDO -> {
-                Long fansId = fansDO.getFansUserId();
-                Double timestamp = Double.valueOf(String.valueOf(DateUtils.localDateTime2Timestamp(fansDO.getCreateTime())));
-                tuples.add(ZSetOperations.TypedTuple.of(fansId, timestamp));
-            });
+            if (CollUtil.isNotEmpty(fansDOS)) {
+                fansDOS.stream().forEach(fansDO -> {
+                    Long fansId = fansDO.getFansUserId();
+                    Double timestamp = Double.valueOf(String.valueOf(DateUtils.localDateTime2Timestamp(fansDO.getCreateTime())));
+                    tuples.add(ZSetOperations.TypedTuple.of(fansId, timestamp));
+                });
+            }
             // 这里可以优化为lua脚本: fans_batch_add_and_expire.lua
             redisTemplate.opsForZSet().add(fansRedisKey, tuples);
             redisTemplate.expire(fansRedisKey, expireSeconds, TimeUnit.SECONDS);
