@@ -434,7 +434,7 @@ public class UserRelationServiceImpl implements UserRelationService{
         long limit = 10L;
 
         // 返参
-        List<FindFansUserRspVO> findFansUserRspVOS = null;
+        List<FindFansUserRspVO> findFansUserRspVOS = Lists.newArrayList();
 
         // 当前分页所有粉丝 ID
         List<Long> fansIds = Lists.newArrayList();
