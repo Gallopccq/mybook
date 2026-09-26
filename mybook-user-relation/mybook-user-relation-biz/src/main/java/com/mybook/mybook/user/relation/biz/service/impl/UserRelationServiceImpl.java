@@ -477,12 +477,11 @@ public class UserRelationServiceImpl implements UserRelationService{
                     Double timestamp = Double.valueOf(String.valueOf(DateUtils.localDateTime2Timestamp(fansDO.getCreateTime())));
                     tuples.add(ZSetOperations.TypedTuple.of(fansId, timestamp));
                 });
+                // 这里可以优化为lua脚本: fans_batch_add_and_expire.lua
+                redisTemplate.opsForZSet().add(fansRedisKey, tuples);
+                redisTemplate.expire(fansRedisKey, expireSeconds, TimeUnit.SECONDS);
+                fansIds = fansDOS.stream().map(fansDO -> fansDO.getFansUserId()).toList();
             }
-            // 这里可以优化为lua脚本: fans_batch_add_and_expire.lua
-            redisTemplate.opsForZSet().add(fansRedisKey, tuples);
-            redisTemplate.expire(fansRedisKey, expireSeconds, TimeUnit.SECONDS);
-
-            fansIds = fansDOS.stream().map(fansDO -> fansDO.getFansUserId()).toList();
         }
 
         // 查询所有用户信息，通过userRpcService，信息需要：用户昵称，用户头像
@@ -491,14 +490,16 @@ public class UserRelationServiceImpl implements UserRelationService{
             findUserByIdRspDTOS = userRpcService.findByIds(fansIds);
         }
         // TODO： 获取用户的笔记总数
-        findUserByIdRspDTOS.stream().forEach(findUserByIdRspDTO -> {
-            FindFansUserRspVO findFansUserRspVO = FindFansUserRspVO.builder()
-                    .userId(findUserByIdRspDTO.getId())
-                    .avatar(findUserByIdRspDTO.getAvatar())
-                    .nickName(findUserByIdRspDTO.getNickName())
-                    .introduction(findUserByIdRspDTO.getIntroduction())
-                    .build();
-        });
+        if (CollUtil.isNotEmpty(findUserByIdRspDTOS)) {
+            findUserByIdRspDTOS.stream().forEach(findUserByIdRspDTO -> {
+                FindFansUserRspVO findFansUserRspVO = FindFansUserRspVO.builder()
+                        .userId(findUserByIdRspDTO.getId())
+                        .avatar(findUserByIdRspDTO.getAvatar())
+                        .nickName(findUserByIdRspDTO.getNickName())
+                        .introduction(findUserByIdRspDTO.getIntroduction())
+                        .build();
+            });
+        }
 
         return PageResponse.success(findFansUserRspVOS, pageNo, total);
     }
