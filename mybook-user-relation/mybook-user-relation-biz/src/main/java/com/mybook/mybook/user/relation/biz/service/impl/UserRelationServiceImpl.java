@@ -471,6 +471,7 @@ public class UserRelationServiceImpl implements UserRelationService{
             // 缓存数据到 redis 中，若查询结果为空，也放入 redis 中，防止恶意攻击。
             Set<ZSetOperations.TypedTuple<Object>> tuples = new HashSet<>();
             long expireSeconds = 60 * 60 * 24 + RandomUtil.randomInt(60 * 60 * 24);
+            log.info("fansDOS" + JsonUtils.toJsonString(fansDOS));
             if (CollUtil.isNotEmpty(fansDOS)) {
                 fansDOS.stream().forEach(fansDO -> {
                     Long fansId = fansDO.getFansUserId();
@@ -483,6 +484,8 @@ public class UserRelationServiceImpl implements UserRelationService{
                 fansIds = fansDOS.stream().map(fansDO -> fansDO.getFansUserId()).toList();
             }
         }
+
+        log.info("fansIds: " + String.valueOf(fansIds));
 
         // 查询所有用户信息，通过userRpcService，信息需要：用户昵称，用户头像
         List<FindUserByIdRspDTO> findUserByIdRspDTOS = null;
@@ -498,6 +501,7 @@ public class UserRelationServiceImpl implements UserRelationService{
                         .nickName(findUserByIdRspDTO.getNickName())
                         .introduction(findUserByIdRspDTO.getIntroduction())
                         .build();
+                findFansUserRspVOS.add(findFansUserRspVO);
             });
         }
 
