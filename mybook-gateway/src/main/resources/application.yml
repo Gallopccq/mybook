@@ -79,3 +79,12 @@ sa-token:
 mybook:
   cors:
     allowed-origin-patterns: "*"
+    allowed-headers: "*"
+    exposed-headers: "*"
+
+### 生产环境 ###
+#mybook:
+#  cors:
+#    allowed-origin-patterns: "http://127.0.0.1:8000","http://127.0.0.1:8082"
+#    allowed-headers: "Content-Type", "X-Requested-With", "Authorization"
+#    exposed-headers: "Custom-Header"

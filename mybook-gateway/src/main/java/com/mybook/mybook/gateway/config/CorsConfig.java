@@ -37,6 +37,7 @@ public class CorsConfig {
         corsConfiguration.addAllowedMethod("*");
         corsConfiguration.addAllowedHeader("*");
         corsConfiguration.setMaxAge(3600L);
+//        corsConfiguration.setAllowCredentials(true);
         // 前端通过 Authorization 请求头携带 token，因此不开启 allowCredentials（仅在需要跨源带 Cookie 时才打开）
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
