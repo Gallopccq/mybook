@@ -29,9 +29,11 @@ storage:
 
 minio:
   endpoint: "http://localhost:9001"
+  publicendpoint: "http://111.228.27.62:9001"
   access-key: mybook
   secret-key: qwe123!@#
   bucket-name: mybook
+
 
 ############## 跨域配置 ##############
 # 允许跨源访问的前端源（Pattern 写法，多个用逗号分隔，* 表示不限制），对应 config/CorsConfig

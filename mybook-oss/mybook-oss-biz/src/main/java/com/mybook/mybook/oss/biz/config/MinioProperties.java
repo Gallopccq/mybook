@@ -12,4 +12,5 @@ public class MinioProperties {
     private String endPoint;
     private String accessKey;
     private String secretKey;
+    private String publicEndPoint;
 }

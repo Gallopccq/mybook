@@ -56,7 +56,9 @@ public class MinioFileStrategy implements FileStrategy {
             e.printStackTrace();
             return "";
         }
-        String url = String.format("%s/%s/%s", minioProperties.getEndPoint(), bucketName, objectName);
+        String endpoint = minioProperties.getPublicEndPoint();
+        if (endpoint == null || endpoint.isBlank()) endpoint= minioProperties.getEndPoint();
+        String url = String.format("%s/%s/%s", endpoint, bucketName, objectName);
         log.info("==> 上传文件至 Minio 成功，访问路径: {}", url);
         return url;
     }

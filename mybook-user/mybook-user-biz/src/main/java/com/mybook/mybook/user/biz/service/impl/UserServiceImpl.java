@@ -382,6 +382,7 @@ public class UserServiceImpl  implements UserService {
 
         // 如果被查询的用户信息，都在 Redis 中，直接返回
         if (CollUtil.size(findUserByIdRspDTOS) == CollUtil.size(userIds)){
+            log.info("所有数据在 redis 中，直接返回：" + findUserByIdRspDTOS.toString());
             return Response.success(findUserByIdRspDTOS);
         }
 
@@ -413,6 +414,7 @@ public class UserServiceImpl  implements UserService {
                             .introduction(userDO.getIntroduction())
                             .build())
                     .toList();
+            log.info("用户信息在 redis 数据为空或不全，查询数据库：" + findUserByIdRspDTOS2.toString());
             // TODO: 异步线程将用户信息同步到 Redis 中，只需同步数据库查询的数据
             List<FindUserByIdRspDTO> finalFindUserByIdRspDTOS = findUserByIdRspDTOS2;
             taskExecutor.submit(() -> {
