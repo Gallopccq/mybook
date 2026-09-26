@@ -6,6 +6,10 @@ spring:
     active: dev
   application:
     name: mybook-oss # 应用名称
+  servlet:
+    multipart:
+      max-file-size: 200MB # 单文件上限，覆盖 Boot 默认 1MB，与前端视频预检一致（frontend/js/config.js）
+      max-request-size: 210MB # 单请求上限，比单文件上限多留一点 multipart 边界开销
   cloud:
     nacos:
       discovery:
